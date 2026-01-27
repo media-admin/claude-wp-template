@@ -1,6 +1,7 @@
 {
   "name": "custom-wordpress-theme",
   "version": "1.0.0",
+  "type": "module",
   "description": "Custom WordPress Theme from Figma",
   "scripts": {
     "dev": "vite",

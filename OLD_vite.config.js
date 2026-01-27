@@ -1,10 +1,7 @@
+cat > vite.config.js << 'EOF'
 import { defineConfig } from 'vite';
 import liveReload from 'vite-plugin-live-reload';
 import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 export default defineConfig({
   plugins: [
@@ -54,3 +51,4 @@ export default defineConfig({
     }
   },
 });
+EOF

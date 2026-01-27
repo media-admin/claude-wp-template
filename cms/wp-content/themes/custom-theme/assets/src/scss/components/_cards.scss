@@ -1,0 +1,75 @@
+// ==========================================================================
+// Card Component (aus Figma)
+// ==========================================================================
+
+.card {
+  background: $color-white;
+  border-radius: $radius-lg;  // 16px aus Figma
+  box-shadow: $shadow-md;
+  overflow: hidden;
+  transition: all $transition-base;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-lg;
+  }
+  
+  // Image
+  &__image {
+    @include aspect-ratio(16, 9);
+    overflow: hidden;
+    
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+  
+  // Content
+  &__content {
+    padding: $spacing-3;  // 24px aus Figma
+  }
+  
+  &__title {
+    font-size: $font-size-h4;
+    font-weight: $font-weight-bold;
+    margin-bottom: $spacing-2;
+    color: $color-dark;
+  }
+  
+  &__description {
+    font-size: $font-size-base;
+    color: $color-text-light;
+    margin-bottom: $spacing-3;
+    @include line-clamp(3);
+  }
+  
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    font-weight: $font-weight-semibold;
+    color: $color-primary;
+    text-decoration: none;
+    transition: color $transition-fast;
+    
+    &:hover {
+      color: darken($color-primary, 15%);
+    }
+  }
+}
+
+// Card Grid
+.card-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-4;
+  
+  @include respond-to('md') {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @include respond-to('lg') {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

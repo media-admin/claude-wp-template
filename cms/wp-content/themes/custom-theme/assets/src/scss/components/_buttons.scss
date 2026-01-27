@@ -1,0 +1,55 @@
+// ==========================================================================
+// Buttons (aus Figma Component)
+// ==========================================================================
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-2 $spacing-4;  // 16px 32px
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  line-height: 1;
+  text-decoration: none;
+  border: none;
+  border-radius: $radius-md;  // 8px
+  cursor: pointer;
+  transition: all $transition-base;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+  
+  // Primary Button
+  &-primary {
+    background: $color-primary;
+    color: $color-white;
+    
+    &:hover {
+      background: darken($color-primary, 10%);
+    }
+  }
+  
+  // Secondary Button
+  &-secondary {
+    background: $color-secondary;
+    color: $color-white;
+    
+    &:hover {
+      background: darken($color-secondary, 10%);
+    }
+  }
+  
+  // Outline Button
+  &-outline {
+    background: transparent;
+    color: $color-primary;
+    border: 2px solid $color-primary;
+    
+    &:hover {
+      background: $color-primary;
+      color: $color-white;
+    }
+  }
+}

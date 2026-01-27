@@ -1,0 +1,75 @@
+// Header (aus Figma Header Component)
+
+.site-header {
+  background: $color-white;
+  box-shadow: $shadow-sm;
+  position: sticky;
+  top: 0;
+  z-index: $z-header;
+  
+  .container {
+    @include flex-between;
+    padding-top: $spacing-2;
+    padding-bottom: $spacing-2;
+  }
+}
+
+.site-branding {
+  a {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: $color-dark;
+    text-decoration: none;
+  }
+}
+
+.main-navigation {
+  ul {
+    display: flex;
+    gap: $spacing-4;
+    list-style: none;
+  }
+  
+  a {
+    font-weight: $font-weight-medium;
+    color: $color-text;
+    text-decoration: none;
+    transition: color $transition-fast;
+    
+    &:hover {
+      color: $color-primary;
+    }
+  }
+  
+  // Mobile
+  @media (max-width: $breakpoint-md - 1) {
+    display: none;
+    
+    &.active {
+      display: block;
+      position: fixed;
+      top: 60px;
+      left: 0;
+      right: 0;
+      background: $color-white;
+      padding: $spacing-4;
+      box-shadow: $shadow-lg;
+      
+      ul {
+        flex-direction: column;
+      }
+    }
+  }
+}
+
+.mobile-menu-toggle {
+  display: none;
+  
+  @media (max-width: $breakpoint-md - 1) {
+    display: block;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+  }
+}
