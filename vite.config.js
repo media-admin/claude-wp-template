@@ -6,18 +6,18 @@ import path from 'path';
 export default defineConfig({
   plugins: [
     liveReload([
-      'wp-content/themes/custom-theme/**/*.php',
+      'cms/wp-content/themes/custom-theme/**/*.php',
     ]),
   ],
   
   build: {
-    outDir: 'wp-content/themes/custom-theme/assets/dist',
+    outDir: 'cms/wp-content/themes/custom-theme/assets/dist',
     emptyOutDir: true,
     
     rollupOptions: {
       input: {
-        main: path.resolve(__dirname, 'wp-content/themes/custom-theme/assets/src/js/main.js'),
-        style: path.resolve(__dirname, 'wp-content/themes/custom-theme/assets/src/scss/style.scss'),
+        main: path.resolve(__dirname, 'cms/wp-content/themes/custom-theme/assets/src/js/main.js'),
+        style: path.resolve(__dirname, 'cms/wp-content/themes/custom-theme/assets/src/scss/style.scss'),
       },
       output: {
         entryFileNames: 'js/[name].js',
@@ -47,7 +47,7 @@ export default defineConfig({
   
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'wp-content/themes/custom-theme/assets/src'),
+      '@': path.resolve(__dirname, 'cms/wp-content/themes/custom-theme/assets/src'),
     }
   },
 });

@@ -1,33 +1,49 @@
 # Wordpress - ignore core, configuration, examples, uploads and logs.
 # https://github.com/github/gitignore/blob/main/WordPress.gitignore
 
-# Core
-#
-# Note: if you want to stage/commit WP core files
-# you can delete this whole section/until Configuration.
-/wp-admin/
-/wp-content/index.php
-/wp-content/languages
-/wp-content/plugins/index.php
-/wp-content/themes/index.php
-/wp-includes/
-/index.php
-/license.txt
-/readme.html
-/wp-*.php
-/xmlrpc.php
+# WordPress Core (im cms/ Verzeichnis)
+/cms/wp-admin/
+/cms/wp-includes/
+/cms/wp-*.php
+/cms/xmlrpc.php
+/cms/license.txt
+/cms/readme.html
+/cms/index.php
 
-# Configuration
-wp-config.php
+# Config
+/cms/wp-config.php
+/cms/.htaccess
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Dependencies
+/vendor/
+/node_modules/
+composer.lock
+package-lock.json
+
+# Build
+/cms/wp-content/themes/custom-theme/assets/dist/
+*.min.js
+*.min.css
+*.map
+
+# Uploads & Cache
+/cms/wp-content/uploads/
+/cms/wp-content/upgrade/
+/cms/wp-content/cache/
+*.log
+
 
 # Example themes
-/wp-content/themes/twenty*/
+/cms/wp-content/themes/twenty*/
 
 # Example plugin
-/wp-content/plugins/hello.php
+/cms/wp-content/plugins/hello.php
 
-# Uploads
-/wp-content/uploads/
 
 # Log files
 *.log
@@ -46,41 +62,6 @@ wp-config.php
 # Note: If you wish to whitelist themes,
 # uncomment the next line
 #/wp-content/themes
-
-# WordPress Core
-/wp-admin/
-/wp-includes/
-/wp-*.php
-/xmlrpc.php
-/license.txt
-/readme.html
-
-# Config
-wp-config.php
-.htaccess
-
-# Environment
-.env
-.env.*
-!.env.example
-
-# Dependencies
-/vendor/
-/node_modules/
-composer.lock
-package-lock.json
-
-# Build
-/wp-content/themes/custom-theme/assets/dist/
-*.min.js
-*.min.css
-*.map
-
-# Uploads & Cache
-/wp-content/uploads/
-/wp-content/upgrade/
-/wp-content/cache/
-*.log
 
 # OS & Editor
 .DS_Store

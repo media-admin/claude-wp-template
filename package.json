@@ -1,5 +1,3 @@
-# Package.json
-cat > package.json << 'EOF'
 {
   "name": "custom-wordpress-theme",
   "version": "1.0.0",
@@ -16,13 +14,9 @@ cat > package.json << 'EOF'
     "postcss": "^8.4.33",
     "sass": "^1.70.0",
     "vite": "^5.0.12",
-    "vite-plugin-live-reload": "^4.0.2"
+    "vite-plugin-live-reload": "^3.0.5"
   },
   "dependencies": {
     "alpinejs": "^3.13.5"
   }
 }
-EOF
-
-# Dependencies installieren
-npm install
