@@ -46,3 +46,46 @@ wp-config.php
 # Note: If you wish to whitelist themes,
 # uncomment the next line
 #/wp-content/themes
+
+# WordPress Core
+/wp-admin/
+/wp-includes/
+/wp-*.php
+/xmlrpc.php
+/license.txt
+/readme.html
+
+# Config
+wp-config.php
+.htaccess
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Dependencies
+/vendor/
+/node_modules/
+composer.lock
+package-lock.json
+
+# Build
+/wp-content/themes/custom-theme/assets/dist/
+*.min.js
+*.min.css
+*.map
+
+# Uploads & Cache
+/wp-content/uploads/
+/wp-content/upgrade/
+/wp-content/cache/
+*.log
+
+# OS & Editor
+.DS_Store
+.vscode/
+.idea/
+
+# Development
+.dev
