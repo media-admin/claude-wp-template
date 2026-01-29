@@ -9,6 +9,10 @@
 <?php wp_body_open(); ?>
 
 <div id="page" class="site">
+    <a class="skip-link screen-reader-text" href="#primary">
+        <?php esc_html_e('Zum Inhalt springen', 'customtheme'); ?>
+    </a>
+
     <header id="masthead" class="site-header">
         <div class="container">
             <div class="site-branding">
@@ -16,6 +20,10 @@
                     <?php bloginfo('name'); ?>
                 </a>
             </div>
+            
+            <button class="mobile-menu-toggle" aria-label="Menu Toggle">
+                ☰
+            </button>
             
             <nav class="main-navigation">
                 <?php
