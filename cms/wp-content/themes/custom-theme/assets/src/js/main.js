@@ -5,15 +5,30 @@
 // Import Styles
 import '../scss/style.scss';
 
+// Import Components
+import './components/hero-slider.js';
+import './components/accordion.js';
+import './components/theme-switcher.js';
+import './components/lightbox.js';
+import './components/modal.js';
+import './components/back-to-top.js';
+import './components/cookie-notice.js';
+import './components/scroll-animations.js';
+
 // DOM Ready
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('Custom Theme loaded');
+  console.log('Agency Starter Kit loaded ✨');
   
+  // Mobile Navigation
   initMobileNav();
+  
+  // Smooth Scroll for anchor links
   initSmoothScroll();
 });
 
-// Mobile Navigation
+/**
+ * Mobile Navigation Toggle
+ */
 function initMobileNav() {
   const toggle = document.querySelector('.mobile-menu-toggle');
   const menu = document.querySelector('.main-navigation');
@@ -27,21 +42,25 @@ function initMobileNav() {
   }
 }
 
-// Smooth Scroll
+/**
+ * Smooth Scroll for Anchor Links
+ */
 function initSmoothScroll() {
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
       const href = this.getAttribute('href');
+      
       if (href === '#') return;
       
       const target = document.querySelector(href);
+      
       if (target) {
         e.preventDefault();
-        target.scrollIntoView({ behavior: 'smooth' });
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
       }
     });
   });
 }
-
-// Import Lazy Loading
-import './lazy-loading.js';

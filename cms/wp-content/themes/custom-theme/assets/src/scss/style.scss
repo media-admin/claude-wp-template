@@ -1,5 +1,5 @@
 // ==========================================================================
-// Main Stylesheet
+// Main Stylesheet - Agency Starter Kit
 // ==========================================================================
 
 // Configuration
@@ -20,9 +20,17 @@
 @import 'components/buttons';
 @import 'components/cards';
 @import 'components/forms';
+@import 'components/hero-slider';
+@import 'components/accordion';
+@import 'components/theme-toggle';
+@import 'components/lightbox';
+@import 'components/modal';
+@import 'components/back-to-top';
+@import 'components/cookie-notice';
 
 // Pages
 @import 'pages/home';
 
 // Utilities
 @import 'utilities/helpers';
+@import 'utilities/animations';
