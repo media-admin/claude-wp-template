@@ -17,6 +17,15 @@ function customtheme_setup() {
     // Image Sizes (basierend auf Figma)
     add_image_size('customtheme-hero', 1920, 1080, true);
     add_image_size('customtheme-card', 600, 400, true);
+
+    // Additional responsive image sizes
+    add_image_size('customtheme-mobile', 375, 0, false);
+    add_image_size('customtheme-tablet', 768, 0, false);
+    add_image_size('customtheme-desktop', 1200, 0, false);
+    
+    // Thumbnail sizes
+    add_image_size('customtheme-thumbnail-small', 150, 150, true);
+    add_image_size('customtheme-thumbnail-medium', 300, 300, true);
     
     // Navigation Menus
     register_nav_menus(array(

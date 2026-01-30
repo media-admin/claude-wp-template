@@ -42,3 +42,6 @@ function initSmoothScroll() {
     });
   });
 }
+
+// Import Lazy Loading
+import './lazy-loading.js';

@@ -1,0 +1,1 @@
+/Users/markus.tritremmel/Valet-Umgebung/claude-wp-template/cms/wp-content/plugins/query-monitor/wp-content/db.php
