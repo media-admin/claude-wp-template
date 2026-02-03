@@ -17,7 +17,8 @@
   }
   
   &__dialog {
-    background: var(--color-card-bg);
+    background: var(--color-surface);
+    color: var(--color-text);
     border-radius: $radius-lg;
     max-width: 600px;
     width: 100%;
@@ -80,3 +81,80 @@
     transform: translateY(0);
   }
 }
+
+// Contact Form 7 im Modal
+.modal__body {
+  .wpcf7 {
+    .wpcf7-form {
+      p {
+        margin-bottom: $spacing-3;
+      }
+      
+      input[type="text"],
+      input[type="email"],
+      input[type="tel"],
+      textarea {
+        width: 100%;
+        padding: $spacing-2;
+        border: 1px solid var(--color-border);
+        border-radius: $radius-sm;
+        background: var(--color-input-bg);
+        color: var(--color-text);
+        font-family: inherit;
+        
+        &:focus {
+          outline: none;
+          border-color: $color-primary;
+          box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
+        }
+      }
+      
+      textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+      
+      input[type="submit"] {
+        background: $color-primary;
+        color: $color-white;
+        border: none;
+        padding: $spacing-2 $spacing-4;
+        border-radius: $radius-sm;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background $transition-base;
+        
+        &:hover {
+          background: darken($color-primary, 10%);
+        }
+      }
+      
+      // Validation Fehler
+      .wpcf7-not-valid-tip {
+        color: $color-error;
+        font-size: $font-size-sm;
+        margin-top: $spacing-1;
+      }
+      
+      // Success/Error Messages
+      .wpcf7-response-output {
+        margin-top: $spacing-3;
+        padding: $spacing-2;
+        border-radius: $radius-sm;
+        
+        &.wpcf7-validation-errors {
+          background: lighten($color-error, 40%);
+          border: 1px solid $color-error;
+          color: $color-error;
+        }
+        
+        &.wpcf7-mail-sent-ok {
+          background: lighten($color-success, 40%);
+          border: 1px solid $color-success;
+          color: darken($color-success, 20%);
+        }
+      }
+    }
+  }
+}
+

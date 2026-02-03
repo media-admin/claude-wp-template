@@ -60,7 +60,9 @@ export default class ThemeSwitcher {
   
   createToggle() {
     // Only create if not exists
-    if (document.querySelector('[data-theme-toggle]')) return;
+    if (document.querySelector('[data-theme-toggle]')) {
+        return; // Button existiert bereits im Header
+    }
     
     const toggle = document.createElement('button');
     toggle.setAttribute('data-theme-toggle', '');

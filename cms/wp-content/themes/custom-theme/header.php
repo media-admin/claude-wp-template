@@ -14,24 +14,26 @@
     </a>
 
     <header id="masthead" class="site-header">
-        <div class="container">
-            <div class="site-branding">
-                <a href="<?php echo esc_url(home_url('/')); ?>">
-                    <?php bloginfo('name'); ?>
-                </a>
-            </div>
-            
-            <button class="mobile-menu-toggle" aria-label="Menu Toggle">
-                ☰
-            </button>
-            
-            <nav class="main-navigation">
-                <?php
-                wp_nav_menu(array(
-                    'theme_location' => 'primary',
-                    'container' => false,
-                ));
-                ?>
-            </nav>
+    <div class="container">
+        <div class="site-branding">
+            <a href="<?php echo esc_url(home_url('/')); ?>">
+                <?php bloginfo('name'); ?>
+            </a>
         </div>
-    </header>
+        
+        <nav class="main-navigation">
+            <?php
+            wp_nav_menu(array(
+                'theme_location' => 'primary',
+                'container' => false,
+            ));
+            ?>
+        </nav>
+        
+        <!-- Theme Toggle im Header -->
+        <button data-theme-toggle aria-label="Toggle theme" class="theme-toggle theme-toggle--header">
+            <span class="theme-toggle__icon theme-toggle__icon--light">☀️</span>
+            <span class="theme-toggle__icon theme-toggle__icon--dark">🌙</span>
+        </button>
+    </div>
+</header>

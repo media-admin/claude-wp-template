@@ -1,7 +1,8 @@
 // Global Styles
-
 body {
-  background: $color-background;
+  background: var(--color-background);
+  color: var(--color-text);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .site {
@@ -18,11 +19,28 @@ body {
   @include container;
 }
 
-// Screen Reader Text
-.screen-reader-text {
-  clip: rect(1px, 1px, 1px, 1px);
-  position: absolute !important;
-  height: 1px;
-  width: 1px;
-  overflow: hidden;
+// Cards anpassen für Dark Mode
+.card {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-color: var(--color-border);
+  transition: all $transition-base;
+}
+
+// Links
+a {
+  color: $color-primary;
+  
+  &:hover {
+    color: darken($color-primary, 15%);
+  }
+}
+
+// Sections mit Background
+.bg-light {
+  background: var(--color-surface);
+  
+  [data-theme="dark"] & {
+    background: rgba(255, 255, 255, 0.05);
+  }
 }

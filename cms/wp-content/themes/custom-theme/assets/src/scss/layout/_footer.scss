@@ -1,10 +1,13 @@
 // Footer (aus Figma Footer Component)
 
 .site-footer {
-  background: $color-dark;
-  color: $color-white;
-  padding: $spacing-8 0 $spacing-4;
+  background: var(--color-surface);
+  color: var(--color-text);
+  padding: $spacing-6 0 $spacing-4;
   margin-top: auto;
+  text-align: center;
+  border-top: 1px solid var(--color-border);
+  transition: all 0.3s ease;
   
   a {
     color: $color-white;
@@ -13,6 +16,12 @@
     &:hover {
       opacity: 1;
     }
+  }
+
+  p {
+    margin: 0;
+    opacity: 0.8;
+    color: var(--color-text-secondary);
   }
   
   .site-info {

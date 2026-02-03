@@ -1,5 +1,14 @@
 // Theme Toggle Button
 .theme-toggle {
+  // Statt fixed bottom-right:
+  
+  // Option 1: Top right
+  // top: $spacing-4;
+  // right: $spacing-4;
+  
+  // Option 2: In Header integrieren
+  // position: relative;
+  // display: inline-flex;
   position: fixed;
   bottom: $spacing-4;
   right: $spacing-4;

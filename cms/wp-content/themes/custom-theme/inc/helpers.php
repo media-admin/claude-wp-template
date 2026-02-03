@@ -85,3 +85,99 @@ function customtheme_get_picture($image_id, $size = 'large', $args = array()) {
     
     return ob_get_clean();
 }
+
+/**
+ * Get Posts by Type with Caching
+ */
+function customtheme_get_posts($post_type, $args = array()) {
+    $cache_key = 'customtheme_posts_' . $post_type . '_' . md5(serialize($args));
+    $posts = get_transient($cache_key);
+    
+    if (false === $posts) {
+        $defaults = array(
+            'post_type' => $post_type,
+            'posts_per_page' => -1,
+            'post_status' => 'publish',
+            'orderby' => 'menu_order',
+            'order' => 'ASC',
+        );
+        
+        $args = wp_parse_args($args, $defaults);
+        $posts = get_posts($args);
+        
+        set_transient($cache_key, $posts, HOUR_IN_SECONDS);
+    }
+    
+    return $posts;
+}
+
+/**
+ * Get FAQ Items for Accordion
+ */
+function customtheme_get_faq_items() {
+    $faqs = customtheme_get_posts('faq', array(
+        'meta_key' => 'faq_order',
+        'orderby' => 'meta_value_num',
+    ));
+    
+    $items = array();
+    
+    foreach ($faqs as $faq) {
+        $items[] = array(
+            'title' => get_the_title($faq),
+            'content' => apply_filters('the_content', $faq->post_content),
+        );
+    }
+    
+    return $items;
+}
+
+/**
+ * Get Hero Slides
+ */
+function customtheme_get_hero_slides() {
+    $slides = customtheme_get_posts('slide');
+    $slides_data = array();
+    
+    foreach ($slides as $slide) {
+        $slides_data[] = array(
+            'image' => get_the_post_thumbnail_url($slide->ID, 'customtheme-hero'),
+            'title' => get_the_title($slide->ID),
+            'subtitle' => get_field('slide_subtitle', $slide->ID),
+            'button_text' => get_field('slide_button_text', $slide->ID),
+            'button_link' => get_field('slide_button_link', $slide->ID),
+        );
+    }
+    
+    return $slides_data;
+}
+
+/**
+ * Get Projects for Grid
+ */
+function customtheme_get_projects($limit = -1) {
+    return customtheme_get_posts('project', array(
+        'posts_per_page' => $limit,
+        'orderby' => 'date',
+        'order' => 'DESC',
+    ));
+}
+
+/**
+ * Get Team Members
+ */
+function customtheme_get_team_members() {
+    return customtheme_get_posts('team');
+}
+
+/**
+ * Clear Custom Post Type Cache on Save
+ */
+function customtheme_clear_cpt_cache($post_id) {
+    $post_type = get_post_type($post_id);
+    
+    if (in_array($post_type, array('slide', 'faq', 'project', 'team', 'testimonial', 'service'))) {
+        delete_transient('customtheme_posts_' . $post_type . '_*');
+    }
+}
+add_action('save_post', 'customtheme_clear_cpt_cache');

@@ -42,3 +42,13 @@ function customtheme_webp_is_displayable($result, $path) {
     return $result;
 }
 add_filter('file_is_displayable_image', 'customtheme_webp_is_displayable', 10, 2);
+
+// Load Dashicons in Frontend
+add_action('wp_enqueue_scripts', 'load_dashicons_frontend');
+function load_dashicons_frontend() {
+    wp_enqueue_style('dashicons');
+}
+
+// Block Patterns
+require_once get_template_directory() . '/inc/block-patterns.php';
+

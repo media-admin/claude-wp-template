@@ -6,6 +6,7 @@
 import '../scss/style.scss';
 
 // Import Components
+import './components/theme-switcher.js';
 import './components/hero-slider.js';
 import './components/accordion.js';
 import './components/theme-switcher.js';
@@ -14,6 +15,13 @@ import './components/modal.js';
 import './components/back-to-top.js';
 import './components/cookie-notice.js';
 import './components/scroll-animations.js';
+
+import TestimonialsSlider from './components/testimonials-slider';
+import Tabs from './components/tabs';
+import Notification from './components/notification';
+import Notifications from './components/notifications';
+import StatsCounter from './components/stats-counter';
+
 
 // DOM Ready
 document.addEventListener('DOMContentLoaded', () => {
@@ -64,3 +72,4 @@ function initSmoothScroll() {
     });
   });
 }
+

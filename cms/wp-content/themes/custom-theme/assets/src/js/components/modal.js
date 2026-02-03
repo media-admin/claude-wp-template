@@ -70,3 +70,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+// CF7 Integration - Modal schließen nach erfolgreichem Submit
+document.addEventListener('wpcf7mailsent', function(event) {
+  // Finde das Modal, in dem das Formular ist
+  const form = event.target;
+  const modal = form.closest('.modal');
+  
+  if (modal) {
+    // Warte 2 Sekunden, dann schließe das Modal
+    setTimeout(() => {
+      modal.classList.remove('is-active');
+      document.body.classList.remove('modal-open');
+      
+      // Success-Nachricht anzeigen (optional)
+      // alert('Vielen Dank! Ihre Nachricht wurde gesendet.');
+    }, 2000);
+  }
+}, false);

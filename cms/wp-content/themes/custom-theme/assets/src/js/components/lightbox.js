@@ -107,4 +107,41 @@ export default class Lightbox {
 }
 
 // Initialize
-new Lightbox();
+// new Lightbox();
+
+// Auto-initialize für WordPress Media Library Bilder
+document.addEventListener('DOMContentLoaded', () => {
+  // Alle verlinkten Bilder finden
+  const imageLinks = document.querySelectorAll('a[href$=".jpg"], a[href$=".jpeg"], a[href$=".png"], a[href$=".gif"], a[href$=".webp"]');
+  
+  imageLinks.forEach((link, index) => {
+    // Nur wenn Link ein img-Tag enthält
+    const img = link.querySelector('img');
+    if (img) {
+      // Lightbox-Attribute hinzufügen
+      link.setAttribute('data-lightbox', 'wp-gallery');
+      
+      // Caption aus img alt oder title nehmen
+      const caption = img.getAttribute('alt') || img.getAttribute('title') || '';
+      if (caption) {
+        link.setAttribute('data-caption', caption);
+      }
+      
+      // Verhindere Standard-Link-Verhalten
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+      });
+    }
+  });
+
+  // Galerie-Bilder gruppieren
+  document.querySelectorAll('.wp-block-gallery').forEach((gallery, galleryIndex) => {
+    const links = gallery.querySelectorAll('a[href$=".jpg"], a[href$=".jpeg"], a[href$=".png"]');
+    links.forEach(link => {
+      link.setAttribute('data-lightbox', `gallery-${galleryIndex}`);
+    });
+  });
+  
+  // Lightbox initialisieren
+  new Lightbox();
+});
