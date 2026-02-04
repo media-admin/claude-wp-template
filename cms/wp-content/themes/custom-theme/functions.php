@@ -52,3 +52,18 @@ function load_dashicons_frontend() {
 // Block Patterns
 require_once get_template_directory() . '/inc/block-patterns.php';
 
+
+// Add custom classes to CF7 forms
+add_filter('wpcf7_form_class_attr', 'custom_cf7_form_class');
+function custom_cf7_form_class($class) {
+    // You can add conditional logic here based on form ID
+    // For now, we'll just return the default
+    return $class;
+}
+
+// Add wrapper div with custom class around CF7 forms
+add_filter('wpcf7_form_elements', 'custom_cf7_form_wrapper');
+function custom_cf7_form_wrapper($content) {
+    // This allows you to wrap the form if needed
+    return $content;
+}

@@ -232,6 +232,34 @@ function add_shortcode_buttons() {
         <span class="dashicons dashicons-chart-bar" style="margin-top: 3px;"></span> Stats
     </button>'; 
 
+    echo '<button type="button" class="button" id="insert-timeline" style="margin-left: 5px;">
+        <span class="dashicons dashicons-backup" style="margin-top: 3px;"></span> Timeline
+    </button>';
+
+    echo '<button type="button" class="button" id="insert-image-comparison" style="margin-left: 5px;">
+        <span class="dashicons dashicons-image-flip-horizontal" style="margin-top: 3px;"></span> Image Comparison
+    </button>';
+
+    echo '<button type="button" class="button" id="insert-logo-carousel" style="margin-left: 5px;">
+        <span class="dashicons dashicons-images-alt" style="margin-top: 3px;"></span> Logo Carousel
+    </button>';
+
+    echo '<button type="button" class="button" id="insert-team-cards" style="margin-left: 5px;">
+        <span class="dashicons dashicons-groups" style="margin-top: 3px;"></span> Team Cards
+    </button>';
+
+    echo '<button type="button" class="button" id="insert-video-player" style="margin-left: 5px;">
+        <span class="dashicons dashicons-video-alt3" style="margin-top: 3px;"></span> Video Player
+    </button>';
+
+    echo '<button type="button" class="button" id="insert-faq" style="margin-left: 5px;">
+        <span class="dashicons dashicons-editor-help" style="margin-top: 3px;"></span> FAQ
+    </button>';
+
+    echo '<button type="button" class="button" id="insert-cpt-query" style="margin-left: 5px;">
+        <span class="dashicons dashicons-database" style="margin-top: 3px;"></span> CPT Query
+    </button>';
+
 }
 
 add_action('admin_footer', 'shortcode_buttons_js');
@@ -347,7 +375,106 @@ function shortcode_buttons_js() {
             insertShortcode(shortcode);
         });
 
+        // Timeline
+        $('#insert-timeline').on('click', function(e) {
+            e.preventDefault();
+            var shortcode = `[timeline style="alternate"]
+                [timeline_item date="2020" title="Gründung" icon="dashicons-star-filled" color="primary"]
+                    Unser Unternehmen wurde mit der Vision gegründet, innovative Lösungen zu schaffen.
+                [/timeline_item]
+                [timeline_item date="2021" title="Erstes Produkt" icon="dashicons-products" color="success"]
+                    Launch unseres ersten erfolgreichen Produkts mit über 1000 Kunden.
+                [/timeline_item]
+                [timeline_item date="2022" title="Expansion" icon="dashicons-admin-site-alt3" color="info"]
+                    Eröffnung von Niederlassungen in 3 weiteren Ländern.
+                [/timeline_item]
+                [timeline_item date="2023" title="Auszeichnung" icon="dashicons-awards" color="warning"]
+                    Gewinner des Innovation Awards für beste Technologie.
+                [/timeline_item]
+                [/timeline]`;
+            insertShortcode(shortcode);
+        });
 
+        // Image Comparison
+        $('#insert-image-comparison').on('click', function(e) {
+            e.preventDefault();
+            var shortcode = '[image_comparison before="https://picsum.photos/1200/675?random=1" after="https://picsum.photos/1200/675?random=2" before_label="Vorher" after_label="Nachher" position="50"]';
+            insertShortcode(shortcode);
+        });
+
+        // Logo Carousel
+        $('#insert-logo-carousel').on('click', function(e) {
+            e.preventDefault();
+            var shortcode = '[logo_carousel autoplay="true" speed="3000" grayscale="true"]\n' +
+                '[logo_item image="https://via.placeholder.com/200x80/667eea/ffffff?text=Logo+1" alt="Partner 1" link="https://example.com"]\n' +
+                '[logo_item image="https://via.placeholder.com/200x80/764ba2/ffffff?text=Logo+2" alt="Partner 2" link="https://example.com"]\n' +
+                '[logo_item image="https://via.placeholder.com/200x80/f093fb/ffffff?text=Logo+3" alt="Partner 3" link="https://example.com"]\n' +
+                '[logo_item image="https://via.placeholder.com/200x80/4facfe/ffffff?text=Logo+4" alt="Partner 4" link="https://example.com"]\n' +
+                '[logo_item image="https://via.placeholder.com/200x80/00f2fe/ffffff?text=Logo+5" alt="Partner 5" link="https://example.com"]\n' +
+                '[logo_item image="https://via.placeholder.com/200x80/43e97b/ffffff?text=Logo+6" alt="Partner 6" link="https://example.com"]\n' +
+                '[/logo_carousel]';
+            insertShortcode(shortcode);
+        });
+
+        // Team Cards
+        $('#insert-team-cards').on('click', function(e) {
+            e.preventDefault();
+            var shortcode = '[team_cards columns="3" style="default"]\n' +
+                '[team_member name="Max Mustermann" role="CEO & Gründer" image="https://i.pravatar.cc/400?img=12" email="max@example.com" linkedin="https://linkedin.com"]\n' +
+                'Mit über 15 Jahren Erfahrung in der Tech-Branche führt Max unser Unternehmen in eine innovative Zukunft.\n' +
+                '[/team_member]\n' +
+                '[team_member name="Anna Schmidt" role="CTO" image="https://i.pravatar.cc/400?img=5" email="anna@example.com" linkedin="https://linkedin.com"]\n' +
+                'Anna ist verantwortlich für unsere technische Strategie und leitet unser Entwicklerteam.\n' +
+                '[/team_member]\n' +
+                '[team_member name="Peter Müller" role="Head of Design" image="https://i.pravatar.cc/400?img=15" email="peter@example.com" twitter="https://twitter.com"]\n' +
+                'Peter bringt kreative Visionen zum Leben und sorgt für außergewöhnliche User Experience.\n' +
+                '[/team_member]\n' +
+                '[/team_cards]';
+            insertShortcode(shortcode);
+        });
+
+        // Video Player
+        $('#insert-video-player').on('click', function(e) {
+            e.preventDefault();
+            var shortcode = '[video_player url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" type="youtube" title="Video Titel" poster="https://picsum.photos/1280/720?random=1"]\n' +
+                'Optional: Beschreibungstext zum Video.\n' +
+                '[/video_player]';
+            insertShortcode(shortcode);
+        });
+
+        // FAQ Accordion
+        $('#insert-faq').on('click', function(e) {
+            e.preventDefault();
+            var shortcode = '[faq_accordion style="default" schema="true"]\n' +
+                '[faq_item question="Wie kann ich bestellen?" open="true"]\n' +
+                'Sie können ganz einfach über unseren Online-Shop bestellen. Wählen Sie Ihre Produkte aus und folgen Sie dem Checkout-Prozess.\n' +
+                '[/faq_item]\n' +
+                '[faq_item question="Welche Zahlungsmethoden akzeptieren Sie?"]\n' +
+                'Wir akzeptieren Kreditkarten, PayPal, Sofortüberweisung und Rechnung.\n' +
+                '[/faq_item]\n' +
+                '[faq_item question="Wie lange dauert der Versand?"]\n' +
+                'Standard-Versand dauert 3-5 Werktage. Express-Versand ist innerhalb von 1-2 Werktagen möglich.\n' +
+                '[/faq_item]\n' +
+                '[faq_item question="Kann ich meine Bestellung zurückgeben?"]\n' +
+                'Ja, Sie haben ein 30-tägiges Rückgaberecht ab Erhalt der Ware.\n' +
+                '[/faq_item]\n' +
+                '[/faq_accordion]';
+            insertShortcode(shortcode);
+        });
+
+        // CPT Query
+        $('#insert-cpt-query').on('click', function(e) {
+            e.preventDefault();
+            var shortcode = '<!-- Team -->\n' +
+                '[team_query number="3" columns="3" style="default"]\n\n' +
+                '<!-- Projects -->\n' +
+                '[projects_query number="6" columns="3"]\n\n' +
+                '<!-- Testimonials -->\n' +
+                '[testimonials_query number="3" columns="3" style="card"]\n\n' +
+                '<!-- Services -->\n' +
+                '[services_query number="-1" columns="3"]';
+            insertShortcode(shortcode);
+        });
 
 
         
@@ -770,3 +897,990 @@ function stat_shortcode($atts, $content = null) {
     </div>';
 }
 add_shortcode('stat', 'stat_shortcode');
+
+// ============================================
+// TIMELINE SHORTCODES
+// ============================================
+
+function timeline_shortcode($atts, $content = null) {
+    $atts = shortcode_atts(array(
+        'style' => 'default', // default, alternate, centered
+    ), $atts);
+    
+    $style = esc_attr($atts['style']);
+    
+    return '<div class="timeline timeline--' . $style . '">' . do_shortcode($content) . '</div>';
+}
+add_shortcode('timeline', 'timeline_shortcode');
+
+function timeline_item_shortcode($atts, $content = null) {
+    $atts = shortcode_atts(array(
+        'date' => '',
+        'title' => '',
+        'icon' => '', // dashicon class
+        'color' => '', // primary, success, error, warning, info
+        'image' => '', // optional image URL
+    ), $atts);
+    
+    $date = esc_html($atts['date']);
+    $title = esc_html($atts['title']);
+    $icon = esc_attr($atts['icon']);
+    $color = $atts['color'] ? ' timeline-item--' . esc_attr($atts['color']) : '';
+    $image = esc_url($atts['image']);
+    
+    // Icon HTML
+    $icon_html = '';
+    if ($icon) {
+        $icon_html = '<span class="dashicons ' . $icon . '"></span>';
+    } elseif (!$image) {
+        // Default icon if none provided
+        $icon_html = '<span class="dashicons dashicons-marker"></span>';
+    }
+    
+    // Image HTML
+    $image_html = '';
+    if ($image) {
+        $image_html = '<div class="timeline-item__image"><img src="' . $image . '" alt="' . $title . '"></div>';
+    }
+    
+    return '
+    <div class="timeline-item' . $color . '" data-animate="fade-in-up">
+        <div class="timeline-item__marker">' . $icon_html . '</div>
+        <div class="timeline-item__content">
+            ' . ($date ? '<div class="timeline-item__date">' . $date . '</div>' : '') . '
+            ' . ($title ? '<h3 class="timeline-item__title">' . $title . '</h3>' : '') . '
+            ' . $image_html . '
+            <div class="timeline-item__description">' . wpautop(do_shortcode($content)) . '</div>
+        </div>
+    </div>';
+}
+add_shortcode('timeline_item', 'timeline_item_shortcode');
+
+// ============================================
+// IMAGE COMPARISON SHORTCODE (CLEAN VERSION)
+// ============================================
+
+function image_comparison_shortcode($atts) {
+    static $comparison_id = 0;
+    $comparison_id++;
+    
+    $atts = shortcode_atts(array(
+        'before' => '',
+        'after' => '',
+        'before_label' => 'Vorher',
+        'after_label' => 'Nachher',
+        'position' => '50',
+        'orientation' => 'horizontal',
+    ), $atts);
+    
+    $before = esc_url($atts['before']);
+    $after = esc_url($atts['after']);
+    
+    if (empty($before) || empty($after)) {
+        return '<p><strong>Fehler:</strong> Bitte geben Sie sowohl ein "before" als auch ein "after" Bild an.</p>';
+    }
+    
+    $before_label = esc_html($atts['before_label']);
+    $after_label = esc_html($atts['after_label']);
+    $position = intval($atts['position']);
+    $orientation = esc_attr($atts['orientation']);
+    $unique_id = 'comparison-' . $comparison_id;
+    
+    ob_start();
+    ?>
+    <div class="image-comparison image-comparison--<?php echo $orientation; ?>" id="<?php echo $unique_id; ?>" data-position="<?php echo $position; ?>">
+        <div class="image-comparison__wrapper">
+            <div class="image-comparison__before">
+                <img src="<?php echo $before; ?>" alt="<?php echo $before_label; ?>">
+                <span class="image-comparison__label image-comparison__label--before"><?php echo $before_label; ?></span>
+            </div>
+            <div class="image-comparison__after">
+                <img src="<?php echo $after; ?>" alt="<?php echo $after_label; ?>">
+                <span class="image-comparison__label image-comparison__label--after"><?php echo $after_label; ?></span>
+            </div>
+            <div class="image-comparison__slider">
+                <div class="image-comparison__handle">
+                    <span class="image-comparison__arrow image-comparison__arrow--left">◀</span>
+                    <span class="image-comparison__divider"></span>
+                    <span class="image-comparison__arrow image-comparison__arrow--right">▶</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('image_comparison', 'image_comparison_shortcode');
+
+// ============================================
+// LOGO CAROUSEL SHORTCODE
+// ============================================
+
+function logo_carousel_shortcode($atts, $content = null) {
+    static $carousel_id = 0;
+    $carousel_id++;
+    
+    $atts = shortcode_atts(array(
+        'autoplay' => 'true',
+        'speed' => '3000',
+        'loop' => 'true',
+        'slides_per_view' => 'auto', // auto, 3, 4, 5, 6
+        'grayscale' => 'true', // Logos grau, farbig bei hover
+        'style' => 'default', // default, card
+    ), $atts);
+    
+    $autoplay = esc_attr($atts['autoplay']);
+    $speed = esc_attr($atts['speed']);
+    $loop = esc_attr($atts['loop']);
+    $slides_per_view = esc_attr($atts['slides_per_view']);
+    $grayscale = esc_attr($atts['grayscale']);
+    $style = esc_attr($atts['style']);
+    $unique_id = 'logo-carousel-' . $carousel_id;
+    
+    ob_start();
+    ?>
+    <div class="logo-carousel logo-carousel--<?php echo $style; ?> swiper" 
+         id="<?php echo $unique_id; ?>" 
+         data-autoplay="<?php echo $autoplay; ?>" 
+         data-speed="<?php echo $speed; ?>"
+         data-loop="<?php echo $loop; ?>"
+         data-slides="<?php echo $slides_per_view; ?>"
+         data-grayscale="<?php echo $grayscale; ?>">
+        <div class="swiper-wrapper">
+            <?php echo do_shortcode($content); ?>
+        </div>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('logo_carousel', 'logo_carousel_shortcode');
+
+function logo_item_shortcode($atts, $content = null) {
+    $atts = shortcode_atts(array(
+        'image' => '',
+        'alt' => '',
+        'link' => '',
+        'target' => '_blank',
+    ), $atts);
+    
+    $image = esc_url($atts['image']);
+    $alt = esc_attr($atts['alt']);
+    $link = esc_url($atts['link']);
+    $target = esc_attr($atts['target']);
+    
+    if (empty($image)) {
+        return '';
+    }
+    
+    ob_start();
+    ?>
+    <div class="swiper-slide logo-carousel__item">
+        <?php if ($link) : ?>
+            <a href="<?php echo $link; ?>" target="<?php echo $target; ?>" rel="noopener noreferrer" class="logo-carousel__link">
+                <img src="<?php echo $image; ?>" alt="<?php echo $alt; ?>" class="logo-carousel__image">
+            </a>
+        <?php else : ?>
+            <div class="logo-carousel__link">
+                <img src="<?php echo $image; ?>" alt="<?php echo $alt; ?>" class="logo-carousel__image">
+            </div>
+        <?php endif; ?>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('logo_item', 'logo_item_shortcode');
+
+// ============================================
+// TEAM CARDS SHORTCODE
+// ============================================
+
+function team_cards_shortcode($atts, $content = null) {
+    $atts = shortcode_atts(array(
+        'columns' => '3', // 2, 3, 4
+        'style' => 'default', // default, card, minimal
+    ), $atts);
+    
+    $columns = esc_attr($atts['columns']);
+    $style = esc_attr($atts['style']);
+    
+    ob_start();
+    ?>
+    <div class="team-cards team-cards--<?php echo $style; ?>" data-columns="<?php echo $columns; ?>">
+        <?php echo do_shortcode($content); ?>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('team_cards', 'team_cards_shortcode');
+
+function team_member_shortcode($atts, $content = null) {
+    $atts = shortcode_atts(array(
+        'name' => '',
+        'role' => '',
+        'image' => '',
+        'email' => '',
+        'phone' => '',
+        'linkedin' => '',
+        'twitter' => '',
+        'facebook' => '',
+        'instagram' => '',
+    ), $atts);
+    
+    $name = esc_html($atts['name']);
+    $role = esc_html($atts['role']);
+    $image = esc_url($atts['image']);
+    $email = esc_attr($atts['email']);
+    $phone = esc_attr($atts['phone']);
+    $linkedin = esc_url($atts['linkedin']);
+    $twitter = esc_url($atts['twitter']);
+    $facebook = esc_url($atts['facebook']);
+    $instagram = esc_url($atts['instagram']);
+    $bio = wpautop(do_shortcode($content));
+    
+    // Social Links
+    $social_html = '';
+    if ($linkedin || $twitter || $facebook || $instagram || $email) {
+        $social_html .= '<div class="team-member__social">';
+        
+        if ($email) {
+            $social_html .= '<a href="mailto:' . $email . '" class="team-member__social-link" aria-label="Email"><span class="dashicons dashicons-email"></span></a>';
+        }
+        if ($linkedin) {
+            $social_html .= '<a href="' . $linkedin . '" target="_blank" rel="noopener noreferrer" class="team-member__social-link" aria-label="LinkedIn"><span class="dashicons dashicons-linkedin"></span></a>';
+        }
+        if ($twitter) {
+            $social_html .= '<a href="' . $twitter . '" target="_blank" rel="noopener noreferrer" class="team-member__social-link" aria-label="Twitter"><span class="dashicons dashicons-twitter"></span></a>';
+        }
+        if ($facebook) {
+            $social_html .= '<a href="' . $facebook . '" target="_blank" rel="noopener noreferrer" class="team-member__social-link" aria-label="Facebook"><span class="dashicons dashicons-facebook"></span></a>';
+        }
+        if ($instagram) {
+            $social_html .= '<a href="' . $instagram . '" target="_blank" rel="noopener noreferrer" class="team-member__social-link" aria-label="Instagram"><span class="dashicons dashicons-instagram"></span></a>';
+        }
+        
+        $social_html .= '</div>';
+    }
+    
+    // Phone
+    $phone_html = '';
+    if ($phone) {
+        $phone_html = '<div class="team-member__phone"><span class="dashicons dashicons-phone"></span> ' . esc_html($phone) . '</div>';
+    }
+    
+    ob_start();
+    ?>
+    <div class="team-member" data-animate="fade-in-up">
+        <?php if ($image) : ?>
+            <div class="team-member__image-wrapper">
+                <img src="<?php echo $image; ?>" alt="<?php echo $name; ?>" class="team-member__image">
+                <?php if ($social_html) : ?>
+                    <div class="team-member__overlay">
+                        <?php echo $social_html; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
+        
+        <div class="team-member__content">
+            <?php if ($name) : ?>
+                <h3 class="team-member__name"><?php echo $name; ?></h3>
+            <?php endif; ?>
+            
+            <?php if ($role) : ?>
+                <div class="team-member__role"><?php echo $role; ?></div>
+            <?php endif; ?>
+            
+            <?php if ($bio) : ?>
+                <div class="team-member__bio"><?php echo $bio; ?></div>
+            <?php endif; ?>
+            
+            <?php echo $phone_html; ?>
+        </div>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('team_member', 'team_member_shortcode');
+
+// ============================================
+// VIDEO PLAYER SHORTCODE
+// ============================================
+
+function video_player_shortcode($atts, $content = null) {
+    static $player_id = 0;
+    $player_id++;
+    
+    $atts = shortcode_atts(array(
+        'url' => '',
+        'type' => 'youtube', // youtube, vimeo, self-hosted
+        'poster' => '', // Thumbnail image
+        'title' => '',
+        'autoplay' => 'false',
+        'controls' => 'true',
+        'muted' => 'false',
+        'loop' => 'false',
+        'aspect_ratio' => '16:9', // 16:9, 4:3, 1:1, 21:9
+    ), $atts);
+    
+    $url = esc_url($atts['url']);
+    $type = esc_attr($atts['type']);
+    $poster = esc_url($atts['poster']);
+    $title = esc_html($atts['title']);
+    $autoplay = $atts['autoplay'] === 'true' ? '1' : '0';
+    $controls = $atts['controls'] === 'true' ? '1' : '0';
+    $muted = $atts['muted'] === 'true' ? '1' : '0';
+    $loop = $atts['loop'] === 'true' ? '1' : '0';
+    $aspect_ratio = esc_attr($atts['aspect_ratio']);
+    $unique_id = 'video-player-' . $player_id;
+    
+    if (empty($url)) {
+        return '<p><strong>Fehler:</strong> Bitte geben Sie eine Video-URL an.</p>';
+    }
+    
+    // Parse video ID for YouTube/Vimeo
+    $video_id = '';
+    $embed_url = '';
+    
+    if ($type === 'youtube') {
+        // Extract YouTube ID
+        preg_match('/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i', $url, $matches);
+        $video_id = isset($matches[1]) ? $matches[1] : '';
+        
+        if ($video_id) {
+            $embed_url = 'https://www.youtube.com/embed/' . $video_id . '?autoplay=' . $autoplay . '&controls=' . $controls . '&mute=' . $muted . '&loop=' . $loop;
+            if ($loop === '1') {
+                $embed_url .= '&playlist=' . $video_id;
+            }
+        }
+    } elseif ($type === 'vimeo') {
+        // Extract Vimeo ID
+        preg_match('/vimeo\.com\/([0-9]+)/i', $url, $matches);
+        $video_id = isset($matches[1]) ? $matches[1] : '';
+        
+        if ($video_id) {
+            $embed_url = 'https://player.vimeo.com/video/' . $video_id . '?autoplay=' . $autoplay . '&controls=' . $controls . '&muted=' . $muted . '&loop=' . $loop;
+        }
+    }
+    
+    // Aspect ratio class
+    $ratio_class = '';
+    switch ($aspect_ratio) {
+        case '4:3':
+            $ratio_class = 'video-player--4-3';
+            break;
+        case '1:1':
+            $ratio_class = 'video-player--1-1';
+            break;
+        case '21:9':
+            $ratio_class = 'video-player--21-9';
+            break;
+        default:
+            $ratio_class = 'video-player--16-9';
+    }
+    
+    ob_start();
+    ?>
+    <div class="video-player <?php echo $ratio_class; ?>" id="<?php echo $unique_id; ?>" data-type="<?php echo $type; ?>">
+        <?php if ($title) : ?>
+            <div class="video-player__header">
+                <h3 class="video-player__title"><?php echo $title; ?></h3>
+            </div>
+        <?php endif; ?>
+        
+        <div class="video-player__wrapper">
+            <?php if ($type === 'self-hosted') : ?>
+                <!-- Self-hosted HTML5 Video -->
+                <video class="video-player__video" 
+                       <?php echo $controls === '1' ? 'controls' : ''; ?>
+                       <?php echo $autoplay === '1' ? 'autoplay' : ''; ?>
+                       <?php echo $muted === '1' ? 'muted' : ''; ?>
+                       <?php echo $loop === '1' ? 'loop' : ''; ?>
+                       <?php echo $poster ? 'poster="' . $poster . '"' : ''; ?>
+                       playsinline>
+                    <source src="<?php echo $url; ?>" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            <?php elseif ($embed_url) : ?>
+                <!-- YouTube/Vimeo Embed -->
+                <?php if ($poster && $autoplay === '0') : ?>
+                    <!-- Custom Thumbnail with Play Button -->
+                    <div class="video-player__thumbnail" data-video-url="<?php echo esc_attr($embed_url); ?>">
+                        <img src="<?php echo $poster; ?>" alt="<?php echo $title; ?>" class="video-player__poster">
+                        <button class="video-player__play-button" aria-label="Play video">
+                            <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                                <circle cx="40" cy="40" r="40" fill="rgba(255,255,255,0.9)"/>
+                                <path d="M32 25L55 40L32 55V25Z" fill="#667eea"/>
+                            </svg>
+                        </button>
+                    </div>
+                <?php else : ?>
+                    <!-- Direct Embed -->
+                    <iframe class="video-player__iframe"
+                            src="<?php echo $embed_url; ?>"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen>
+                    </iframe>
+                <?php endif; ?>
+            <?php endif; ?>
+        </div>
+        
+        <?php if ($content) : ?>
+            <div class="video-player__description">
+                <?php echo wpautop(do_shortcode($content)); ?>
+            </div>
+        <?php endif; ?>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('video_player', 'video_player_shortcode');
+
+// ============================================
+// FAQ ACCORDION SHORTCODE
+// ============================================
+
+function faq_accordion_shortcode($atts, $content = null) {
+    $atts = shortcode_atts(array(
+        'style' => 'default', // default, bordered, minimal
+        'allow_multiple' => 'false',
+        'schema' => 'true', // Add Schema.org markup for SEO
+    ), $atts);
+    
+    $style = esc_attr($atts['style']);
+    $allow_multiple = $atts['allow_multiple'] === 'true' ? 'data-allow-multiple="true"' : '';
+    $schema = $atts['schema'] === 'true';
+    
+    // Collect FAQ items for schema
+    global $faq_items;
+    $faq_items = array();
+    
+    // Process content to collect FAQ items
+    $processed_content = do_shortcode($content);
+    
+    // Build Schema.org JSON-LD
+    $schema_markup = '';
+    if ($schema && !empty($faq_items)) {
+        $schema_data = array(
+            '@context' => 'https://schema.org',
+            '@type' => 'FAQPage',
+            'mainEntity' => array()
+        );
+        
+        foreach ($faq_items as $item) {
+            $schema_data['mainEntity'][] = array(
+                '@type' => 'Question',
+                'name' => $item['question'],
+                'acceptedAnswer' => array(
+                    '@type' => 'Answer',
+                    'text' => strip_tags($item['answer'])
+                )
+            );
+        }
+        
+        $schema_markup = '<script type="application/ld+json">' . wp_json_encode($schema_data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . '</script>';
+    }
+    
+    // Reset for next FAQ group
+    $faq_items = array();
+    
+    ob_start();
+    ?>
+    <?php echo $schema_markup; ?>
+    <div class="faq-accordion faq-accordion--<?php echo $style; ?>" <?php echo $allow_multiple; ?>>
+        <?php echo $processed_content; ?>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('faq_accordion', 'faq_accordion_shortcode');
+
+function faq_item_shortcode($atts, $content = null) {
+    static $faq_index = 0;
+    $faq_index++;
+    
+    $atts = shortcode_atts(array(
+        'question' => '',
+        'open' => 'false',
+        'category' => '', // Optional category/tag
+    ), $atts);
+    
+    $question = esc_html($atts['question']);
+    $answer = wpautop(do_shortcode($content));
+    $is_open = $atts['open'] === 'true';
+    $category = esc_html($atts['category']);
+    
+    // Store for schema markup
+    global $faq_items;
+    if (!isset($faq_items)) {
+        $faq_items = array();
+    }
+    $faq_items[] = array(
+        'question' => $question,
+        'answer' => $answer
+    );
+    
+    $active_class = $is_open ? ' is-active' : '';
+    $expanded = $is_open ? 'true' : 'false';
+    $icon = $is_open ? '−' : '+';
+    $display = $is_open ? 'style="display:block;"' : '';
+    
+    ob_start();
+    ?>
+    <div class="faq-item<?php echo $active_class; ?>" data-animate="fade-in-up" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+        <?php if ($category) : ?>
+            <span class="faq-item__category"><?php echo $category; ?></span>
+        <?php endif; ?>
+        <button class="faq-item__question" aria-expanded="<?php echo $expanded; ?>" itemprop="name">
+            <span class="faq-item__question-text"><?php echo $question; ?></span>
+            <span class="faq-item__icon"><?php echo $icon; ?></span>
+        </button>
+        <div class="faq-item__answer" <?php echo $display; ?> itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+            <div class="faq-item__answer-inner" itemprop="text">
+                <?php echo $answer; ?>
+            </div>
+        </div>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('faq_item', 'faq_item_shortcode');
+
+// ============================================
+// TEAM QUERY SHORTCODE
+// ============================================
+
+function team_query_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'number' => 3,
+        'columns' => 3,
+        'order' => 'ASC', // ASC or DESC
+        'orderby' => 'menu_order', // menu_order, title, date, rand, meta_value_num (for display_order)
+        'style' => 'default', // default, card, minimal
+    ), $atts);
+    
+    $number = intval($atts['number']);
+    $columns = esc_attr($atts['columns']);
+    $order = esc_attr($atts['order']);
+    $orderby = esc_attr($atts['orderby']);
+    $style = esc_attr($atts['style']);
+    
+    // Query arguments
+    $args = array(
+        'post_type' => 'team',
+        'posts_per_page' => $number,
+        'order' => $order,
+        'orderby' => $orderby,
+        'post_status' => 'publish',
+    );
+    
+    // If ordering by custom field (display_order)
+    if ($orderby === 'display_order') {
+        $args['orderby'] = 'meta_value_num';
+        $args['meta_key'] = 'display_order';
+    }
+    
+    $team_query = new WP_Query($args);
+    
+    if (!$team_query->have_posts()) {
+        return '<p>Keine Team-Mitglieder gefunden.</p>';
+    }
+    
+    ob_start();
+    ?>
+    <div class="team-cards team-cards--<?php echo $style; ?>" data-columns="<?php echo $columns; ?>">
+        <?php while ($team_query->have_posts()) : $team_query->the_post(); ?>
+            <?php
+            $role = get_field('role');
+            $email = get_field('email');
+            $phone = get_field('phone');
+            $social = get_field('social_media');
+            $thumbnail = get_the_post_thumbnail_url(get_the_ID(), 'medium');
+            ?>
+            
+            <div class="team-member" data-animate="fade-in-up">
+                <?php if ($thumbnail) : ?>
+                    <div class="team-member__image-wrapper">
+                        <img src="<?php echo esc_url($thumbnail); ?>" alt="<?php the_title(); ?>" class="team-member__image">
+                        
+                        <?php if ($social || $email) : ?>
+                            <div class="team-member__overlay">
+                                <div class="team-member__social">
+                                    <?php if ($email) : ?>
+                                        <a href="mailto:<?php echo esc_attr($email); ?>" class="team-member__social-link" aria-label="Email">
+                                            <span class="dashicons dashicons-email"></span>
+                                        </a>
+                                    <?php endif; ?>
+                                    
+                                    <?php if ($social && !empty($social['linkedin'])) : ?>
+                                        <a href="<?php echo esc_url($social['linkedin']); ?>" target="_blank" rel="noopener noreferrer" class="team-member__social-link" aria-label="LinkedIn">
+                                            <span class="dashicons dashicons-linkedin"></span>
+                                        </a>
+                                    <?php endif; ?>
+                                    
+                                    <?php if ($social && !empty($social['twitter'])) : ?>
+                                        <a href="<?php echo esc_url($social['twitter']); ?>" target="_blank" rel="noopener noreferrer" class="team-member__social-link" aria-label="Twitter">
+                                            <span class="dashicons dashicons-twitter"></span>
+                                        </a>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+                
+                <div class="team-member__content">
+                    <h3 class="team-member__name"><?php the_title(); ?></h3>
+                    
+                    <?php if ($role) : ?>
+                        <div class="team-member__role"><?php echo esc_html($role); ?></div>
+                    <?php endif; ?>
+                    
+                    <?php if (has_excerpt()) : ?>
+                        <div class="team-member__bio">
+                            <?php the_excerpt(); ?>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <?php if ($phone) : ?>
+                        <div class="team-member__phone">
+                            <span class="dashicons dashicons-phone"></span> <?php echo esc_html($phone); ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        <?php endwhile; ?>
+    </div>
+    <?php
+    wp_reset_postdata();
+    return ob_get_clean();
+}
+add_shortcode('team_query', 'team_query_shortcode');
+
+// ============================================
+// PROJECTS QUERY SHORTCODE
+// ============================================
+
+function projects_query_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'number' => 6,
+        'columns' => 3,
+        'category' => '', // Project category slug
+        'order' => 'DESC',
+        'orderby' => 'date',
+    ), $atts);
+    
+    $number = intval($atts['number']);
+    $columns = esc_attr($atts['columns']);
+    $category = sanitize_text_field($atts['category']);
+    $order = esc_attr($atts['order']);
+    $orderby = esc_attr($atts['orderby']);
+    
+    $args = array(
+        'post_type' => 'projects',
+        'posts_per_page' => $number,
+        'order' => $order,
+        'orderby' => $orderby,
+        'post_status' => 'publish',
+    );
+    
+    // Filter by category
+    if (!empty($category)) {
+        $args['tax_query'] = array(
+            array(
+                'taxonomy' => 'project_category',
+                'field' => 'slug',
+                'terms' => $category,
+            ),
+        );
+    }
+    
+    $projects_query = new WP_Query($args);
+    
+    if (!$projects_query->have_posts()) {
+        return '<p>Keine Projekte gefunden.</p>';
+    }
+    
+    ob_start();
+    ?>
+    <div class="projects-grid" data-columns="<?php echo $columns; ?>">
+        <?php while ($projects_query->have_posts()) : $projects_query->the_post(); ?>
+            <?php
+            $client = get_field('client_name');
+            $year = get_field('project_year');
+            $url = get_field('project_url');
+            $thumbnail = get_the_post_thumbnail_url(get_the_ID(), 'large');
+            $categories = get_the_terms(get_the_ID(), 'project_category');
+            ?>
+            
+            <div class="project-card" data-animate="fade-in-up">
+                <?php if ($thumbnail) : ?>
+                    <div class="project-card__image">
+                        <img src="<?php echo esc_url($thumbnail); ?>" alt="<?php the_title(); ?>">
+                        <div class="project-card__overlay">
+                            <a href="<?php the_permalink(); ?>" class="project-card__link">
+                                <span class="dashicons dashicons-visibility"></span>
+                                Details ansehen
+                            </a>
+                        </div>
+                    </div>
+                <?php endif; ?>
+                
+                <div class="project-card__content">
+                    <?php if ($categories) : ?>
+                        <div class="project-card__categories">
+                            <?php foreach ($categories as $cat) : ?>
+                                <span class="project-card__category"><?php echo esc_html($cat->name); ?></span>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <h3 class="project-card__title">
+                        <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+                    </h3>
+                    
+                    <?php if ($client || $year) : ?>
+                        <div class="project-card__meta">
+                            <?php if ($client) : ?>
+                                <span><?php echo esc_html($client); ?></span>
+                            <?php endif; ?>
+                            
+                            <?php if ($client && $year) : ?>
+                                <span>·</span>
+                            <?php endif; ?>
+                            
+                            <?php if ($year) : ?>
+                                <span><?php echo esc_html($year); ?></span>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <?php if (has_excerpt()) : ?>
+                        <div class="project-card__excerpt">
+                            <?php the_excerpt(); ?>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <?php if ($url) : ?>
+                        <a href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener noreferrer" class="project-card__url">
+                            <span class="dashicons dashicons-external"></span> Live ansehen
+                        </a>
+                    <?php endif; ?>
+                </div>
+            </div>
+        <?php endwhile; ?>
+    </div>
+    <?php
+    wp_reset_postdata();
+    return ob_get_clean();
+}
+add_shortcode('projects_query', 'projects_query_shortcode');
+
+// ============================================
+// TESTIMONIALS QUERY SHORTCODE
+// ============================================
+
+function testimonials_query_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'number' => 3,
+        'columns' => 3,
+        'style' => 'card',
+        'featured_only' => 'false',
+        'slider' => 'false',
+    ), $atts);
+    
+    $number = intval($atts['number']);
+    $columns = esc_attr($atts['columns']);
+    $style = esc_attr($atts['style']);
+    $featured_only = $atts['featured_only'] === 'true';
+    $slider = $atts['slider'] === 'true';
+    
+    $args = array(
+        'post_type' => 'testimonials',
+        'posts_per_page' => $number,
+        'order' => 'DESC',
+        'orderby' => 'date',
+        'post_status' => 'publish',
+    );
+    
+    // Filter featured only
+    if ($featured_only) {
+        $args['meta_query'] = array(
+            array(
+                'key' => 'featured',
+                'value' => '1',
+                'compare' => '=',
+            ),
+        );
+    }
+    
+    $testimonials_query = new WP_Query($args);
+    
+    if (!$testimonials_query->have_posts()) {
+        return '<p>Keine Testimonials gefunden.</p>';
+    }
+    
+    $wrapper_class = $slider ? 'testimonials testimonials--slider testimonials--' . $style . ' swiper' : 'testimonials testimonials--' . $style;
+    $item_class = $slider ? 'swiper-slide testimonial' : 'testimonial';
+    
+    ob_start();
+    ?>
+    <div class="<?php echo $wrapper_class; ?>" data-columns="<?php echo $columns; ?>" <?php if ($slider) echo 'data-autoplay="true"'; ?>>
+        <div class="<?php echo $slider ? 'swiper-wrapper' : ''; ?>">
+            <?php while ($testimonials_query->have_posts()) : $testimonials_query->the_post(); ?>
+                <?php
+                $company = get_field('company');
+                $role = get_field('role');
+                $rating = get_field('rating');
+                $thumbnail = get_the_post_thumbnail_url(get_the_ID(), 'thumbnail');
+                ?>
+                
+                <div class="<?php echo $item_class; ?>" data-animate="fade-in-up">
+                    <?php if ($rating) : ?>
+                        <div class="testimonial__rating">
+                            <?php for ($i = 1; $i <= 5; $i++) : ?>
+                                <span class="star <?php echo $i <= $rating ? 'star--filled' : 'star--empty'; ?>">
+                                    <?php echo $i <= $rating ? '★' : '☆'; ?>
+                                </span>
+                            <?php endfor; ?>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <div class="testimonial__quote">
+                        <?php the_content(); ?>
+                    </div>
+                    
+                    <div class="testimonial__footer">
+                        <?php if ($thumbnail) : ?>
+                            <div class="testimonial__image">
+                                <img src="<?php echo esc_url($thumbnail); ?>" alt="<?php the_title(); ?>">
+                            </div>
+                        <?php endif; ?>
+                        
+                        <div class="testimonial__meta">
+                            <div class="testimonial__name"><?php the_title(); ?></div>
+                            <?php if ($role || $company) : ?>
+                                <div class="testimonial__role">
+                                    <?php 
+                                    $meta_parts = array_filter(array($role, $company));
+                                    echo implode(' · ', $meta_parts);
+                                    ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endwhile; ?>
+        </div>
+        
+        <?php if ($slider) : ?>
+            <div class="testimonials__navigation">
+                <button class="testimonials__button testimonials__button--prev" aria-label="Previous">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+                <button class="testimonials__button testimonials__button--next" aria-label="Next">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+            </div>
+            <div class="testimonials__pagination"></div>
+        <?php endif; ?>
+    </div>
+    <?php
+    wp_reset_postdata();
+    return ob_get_clean();
+}
+add_shortcode('testimonials_query', 'testimonials_query_shortcode');
+
+// ============================================
+// SERVICES QUERY SHORTCODE
+// ============================================
+
+function services_query_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'number' => -1,
+        'columns' => 3,
+        'order' => 'ASC',
+        'orderby' => 'menu_order',
+    ), $atts);
+    
+    $number = intval($atts['number']);
+    $columns = esc_attr($atts['columns']);
+    $order = esc_attr($atts['order']);
+    $orderby = esc_attr($atts['orderby']);
+    
+    $args = array(
+        'post_type' => 'services',
+        'posts_per_page' => $number,
+        'order' => $order,
+        'orderby' => $orderby,
+        'post_status' => 'publish',
+    );
+    
+    $services_query = new WP_Query($args);
+    
+    if (!$services_query->have_posts()) {
+        return '<p>Keine Services gefunden.</p>';
+    }
+    
+    ob_start();
+    ?>
+    <div class="services-grid" data-columns="<?php echo $columns; ?>">
+        <?php while ($services_query->have_posts()) : $services_query->the_post(); ?>
+            <?php
+            $icon = get_field('icon');
+            $price = get_field('price');
+            $features = get_field('features');
+            $cta = get_field('cta');
+            $thumbnail = get_the_post_thumbnail_url(get_the_ID(), 'medium');
+            ?>
+            
+            <div class="service-card" data-animate="fade-in-up">
+                <?php if ($icon) : ?>
+                    <div class="service-card__icon">
+                        <span class="dashicons <?php echo esc_attr($icon); ?>"></span>
+                    </div>
+                <?php endif; ?>
+                
+                <h3 class="service-card__title"><?php the_title(); ?></h3>
+                
+                <?php if ($price) : ?>
+                    <div class="service-card__price"><?php echo esc_html($price); ?></div>
+                <?php endif; ?>
+                
+                <?php if (has_excerpt()) : ?>
+                    <div class="service-card__excerpt">
+                        <?php the_excerpt(); ?>
+                    </div>
+                <?php endif; ?>
+                
+                <?php if ($features) : ?>
+                    <ul class="service-card__features">
+                        <?php foreach ($features as $feature) : ?>
+                            <li><?php echo esc_html($feature['text']); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+                
+                <?php if ($cta && !empty($cta['link'])) : ?>
+                    <a href="<?php echo esc_url($cta['link']['url']); ?>" 
+                       class="service-card__cta button button--primary"
+                       <?php echo !empty($cta['link']['target']) ? 'target="' . esc_attr($cta['link']['target']) . '"' : ''; ?>>
+                        <?php echo esc_html($cta['text']); ?>
+                    </a>
+                <?php else : ?>
+                    <a href="<?php the_permalink(); ?>" class="service-card__cta button button--primary">
+                        Mehr erfahren
+                    </a>
+                <?php endif; ?>
+            </div>
+        <?php endwhile; ?>
+    </div>
+    <?php
+    wp_reset_postdata();
+    return ob_get_clean();
+}
+add_shortcode('services_query', 'services_query_shortcode');

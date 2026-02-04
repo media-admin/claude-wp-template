@@ -2,6 +2,10 @@
  * Main JavaScript Entry Point
  */
 
+// Swiper Import
+import Swiper from 'swiper';
+import 'swiper/css';
+
 // Import Styles
 import '../scss/style.scss';
 
@@ -21,7 +25,10 @@ import Tabs from './components/tabs';
 import Notification from './components/notification';
 import Notifications from './components/notifications';
 import StatsCounter from './components/stats-counter';
-
+import ImageComparison from './components/image-comparison';
+import LogoCarousel from './components/logo-carousel';
+import VideoPlayer from './components/video-player';
+import FAQAccordion from './components/faq-accordion';
 
 // DOM Ready
 document.addEventListener('DOMContentLoaded', () => {
@@ -72,4 +79,3 @@ function initSmoothScroll() {
     });
   });
 }
-

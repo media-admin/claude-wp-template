@@ -395,3 +395,635 @@ register_block_pattern('custom-theme/stats-company', array(
 [/stats]
 <!-- /wp:shortcode -->',
 ));
+
+// Timeline Patterns
+register_block_pattern('custom-theme/timeline-company', array(
+    'title'       => __('Timeline - Firmengeschichte', 'custom-theme'),
+    'description' => __('Timeline für Unternehmensgeschichte', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:shortcode -->
+[timeline style="alternate"]
+  [timeline_item date="2020" title="Gründung" icon="dashicons-star-filled" color="primary"]
+    Unser Unternehmen wurde mit der Vision gegründet, innovative Lösungen für moderne Herausforderungen zu schaffen.
+  [/timeline_item]
+  [timeline_item date="2021" title="Erstes Produkt" icon="dashicons-products" color="success"]
+    Launch unseres ersten erfolgreichen Produkts mit über 1000 zufriedenen Kunden im ersten Jahr.
+  [/timeline_item]
+  [timeline_item date="2022" title="Internationale Expansion" icon="dashicons-admin-site-alt3" color="info"]
+    Eröffnung von Niederlassungen in 3 weiteren Ländern und Aufbau eines globalen Teams.
+  [/timeline_item]
+  [timeline_item date="2023" title="Innovation Award" icon="dashicons-awards" color="warning"]
+    Gewinner des prestigeträchtigen Innovation Awards für beste Technologie in unserer Branche.
+  [/timeline_item]
+  [timeline_item date="2024" title="Heute" icon="dashicons-chart-line" color="primary"]
+    Mit über 5000 Kunden und 100+ Mitarbeitern sind wir Marktführer in unserem Segment.
+  [/timeline_item]
+[/timeline]
+<!-- /wp:shortcode -->',
+));
+
+register_block_pattern('custom-theme/timeline-project', array(
+    'title'       => __('Timeline - Projektverlauf', 'custom-theme'),
+    'description' => __('Timeline für Projektphasen', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:shortcode -->
+[timeline style="centered"]
+  [timeline_item date="Phase 1" title="Analyse" icon="dashicons-search" color="info"]
+    <strong>Dauer:</strong> 2 Wochen
+    
+    - Anforderungsanalyse
+    - Stakeholder-Interviews
+    - Marktforschung
+  [/timeline_item]
+  [timeline_item date="Phase 2" title="Konzeption" icon="dashicons-lightbulb" color="primary"]
+    <strong>Dauer:</strong> 3 Wochen
+    
+    - Strategie-Entwicklung
+    - Wireframes & Prototypen
+    - Design-System
+  [/timeline_item]
+  [timeline_item date="Phase 3" title="Umsetzung" icon="dashicons-admin-tools" color="warning"]
+    <strong>Dauer:</strong> 8 Wochen
+    
+    - Frontend-Entwicklung
+    - Backend-Integration
+    - Testing & QA
+  [/timeline_item]
+  [timeline_item date="Phase 4" title="Launch" icon="dashicons-rocket" color="success"]
+    <strong>Dauer:</strong> 1 Woche
+    
+    - Deployment
+    - Monitoring
+    - Support & Wartung
+  [/timeline_item]
+[/timeline]
+<!-- /wp:shortcode -->',
+));
+
+register_block_pattern('custom-theme/timeline-career', array(
+    'title'       => __('Timeline - Karriereweg', 'custom-theme'),
+    'description' => __('Timeline für Lebenslauf/Karriere', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:shortcode -->
+[timeline style="alternate"]
+  [timeline_item date="2015 - 2019" title="Studium" icon="dashicons-welcome-learn-more" color="info"]
+    <strong>Bachelor of Science</strong>
+    
+    Informatik an der Technischen Universität München. Schwerpunkt: Web-Entwicklung & UX Design.
+  [/timeline_item]
+  [timeline_item date="2019 - 2021" title="Junior Developer" icon="dashicons-editor-code" color="primary"]
+    <strong>Tech Startup GmbH</strong>
+    
+    Entwicklung von Web-Applikationen mit React und Node.js. Erste Erfahrungen im agilen Projektmanagement.
+  [/timeline_item]
+  [timeline_item date="2021 - 2023" title="Senior Developer" icon="dashicons-admin-generic" color="success"]
+    <strong>Digital Agency AG</strong>
+    
+    Lead Developer für große Enterprise-Projekte. Mentoring von Junior-Entwicklern und Code-Reviews.
+  [/timeline_item]
+  [timeline_item date="2023 - Heute" title="Tech Lead" icon="dashicons-groups" color="warning"]
+    <strong>Innovation Labs</strong>
+    
+    Technische Leitung eines 15-köpfigen Entwicklerteams. Verantwortung für Architektur-Entscheidungen.
+  [/timeline_item]
+[/timeline]
+<!-- /wp:shortcode -->',
+));
+
+register_block_pattern('custom-theme/timeline-with-images', array(
+    'title'       => __('Timeline - Mit Bildern', 'custom-theme'),
+    'description' => __('Timeline mit Bildern für jeden Meilenstein', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:shortcode -->
+[timeline style="alternate"]
+  [timeline_item date="Januar 2024" title="Kick-Off Meeting" icon="dashicons-megaphone" color="primary" image="https://picsum.photos/800/400?random=1"]
+    Erfolgreicher Start des Projekts mit allen Stakeholdern. Definition der Projektziele und Roadmap.
+  [/timeline_item]
+  [timeline_item date="März 2024" title="Design Sprint" icon="dashicons-art" color="info" image="https://picsum.photos/800/400?random=2"]
+    Intensive Design-Phase mit User Research, Wireframes und finalen Mockups.
+  [/timeline_item]
+  [timeline_item date="Juni 2024" title="Beta Launch" icon="dashicons-rocket" color="success" image="https://picsum.photos/800/400?random=3"]
+    Erfolgreicher Beta-Launch mit ausgewählten Testern. Sehr positives Feedback!
+  [/timeline_item]
+[/timeline]
+<!-- /wp:shortcode -->',
+));
+
+// Image Comparison Patterns
+register_block_pattern('custom-theme/image-comparison-horizontal', array(
+    'title'       => __('Image Comparison - Horizontal', 'custom-theme'),
+    'description' => __('Vorher/Nachher Vergleich horizontal', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:shortcode -->
+[image_comparison before="https://picsum.photos/1200/675?random=10&grayscale" after="https://picsum.photos/1200/675?random=10" before_label="Vorher" after_label="Nachher" position="50" orientation="horizontal"]
+<!-- /wp:shortcode -->',
+));
+
+register_block_pattern('custom-theme/image-comparison-vertical', array(
+    'title'       => __('Image Comparison - Vertical', 'custom-theme'),
+    'description' => __('Vorher/Nachher Vergleich vertikal', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:shortcode -->
+[image_comparison before="https://picsum.photos/800/1200?random=20&grayscale" after="https://picsum.photos/800/1200?random=20" before_label="Vorher" after_label="Nachher" position="50" orientation="vertical"]
+<!-- /wp:shortcode -->',
+));
+
+register_block_pattern('custom-theme/image-comparison-renovation', array(
+    'title'       => __('Image Comparison - Renovation Example', 'custom-theme'),
+    'description' => __('Beispiel für Renovierung/Umbau', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:heading -->
+<h2>Unsere Renovierung</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Sehen Sie selbst, wie wir aus einem alten Raum etwas Neues geschaffen haben. Bewegen Sie den Slider, um den Unterschied zu sehen.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:shortcode -->
+[image_comparison before="https://picsum.photos/1200/675?random=30&blur=2" after="https://picsum.photos/1200/675?random=30" before_label="Alt" after_label="Neu" position="50"]
+<!-- /wp:shortcode -->',
+));
+
+// Logo Carousel Patterns
+register_block_pattern('custom-theme/logo-carousel-partners', array(
+    'title'       => __('Logo Carousel - Partner', 'custom-theme'),
+    'description' => __('Partner-Logos mit Autoplay', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:heading {"textAlign":"center"} -->
+<h2 class="has-text-align-center">Unsere Partner</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph {"align":"center"} -->
+<p class="has-text-align-center">Vertrauen von führenden Unternehmen weltweit</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:shortcode -->
+[logo_carousel autoplay="true" speed="3000" grayscale="true"]
+[logo_item image="https://via.placeholder.com/200x80/667eea/ffffff?text=Partner+1" alt="Partner 1" link="https://example.com"]
+[logo_item image="https://via.placeholder.com/200x80/764ba2/ffffff?text=Partner+2" alt="Partner 2" link="https://example.com"]
+[logo_item image="https://via.placeholder.com/200x80/f093fb/ffffff?text=Partner+3" alt="Partner 3" link="https://example.com"]
+[logo_item image="https://via.placeholder.com/200x80/4facfe/ffffff?text=Partner+4" alt="Partner 4" link="https://example.com"]
+[logo_item image="https://via.placeholder.com/200x80/00f2fe/ffffff?text=Partner+5" alt="Partner 5" link="https://example.com"]
+[logo_item image="https://via.placeholder.com/200x80/43e97b/ffffff?text=Partner+6" alt="Partner 6" link="https://example.com"]
+[/logo_carousel]
+<!-- /wp:shortcode -->',
+));
+
+register_block_pattern('custom-theme/logo-carousel-clients', array(
+    'title'       => __('Logo Carousel - Kunden (Card Style)', 'custom-theme'),
+    'description' => __('Kunden-Logos im Card-Design', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:heading {"textAlign":"center"} -->
+<h2 class="has-text-align-center">Unsere Kunden</h2>
+<!-- /wp:heading -->
+
+<!-- wp:shortcode -->
+[logo_carousel autoplay="true" speed="4000" style="card" grayscale="true"]
+[logo_item image="https://via.placeholder.com/200x80/667eea/ffffff?text=Client+1" alt="Kunde 1"]
+[logo_item image="https://via.placeholder.com/200x80/764ba2/ffffff?text=Client+2" alt="Kunde 2"]
+[logo_item image="https://via.placeholder.com/200x80/f093fb/ffffff?text=Client+3" alt="Kunde 3"]
+[logo_item image="https://via.placeholder.com/200x80/4facfe/ffffff?text=Client+4" alt="Kunde 4"]
+[logo_item image="https://via.placeholder.com/200x80/00f2fe/ffffff?text=Client+5" alt="Kunde 5"]
+[/logo_carousel]
+<!-- /wp:shortcode -->',
+));
+
+register_block_pattern('custom-theme/logo-carousel-sponsors', array(
+    'title'       => __('Logo Carousel - Sponsoren (Color)', 'custom-theme'),
+    'description' => __('Sponsoren-Logos in Farbe', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:heading {"textAlign":"center"} -->
+<h2 class="has-text-align-center">Unsere Sponsoren</h2>
+<!-- /wp:heading -->
+
+<!-- wp:shortcode -->
+[logo_carousel autoplay="true" speed="2500" grayscale="false" slides_per_view="4"]
+[logo_item image="https://via.placeholder.com/200x80/667eea/ffffff?text=Sponsor+1" alt="Sponsor 1" link="https://example.com"]
+[logo_item image="https://via.placeholder.com/200x80/764ba2/ffffff?text=Sponsor+2" alt="Sponsor 2" link="https://example.com"]
+[logo_item image="https://via.placeholder.com/200x80/f093fb/ffffff?text=Sponsor+3" alt="Sponsor 3" link="https://example.com"]
+[logo_item image="https://via.placeholder.com/200x80/4facfe/ffffff?text=Sponsor+4" alt="Sponsor 4" link="https://example.com"]
+[/logo_carousel]
+<!-- /wp:shortcode -->',
+));
+
+// Team Cards Patterns
+register_block_pattern('custom-theme/team-cards-leadership', array(
+    'title'       => __('Team Cards - Leadership', 'custom-theme'),
+    'description' => __('Führungsteam mit 3 Mitgliedern', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:heading {"textAlign":"center"} -->
+<h2 class="has-text-align-center">Unser Führungsteam</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph {"align":"center"} -->
+<p class="has-text-align-center">Lernen Sie die Menschen kennen, die unser Unternehmen leiten</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:shortcode -->
+[team_cards columns="3" style="default"]
+[team_member name="Max Mustermann" role="CEO & Gründer" image="https://i.pravatar.cc/400?img=12" email="max@example.com" linkedin="https://linkedin.com" phone="+49 123 456789"]
+Mit über 15 Jahren Erfahrung in der Tech-Branche führt Max unser Unternehmen in eine innovative Zukunft.
+[/team_member]
+[team_member name="Anna Schmidt" role="Chief Technology Officer" image="https://i.pravatar.cc/400?img=5" email="anna@example.com" linkedin="https://linkedin.com"]
+Anna ist verantwortlich für unsere technische Strategie und leitet unser 20-köpfiges Entwicklerteam.
+[/team_member]
+[team_member name="Peter Müller" role="Head of Design" image="https://i.pravatar.cc/400?img=15" email="peter@example.com" twitter="https://twitter.com" instagram="https://instagram.com"]
+Peter bringt kreative Visionen zum Leben und sorgt für außergewöhnliche User Experience.
+[/team_member]
+[/team_cards]
+<!-- /wp:shortcode -->',
+));
+
+register_block_pattern('custom-theme/team-cards-full-team', array(
+    'title'       => __('Team Cards - Vollständiges Team (4 Spalten)', 'custom-theme'),
+    'description' => __('Großes Team im Card-Style', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:heading {"textAlign":"center"} -->
+<h2 class="has-text-align-center">Unser Team</h2>
+<!-- /wp:heading -->
+
+<!-- wp:shortcode -->
+[team_cards columns="4" style="card"]
+[team_member name="Sarah Weber" role="Marketing Manager" image="https://i.pravatar.cc/400?img=9" email="sarah@example.com" linkedin="https://linkedin.com"]
+Expertin für digitales Marketing und Brand Strategy.
+[/team_member]
+[team_member name="Tom Klein" role="Senior Developer" image="https://i.pravatar.cc/400?img=33" email="tom@example.com" linkedin="https://linkedin.com"]
+Full-Stack Entwickler mit Fokus auf React und Node.js.
+[/team_member]
+[team_member name="Lisa Hoffmann" role="UX Designer" image="https://i.pravatar.cc/400?img=25" email="lisa@example.com" instagram="https://instagram.com"]
+Spezialisiert auf User Research und Interface Design.
+[/team_member]
+[team_member name="Michael Wagner" role="Project Manager" image="https://i.pravatar.cc/400?img=68" email="michael@example.com" linkedin="https://linkedin.com"]
+Agile Coach und erfahrener Projektleiter.
+[/team_member]
+[/team_cards]
+<!-- /wp:shortcode -->',
+));
+
+register_block_pattern('custom-theme/team-cards-minimal', array(
+    'title'       => __('Team Cards - Minimal (Rund)', 'custom-theme'),
+    'description' => __('Minimalistisches Team-Layout mit runden Bildern', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:heading {"textAlign":"center"} -->
+<h2 class="has-text-align-center">Meet the Team</h2>
+<!-- /wp:heading -->
+
+<!-- wp:shortcode -->
+[team_cards columns="4" style="minimal"]
+[team_member name="Julia Becker" role="Designer" image="https://i.pravatar.cc/400?img=10" linkedin="https://linkedin.com"]
+[/team_member]
+[team_member name="David Koch" role="Developer" image="https://i.pravatar.cc/400?img=52" linkedin="https://linkedin.com"]
+[/team_member]
+[team_member name="Emma Schneider" role="Consultant" image="https://i.pravatar.cc/400?img=44" linkedin="https://linkedin.com"]
+[/team_member]
+[team_member name="Felix Richter" role="Analyst" image="https://i.pravatar.cc/400?img=59" linkedin="https://linkedin.com"]
+[/team_member]
+[/team_cards]
+<!-- /wp:shortcode -->',
+));
+
+register_block_pattern('custom-theme/team-cards-founders', array(
+    'title'       => __('Team Cards - Gründer (2 Spalten)', 'custom-theme'),
+    'description' => __('Gründer-Duo mit ausführlichen Infos', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:heading {"textAlign":"center"} -->
+<h2 class="has-text-align-center">Unsere Gründer</h2>
+<!-- /wp:heading -->
+
+<!-- wp:shortcode -->
+[team_cards columns="2" style="card"]
+[team_member name="Laura Bauer" role="Co-Founder & CEO" image="https://i.pravatar.cc/400?img=20" email="laura@example.com" linkedin="https://linkedin.com" twitter="https://twitter.com" phone="+49 123 456789"]
+Laura hat das Unternehmen 2020 mitgegründet und bringt über 10 Jahre Erfahrung in der Startup-Welt mit. Ihre Vision: Technologie zugänglich für alle zu machen.
+[/team_member]
+[team_member name="Daniel Krause" role="Co-Founder & CTO" image="https://i.pravatar.cc/400?img=33" email="daniel@example.com" linkedin="https://linkedin.com" github="https://github.com"]
+Daniel ist der technische Kopf hinter unserem Produkt. Als erfahrener Software-Architekt hat er mehrere erfolgreiche Projekte geleitet.
+[/team_member]
+[/team_cards]
+<!-- /wp:shortcode -->',
+));
+
+// Video Player Patterns
+register_block_pattern('custom-theme/video-player-youtube', array(
+    'title'       => __('Video Player - YouTube', 'custom-theme'),
+    'description' => __('YouTube Video mit Custom Thumbnail', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:shortcode -->
+[video_player url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" type="youtube" title="Demo Video" poster="https://picsum.photos/1280/720?random=1" aspect_ratio="16:9"]
+Dies ist ein Beispiel-Video. Klicken Sie auf den Play-Button, um das Video zu starten.
+[/video_player]
+<!-- /wp:shortcode -->',
+));
+
+register_block_pattern('custom-theme/video-player-vimeo', array(
+    'title'       => __('Video Player - Vimeo', 'custom-theme'),
+    'description' => __('Vimeo Video Player', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:shortcode -->
+[video_player url="https://vimeo.com/148751763" type="vimeo" title="Vimeo Demo" aspect_ratio="16:9"]
+Hochwertiges Video von Vimeo.
+[/video_player]
+<!-- /wp:shortcode -->',
+));
+
+register_block_pattern('custom-theme/video-player-embedded', array(
+    'title'       => __('Video Player - Auto-Embed', 'custom-theme'),
+    'description' => __('Video ohne Thumbnail (Auto-Start)', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:shortcode -->
+[video_player url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" type="youtube" title="Embedded Video" autoplay="false" controls="true"]
+[/video_player]
+<!-- /wp:shortcode -->',
+));
+
+register_block_pattern('custom-theme/video-player-self-hosted', array(
+    'title'       => __('Video Player - Self-Hosted', 'custom-theme'),
+    'description' => __('Selbst gehostetes MP4 Video', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:shortcode -->
+[video_player url="https://example.com/video.mp4" type="self-hosted" title="Unser Showreel" poster="https://picsum.photos/1280/720?random=5" controls="true"]
+Unser neuestes Showreel zeigt unsere besten Projekte aus 2024.
+[/video_player]
+<!-- /wp:shortcode -->',
+));
+
+// FAQ Patterns
+register_block_pattern('custom-theme/faq-general', array(
+    'title'       => __('FAQ - Allgemein', 'custom-theme'),
+    'description' => __('Allgemeine FAQs mit Schema.org Markup', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:heading {"textAlign":"center"} -->
+<h2 class="has-text-align-center">Häufig gestellte Fragen</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph {"align":"center"} -->
+<p class="has-text-align-center">Finden Sie Antworten auf die wichtigsten Fragen</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:shortcode -->
+[faq_accordion style="default" schema="true"]
+[faq_item question="Wie kann ich bestellen?" open="true"]
+Sie können ganz einfach über unseren Online-Shop bestellen. Wählen Sie Ihre Produkte aus, legen Sie sie in den Warenkorb und folgen Sie dem Checkout-Prozess.
+[/faq_item]
+[faq_item question="Welche Zahlungsmethoden akzeptieren Sie?"]
+Wir akzeptieren folgende Zahlungsmethoden:
+- Kreditkarten (Visa, Mastercard, American Express)
+- PayPal
+- Sofortüberweisung
+- Rechnung (nach Prüfung)
+[/faq_item]
+[faq_item question="Wie lange dauert der Versand?"]
+Standard-Versand dauert 3-5 Werktage innerhalb Deutschlands. Express-Versand ist innerhalb von 1-2 Werktagen möglich.
+[/faq_item]
+[faq_item question="Kann ich meine Bestellung zurückgeben?"]
+Ja, Sie haben ein 30-tägiges Rückgaberecht ab Erhalt der Ware. Die Ware muss unbenutzt und in Originalverpackung sein.
+[/faq_item]
+[faq_item question="Bieten Sie internationalen Versand an?"]
+Ja, wir versenden weltweit. Die Versandkosten und -zeiten variieren je nach Zielland.
+[/faq_item]
+[/faq_accordion]
+<!-- /wp:shortcode -->',
+));
+
+register_block_pattern('custom-theme/faq-bordered', array(
+    'title'       => __('FAQ - Bordered Style', 'custom-theme'),
+    'description' => __('FAQ mit Rahmen-Design', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:heading -->
+<h2>Technischer Support</h2>
+<!-- /wp:heading -->
+
+<!-- wp:shortcode -->
+[faq_accordion style="bordered" schema="true"]
+[faq_item question="Wie installiere ich das Produkt?" category="Installation"]
+Eine detaillierte Installationsanleitung finden Sie in der mitgelieferten Dokumentation. Bei Fragen steht Ihnen unser Support-Team zur Verfügung.
+[/faq_item]
+[faq_item question="Welche Systemanforderungen gibt es?" category="Technisch"]
+Minimale Anforderungen:
+- Windows 10 oder macOS 11
+- 8 GB RAM
+- 500 MB freier Speicherplatz
+[/faq_item]
+[faq_item question="Gibt es eine kostenlose Testversion?" category="Lizenz"]
+Ja, Sie können unsere Software 14 Tage kostenlos testen. Keine Kreditkarte erforderlich.
+[/faq_item]
+[/faq_accordion]
+<!-- /wp:shortcode -->',
+));
+
+register_block_pattern('custom-theme/faq-minimal', array(
+    'title'       => __('FAQ - Minimal Style', 'custom-theme'),
+    'description' => __('Minimalistisches FAQ-Design', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:shortcode -->
+[faq_accordion style="minimal" allow_multiple="true"]
+[faq_item question="Was ist im Preis enthalten?"]
+Der Preis beinhaltet alle Grundfunktionen, kostenlosen Support und regelmäßige Updates.
+[/faq_item]
+[faq_item question="Kann ich jederzeit kündigen?"]
+Ja, Sie können monatlich kündigen. Es gibt keine versteckten Gebühren oder Kündigungsfristen.
+[/faq_item]
+[faq_item question="Gibt es Mengenrabatte?"]
+Ja, ab 5 Lizenzen bieten wir gestaffelte Rabatte an. Kontaktieren Sie uns für ein individuelles Angebot.
+[/faq_item]
+[/faq_accordion]
+<!-- /wp:shortcode -->',
+));
+
+register_block_pattern('custom-theme/faq-categories', array(
+    'title'       => __('FAQ - Mit Kategorien', 'custom-theme'),
+    'description' => __('FAQ mit Kategorie-Tags', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:shortcode -->
+[faq_accordion style="default"]
+[faq_item question="Wie erstelle ich ein Konto?" category="Erste Schritte"]
+Klicken Sie auf "Registrieren" und folgen Sie den Anweisungen. Die Registrierung dauert nur wenige Minuten.
+[/faq_item]
+[faq_item question="Wie sichere ich meine Daten?" category="Sicherheit"]
+Ihre Daten werden mit SSL-Verschlüsselung übertragen und auf sicheren Servern in Deutschland gespeichert.
+[/faq_item]
+[faq_item question="Kann ich meine Daten exportieren?" category="Daten"]
+Ja, Sie können jederzeit alle Ihre Daten im CSV- oder JSON-Format exportieren.
+[/faq_item]
+[faq_item question="Wie funktioniert die Zwei-Faktor-Authentifizierung?" category="Sicherheit"]
+Sie können 2FA in den Einstellungen aktivieren. Wir unterstützen Authenticator-Apps wie Google Authenticator.
+[/faq_item]
+[/faq_accordion]
+<!-- /wp:shortcode -->',
+));
+
+// Contact Form Patterns
+register_block_pattern('custom-theme/contact-form-simple', array(
+    'title'       => __('Contact Form - Simple', 'custom-theme'),
+    'description' => __('Einfaches Kontaktformular', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:heading -->
+<h2>Kontaktieren Sie uns</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p>Haben Sie Fragen? Füllen Sie das Formular aus und wir melden uns bei Ihnen.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:shortcode -->
+[contact-form-7 id="YOUR_FORM_ID"]
+<!-- /wp:shortcode -->',
+));
+
+register_block_pattern('custom-theme/contact-form-card', array(
+    'title'       => __('Contact Form - Card Style', 'custom-theme'),
+    'description' => __('Kontaktformular im Card-Design', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:group {"className":"wpcf7-card"} -->
+<div class="wp-block-group wpcf7-card">
+
+<!-- wp:heading {"textAlign":"center"} -->
+<h2 class="has-text-align-center">Schreiben Sie uns</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph {"align":"center"} -->
+<p class="has-text-align-center">Wir freuen uns auf Ihre Nachricht!</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:shortcode -->
+[contact-form-7 id="YOUR_FORM_ID"]
+<!-- /wp:shortcode -->
+
+</div>
+<!-- /wp:group -->',
+));
+
+register_block_pattern('custom-theme/contact-form-two-column', array(
+    'title'       => __('Contact Form - Two Column Layout', 'custom-theme'),
+    'description' => __('Kontaktformular mit Infos daneben', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:columns -->
+<div class="wp-block-columns">
+
+<!-- wp:column -->
+<div class="wp-block-column">
+
+<!-- wp:heading -->
+<h2>Kontaktinformationen</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph -->
+<p><strong>📧 E-Mail:</strong><br>info@example.com</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p><strong>📞 Telefon:</strong><br>+49 123 456789</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p><strong>📍 Adresse:</strong><br>Musterstraße 123<br>12345 Musterstadt</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:paragraph -->
+<p><strong>🕐 Öffnungszeiten:</strong><br>Mo-Fr: 9:00 - 18:00 Uhr</p>
+<!-- /wp:paragraph -->
+
+</div>
+<!-- /wp:column -->
+
+<!-- wp:column -->
+<div class="wp-block-column">
+
+<!-- wp:heading -->
+<h2>Kontaktformular</h2>
+<!-- /wp:heading -->
+
+<!-- wp:shortcode -->
+[contact-form-7 id="YOUR_FORM_ID"]
+<!-- /wp:shortcode -->
+
+</div>
+<!-- /wp:column -->
+
+</div>
+<!-- /wp:columns -->',
+));
+
+register_block_pattern('custom-theme/newsletter-form', array(
+    'title'       => __('Newsletter Form - Inline', 'custom-theme'),
+    'description' => __('Inline Newsletter-Anmeldung', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:group {"className":"wpcf7-card","style":{"spacing":{"padding":{"top":"3rem","bottom":"3rem","left":"2rem","right":"2rem"}}}} -->
+<div class="wp-block-group wpcf7-card" style="padding-top:3rem;padding-bottom:3rem;padding-left:2rem;padding-right:2rem">
+
+<!-- wp:heading {"textAlign":"center"} -->
+<h2 class="has-text-align-center">Newsletter abonnieren</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph {"align":"center"} -->
+<p class="has-text-align-center">Bleiben Sie auf dem Laufenden mit unseren neuesten Updates</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:shortcode -->
+[contact-form-7 id="YOUR_FORM_ID" html_class="wpcf7-form-inline"]
+<!-- /wp:shortcode -->
+
+</div>
+<!-- /wp:group -->',
+));
+
+// CPT Query Patterns
+register_block_pattern('custom-theme/team-query-section', array(
+    'title'       => __('Team Section (Dynamic)', 'custom-theme'),
+    'description' => __('Dynamische Team-Ausgabe aus CPT', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:heading {"textAlign":"center"} -->
+<h2 class="has-text-align-center">Unser Team</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph {"align":"center"} -->
+<p class="has-text-align-center">Lernen Sie die Menschen kennen, die unser Unternehmen vorantreiben</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:shortcode -->
+[team_query number="6" columns="3" style="card" orderby="display_order"]
+<!-- /wp:shortcode -->',
+));
+
+register_block_pattern('custom-theme/projects-query-section', array(
+    'title'       => __('Projects Section (Dynamic)', 'custom-theme'),
+    'description' => __('Dynamische Projekt-Ausgabe aus CPT', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:heading {"textAlign":"center"} -->
+<h2 class="has-text-align-center">Unsere Projekte</h2>
+<!-- /wp:heading -->
+
+<!-- wp:shortcode -->
+[projects_query number="6" columns="3"]
+<!-- /wp:shortcode -->',
+));
+
+register_block_pattern('custom-theme/testimonials-query-slider', array(
+    'title'       => __('Testimonials Slider (Dynamic)', 'custom-theme'),
+    'description' => __('Dynamische Testimonials als Slider', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:heading {"textAlign":"center"} -->
+<h2 class="has-text-align-center">Was unsere Kunden sagen</h2>
+<!-- /wp:heading -->
+
+<!-- wp:shortcode -->
+[testimonials_query number="5" slider="true" style="card"]
+<!-- /wp:shortcode -->',
+));
+
+register_block_pattern('custom-theme/services-query-section', array(
+    'title'       => __('Services Section (Dynamic)', 'custom-theme'),
+    'description' => __('Dynamische Service-Ausgabe aus CPT', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:heading {"textAlign":"center"} -->
+<h2 class="has-text-align-center">Unsere Dienstleistungen</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph {"align":"center"} -->
+<p class="has-text-align-center">Entdecken Sie unser vollständiges Service-Portfolio</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:shortcode -->
+[services_query number="-1" columns="3"]
+<!-- /wp:shortcode -->',
+));
