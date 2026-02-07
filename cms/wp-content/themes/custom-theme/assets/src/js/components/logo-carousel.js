@@ -2,7 +2,6 @@
  * Logo Carousel
  */
 
-// Import Swiper modules
 import Swiper from 'swiper';
 import { Autoplay } from 'swiper/modules';
 
@@ -26,7 +25,10 @@ export default class LogoCarousel {
     const loop = carouselElement.dataset.loop === 'true';
     const slidesPerView = carouselElement.dataset.slides || 'auto';
     
-    // Calculate slides per view
+    // Zähle Slides
+    const slideCount = carouselElement.querySelectorAll('.swiper-slide').length;
+    const shouldLoop = slideCount > 6; // Mindestens 6 für Logo Carousel
+    
     let breakpoints = {};
     
     if (slidesPerView === 'auto') {
@@ -66,13 +68,12 @@ export default class LogoCarousel {
       };
     }
     
-    // Configure Swiper with Autoplay module
     new Swiper(carouselElement, {
       modules: [Autoplay],
       slidesPerView: 2,
       spaceBetween: 20,
-      loop: loop,
-      autoplay: autoplay ? {
+      loop: shouldLoop && loop, // Nur wenn genug Slides UND loop gewünscht
+      autoplay: autoplay && shouldLoop ? {
         delay: speed,
         disableOnInteraction: false,
         pauseOnMouseEnter: true,
@@ -80,6 +81,10 @@ export default class LogoCarousel {
       breakpoints: breakpoints,
       speed: 600,
     });
+    
+    if (!shouldLoop && loop) {
+      console.info('Logo carousel: Loop disabled (not enough logos)');
+    }
   }
 }
 

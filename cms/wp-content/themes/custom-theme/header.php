@@ -8,32 +8,47 @@
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
 
-<div id="page" class="site">
-    <a class="skip-link screen-reader-text" href="#primary">
-        <?php esc_html_e('Zum Inhalt springen', 'customtheme'); ?>
-    </a>
-
-    <header id="masthead" class="site-header">
-    <div class="container">
-        <div class="site-branding">
-            <a href="<?php echo esc_url(home_url('/')); ?>">
-                <?php bloginfo('name'); ?>
-            </a>
-        </div>
+<header class="site-header">
+    <nav class="site-navigation" role="navigation" aria-label="Primary Navigation">
+        <!-- Logo -->
+        <a href="<?php echo esc_url(home_url('/')); ?>" class="site-logo">
+            <?php bloginfo('name'); ?>
+        </a>
         
-        <nav class="main-navigation">
+        <!-- Desktop Menu -->
+        <div class="primary-menu">
             <?php
             wp_nav_menu(array(
                 'theme_location' => 'primary',
                 'container' => false,
+                'menu_class' => '',
+                'fallback_cb' => false,
+                'depth' => 3, // 3 levels
             ));
             ?>
-        </nav>
+        </div>
         
-        <!-- Theme Toggle im Header -->
-        <button data-theme-toggle aria-label="Toggle theme" class="theme-toggle theme-toggle--header">
-            <span class="theme-toggle__icon theme-toggle__icon--light">☀️</span>
-            <span class="theme-toggle__icon theme-toggle__icon--dark">🌙</span>
+        <!-- Mobile Toggle -->
+        <button class="mobile-menu-toggle" aria-label="Toggle Menu" aria-expanded="false">
+            <span></span>
         </button>
-    </div>
+    </nav>
 </header>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" role="navigation" aria-label="Mobile Navigation">
+    <?php
+    wp_nav_menu(array(
+        'theme_location' => 'primary',
+        'container' => false,
+        'menu_class' => '',
+        'fallback_cb' => false,
+        'depth' => 3,
+    ));
+    ?>
+</div>
+
+<!-- Mobile Overlay -->
+<div class="mobile-menu-overlay"></div>
+
+<main id="main-content" class="site-main">

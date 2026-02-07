@@ -1,4 +1,26 @@
 <?php
+// Enqueue Swiper Library from CDN
+add_action('wp_enqueue_scripts', 'enqueue_swiper_cdn', 5);
+function enqueue_swiper_cdn() {
+    // Swiper CSS
+    wp_enqueue_style(
+        'swiper-css',
+        'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css',
+        array(),
+        '11.0.0'
+    );
+    
+    // Swiper JS - WICHTIG: Vor theme scripts laden!
+    wp_enqueue_script(
+        'swiper-js',
+        'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js',
+        array(),
+        '11.0.0',
+        false // WICHTIG: im Head laden, nicht im Footer!
+    );
+}
+
+
 /**
  * Custom Theme Functions
  * 
@@ -19,6 +41,29 @@ require_once CUSTOMTHEME_DIR . '/inc/setup.php';
 require_once CUSTOMTHEME_DIR . '/inc/enqueue.php';
 require_once CUSTOMTHEME_DIR . '/inc/helpers.php';
 require_once CUSTOMTHEME_DIR . '/inc/performance.php';
+
+
+/**
+ * Fix Gutenberg JSON Response für Shortcodes
+ */
+add_filter('rest_pre_echo_response', function($result, $server, $request) {
+    // Verhindere dass Shortcode-Output die REST API stört
+    if (is_string($result)) {
+        // Entferne problematische Tags
+        $result = preg_replace('/<script[^>]*>.*?<\/script>/si', '', $result);
+    }
+    return $result;
+}, 10, 3);
+
+// Alternative: Disable REST API sanitization für post content
+add_filter('wp_kses_allowed_html', function($tags, $context) {
+    if ($context === 'post') {
+        $tags['script'] = array();
+    }
+    return $tags;
+}, 10, 2);
+
+
 
 /**
  * Enable WebP Upload Support

@@ -55,70 +55,100 @@ add_shortcode('accordion_item', 'accordion_item_shortcode');
 
 function hero_slider_shortcode($atts, $content = null) {
     $atts = shortcode_atts(array(
-        'autoplay' => 'true',
+        'autoplay' => 'false',
         'delay' => '5000',
         'loop' => 'true',
     ), $atts);
     
-    $slider_id = 'hero-slider-' . uniqid();
+    $autoplay = esc_attr($atts['autoplay']);
+    $delay = esc_attr($atts['delay']);
+    $loop = esc_attr($atts['loop']);
     
-    $autoplay_attr = $atts['autoplay'] === 'true' ? 'data-autoplay="true"' : '';
-    $delay_attr = 'data-delay="' . esc_attr($atts['delay']) . '"';
-    $loop_attr = $atts['loop'] === 'true' ? 'data-loop="true"' : '';
+    $output = '<div class="hero-slider swiper" data-autoplay="' . $autoplay . '" data-delay="' . $delay . '" data-loop="' . $loop . '" style="position:relative;width:100%;max-width:100%;height:600px;overflow:hidden;">';
+    $output .= '<div class="swiper-wrapper">';
+    $output .= do_shortcode($content);
+    $output .= '</div>';
     
-    return '
-    <div class="hero-slider swiper" id="' . $slider_id . '" ' . $autoplay_attr . ' ' . $delay_attr . ' ' . $loop_attr . '>
-        <div class="swiper-wrapper">' . do_shortcode($content) . '</div>
-        <div class="hero-slider__navigation">
-            <button class="hero-slider__button hero-slider__button--prev" aria-label="Previous slide">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="15 18 9 12 15 6"></polyline>
-                </svg>
-            </button>
-            <button class="hero-slider__button hero-slider__button--next" aria-label="Next slide">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <polyline points="9 18 15 12 9 6"></polyline>
-                </svg>
-            </button>
-        </div>
-        <div class="hero-slider__pagination"></div>
-    </div>';
+    // Navigation mit inline styles
+    $output .= '<div class="swiper-button-prev" style="position:absolute;top:50%;left:1rem;transform:translateY(-50%);width:50px;height:50px;background:rgba(255,255,255,0.3);border-radius:50%;z-index:10;cursor:pointer;"></div>';
+    $output .= '<div class="swiper-button-next" style="position:absolute;top:50%;right:1rem;transform:translateY(-50%);width:50px;height:50px;background:rgba(255,255,255,0.3);border-radius:50%;z-index:10;cursor:pointer;"></div>';
+    
+    // Pagination mit inline styles
+    $output .= '<div class="swiper-pagination" style="position:absolute;bottom:1rem;left:50%;transform:translateX(-50%);z-index:10;"></div>';
+    
+    $output .= '</div>';
+    
+    return $output;
 }
 add_shortcode('hero_slider', 'hero_slider_shortcode');
 
 function hero_slide_shortcode($atts, $content = null) {
     $atts = shortcode_atts(array(
         'image' => '',
+        'image_mobile' => '',
         'title' => '',
         'subtitle' => '',
         'button_text' => '',
         'button_link' => '',
         'button_target' => '_self',
+        'text_align' => 'center',
+        'text_color' => 'white',
+        'overlay' => 'true',
+        'overlay_opacity' => '0.4',
     ), $atts);
     
-    $image_url = esc_url($atts['image']);
+    $image = esc_url($atts['image']);
+    $image_mobile = !empty($atts['image_mobile']) ? esc_url($atts['image_mobile']) : $image;
     $title = esc_html($atts['title']);
     $subtitle = esc_html($atts['subtitle']);
     $button_text = esc_html($atts['button_text']);
     $button_link = esc_url($atts['button_link']);
     $button_target = esc_attr($atts['button_target']);
+    $text_color = esc_attr($atts['text_color']);
+    $show_overlay = $atts['overlay'] === 'true';
+    $overlay_opacity = floatval($atts['overlay_opacity']);
     
-    $button_html = '';
-    if ($button_text && $button_link) {
-        $button_html = '<a href="' . $button_link . '" class="hero-slider__button-cta" target="' . $button_target . '">' . $button_text . '</a>';
+    $output = '<div class="hero-slide swiper-slide" style="position:relative;width:100%;height:100%;">';
+    
+    // Background mit inline styles
+    $output .= '<div class="hero-slide__background" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;">';
+    if ($image) {
+        $output .= '<picture>';
+        $output .= '<source media="(min-width: 768px)" srcset="' . $image . '">';
+        $output .= '<source media="(max-width: 767px)" srcset="' . $image_mobile . '">';
+        $output .= '<img src="' . $image . '" alt="' . $title . '" class="hero-slide__image" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">';
+        $output .= '</picture>';
     }
+    if ($show_overlay) {
+        $output .= '<div class="hero-slide__overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,' . $overlay_opacity . ');z-index:1;"></div>';
+    }
+    $output .= '</div>';
     
-    return '
-    <div class="swiper-slide hero-slider__slide">
-        <div class="hero-slider__image" style="background-image: url(' . $image_url . ')"></div>
-        <div class="hero-slider__content">
-            <div class="hero-slider__content-inner">
-                ' . ($title ? '<h1 class="hero-slider__title">' . $title . '</h1>' : '') . '
-                ' . ($subtitle ? '<p class="hero-slider__subtitle">' . $subtitle . '</p>' : '') . '
-                ' . $button_html . '
-            </div>
-        </div>
-    </div>';
+    // Content mit inline styles
+    $output .= '<div class="hero-slide__content" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:800px;z-index:2;padding:2rem;text-align:center!important;">';
+    $output .= '<div class="hero-slide__inner" style="width:100%;text-align:center!important;color:white!important;">';
+
+    if ($subtitle) {
+        $output .= '<div class="hero-slide__subtitle" style="color:white!important;font-size:1rem;margin:0 auto 0.75rem auto;text-transform:uppercase;letter-spacing:0.1em;font-weight:600;text-align:center!important;width:100%;">' . $subtitle . '</div>';
+    }
+
+    if ($title) {
+        $output .= '<h2 class="hero-slide__title" style="color:white!important;font-size:2.5rem;font-weight:700;margin:0 auto 1rem auto;line-height:1.2;text-shadow:0 2px 4px rgba(0,0,0,0.5);text-align:center!important;width:100%;">' . $title . '</h2>';
+    }
+
+    if ($content) {
+        $output .= '<div class="hero-slide__text" style="color:white!important;font-size:1rem;margin:0 auto 1.5rem auto;line-height:1.6;text-align:center!important;width:100%;">' . wpautop(do_shortcode($content)) . '</div>';
+    }
+
+    if ($button_text && $button_link) {
+        $output .= '<div style="text-align:center!important;width:100%;"><a href="' . $button_link . '" target="' . $button_target . '" class="hero-slide__button" style="display:inline-block;padding:0.75rem 1.5rem;background:#667eea;color:white!important;text-decoration:none;border-radius:0.5rem;font-weight:600;">' . $button_text . '</a></div>';
+    }
+
+    $output .= '</div></div>'; // inner + content
+
+    $output .= '</div>'; // slide
+    
+    return $output;
 }
 add_shortcode('hero_slide', 'hero_slide_shortcode');
 
@@ -260,6 +290,14 @@ function add_shortcode_buttons() {
         <span class="dashicons dashicons-database" style="margin-top: 3px;"></span> CPT Query
     </button>';
 
+    echo '<button type="button" class="button" id="insert-spoiler" style="margin-left: 5px;">
+        <span class="dashicons dashicons-hidden" style="margin-top: 3px;"></span> Spoiler
+    </button>';
+
+    echo '<button type="button" class="button" id="insert-pricing" style="margin-left: 5px;">
+        <span class="dashicons dashicons-tag" style="margin-top: 3px;"></span> Pricing
+    </button>';
+
 }
 
 add_action('admin_footer', 'shortcode_buttons_js');
@@ -284,12 +322,14 @@ function shortcode_buttons_js() {
         // Hero Slider
         $('#insert-hero-slider').on('click', function(e) {
             e.preventDefault();
-            var shortcode = `[hero_slider]
-                [hero_slide image="https://picsum.photos/1920/800?random=1" title="Slide 1" subtitle="Beschreibung" button_text="Mehr" button_link="/link"]
-                [/hero_slide]
-                [hero_slide image="https://picsum.photos/1920/800?random=2" title="Slide 2"]
-                [/hero_slide]
-                [/hero_slider]`;
+            var shortcode = '[hero_slider autoplay="true" loop="true"]\n' +
+                '[hero_slide image="https://picsum.photos/1920/800?random=1" image_mobile="https://picsum.photos/800/1200?random=1" title="Willkommen" subtitle="Ihr Partner für digitale Lösungen" button_text="Mehr erfahren" button_link="#" text_align="left" text_color="white"]\n' +
+                'Entdecken Sie unsere innovativen Dienstleistungen.\n' +
+                '[/hero_slide]\n' +
+                '[hero_slide image="https://picsum.photos/1920/800?random=2" image_mobile="https://picsum.photos/800/1200?random=2" title="Unsere Services" subtitle="Professionell & Zuverlässig" button_text="Services ansehen" button_link="#" text_align="center"]\n' +
+                'Von Webdesign bis App-Entwicklung.\n' +
+                '[/hero_slide]\n' +
+                '[/hero_slider]';
             insertShortcode(shortcode);
         });
         
@@ -475,6 +515,44 @@ function shortcode_buttons_js() {
                 '[services_query number="-1" columns="3"]';
             insertShortcode(shortcode);
         });
+
+        // Spoiler / Read-More
+        $('#insert-spoiler').on('click', function(e) {
+            e.preventDefault();
+            var shortcode = '[spoiler open_text="Mehr anzeigen" close_text="Weniger anzeigen"]\n' +
+                'Dieser Inhalt ist standardmäßig versteckt und wird erst angezeigt, wenn der Benutzer auf den Button klickt.\n\n' +
+                'Sie können hier beliebig viel Text, Bilder, Listen und andere Inhalte einfügen.\n' +
+                '[/spoiler]';
+            insertShortcode(shortcode);
+        });
+
+        // Pricing Tables
+    $('#insert-pricing').on('click', function(e) {
+        e.preventDefault();
+        var shortcode = '[pricing_tables columns="3"]\n' +
+            '[pricing_table title="Starter" price="29" period="pro Monat" button_text="Jetzt starten" button_link="#"]\n' +
+            '[pricing_feature icon="check"]5 Projekte[/pricing_feature]\n' +
+            '[pricing_feature icon="check"]10 GB Speicher[/pricing_feature]\n' +
+            '[pricing_feature icon="check"]E-Mail Support[/pricing_feature]\n' +
+            '[pricing_feature icon="cross"]Telefon Support[/pricing_feature]\n' +
+            '[/pricing_table]\n\n' +
+            '[pricing_table title="Professional" price="79" period="pro Monat" featured="true" badge="Beliebt" button_text="Jetzt starten" button_link="#"]\n' +
+            '[pricing_feature icon="check"]Unbegrenzte Projekte[/pricing_feature]\n' +
+            '[pricing_feature icon="check"]100 GB Speicher[/pricing_feature]\n' +
+            '[pricing_feature icon="check"]E-Mail Support[/pricing_feature]\n' +
+            '[pricing_feature icon="check"]Telefon Support[/pricing_feature]\n' +
+            '[pricing_feature icon="check"]Priorität Support[/pricing_feature]\n' +
+            '[/pricing_table]\n\n' +
+            '[pricing_table title="Enterprise" price="199" period="pro Monat" button_text="Kontakt" button_link="/kontakt"]\n' +
+            '[pricing_feature icon="check"]Alles aus Professional[/pricing_feature]\n' +
+            '[pricing_feature icon="check"]Unbegrenzter Speicher[/pricing_feature]\n' +
+            '[pricing_feature icon="check"]24/7 Support[/pricing_feature]\n' +
+            '[pricing_feature icon="check"]Dedizierter Account Manager[/pricing_feature]\n' +
+            '[pricing_feature icon="check"]Custom Integrationen[/pricing_feature]\n' +
+            '[/pricing_table]\n' +
+            '[/pricing_tables]';
+        insertShortcode(shortcode);
+    });
 
 
         
@@ -840,63 +918,29 @@ add_shortcode('notifications', 'notifications_shortcode');
 
 function stats_shortcode($atts, $content = null) {
     $atts = shortcode_atts(array(
-        'columns' => '4', // 2, 3, 4
-        'style' => 'default', // default, minimal, card
+        'columns' => '4',
+        'style' => 'default',
     ), $atts);
     
-    $columns = esc_attr($atts['columns']);
+    $columns = intval($atts['columns']);
     $style = esc_attr($atts['style']);
     
-    return '<div class="stats stats--' . $style . '" data-columns="' . $columns . '">' . do_shortcode($content) . '</div>';
+    // INLINE STYLES
+    $inline_style = 'display:grid!important;gap:2rem!important;margin:2rem 0!important;width:100%!important;';
+    
+    if ($columns == 2) {
+        $inline_style .= 'grid-template-columns:repeat(2,1fr)!important;';
+    } elseif ($columns == 3) {
+        $inline_style .= 'grid-template-columns:repeat(3,1fr)!important;';
+    } elseif ($columns == 4) {
+        $inline_style .= 'grid-template-columns:repeat(4,1fr)!important;';
+    } else {
+        $inline_style .= 'grid-template-columns:repeat(' . $columns . ',1fr)!important;';
+    }
+    
+    return '<div class="stats stats--' . $style . '" data-columns="' . $columns . '" style="' . $inline_style . '">' . do_shortcode($content) . '</div>';
 }
 add_shortcode('stats', 'stats_shortcode');
-
-function stat_shortcode($atts, $content = null) {
-    $atts = shortcode_atts(array(
-        'number' => '0',
-        'prefix' => '',
-        'suffix' => '',
-        'duration' => '2000', // Animation duration in ms
-        'label' => '',
-        'icon' => '', // dashicon class
-        'color' => '', // primary, success, error, warning, info
-    ), $atts);
-    
-    $number = esc_attr($atts['number']);
-    $prefix = esc_html($atts['prefix']);
-    $suffix = esc_html($atts['suffix']);
-    $duration = esc_attr($atts['duration']);
-    $label = esc_html($atts['label']);
-    $icon = esc_attr($atts['icon']);
-    $color = $atts['color'] ? ' stat--' . esc_attr($atts['color']) : '';
-    
-    // Icon HTML
-    $icon_html = '';
-    if ($icon) {
-        $icon_html = '<div class="stat__icon"><span class="dashicons ' . $icon . '"></span></div>';
-    }
-    
-    // Description from content
-    $description = '';
-    if ($content) {
-        $description = '<p class="stat__description">' . wp_kses_post($content) . '</p>';
-    }
-    
-    return '
-    <div class="stat' . $color . '" data-counter>
-        ' . $icon_html . '
-        <div class="stat__content">
-            <div class="stat__number">
-                <span class="stat__prefix">' . $prefix . '</span>
-                <span class="stat__value" data-target="' . $number . '" data-duration="' . $duration . '">0</span>
-                <span class="stat__suffix">' . $suffix . '</span>
-            </div>
-            ' . ($label ? '<div class="stat__label">' . $label . '</div>' : '') . '
-            ' . $description . '
-        </div>
-    </div>';
-}
-add_shortcode('stat', 'stat_shortcode');
 
 // ============================================
 // TIMELINE SHORTCODES
@@ -1096,16 +1140,31 @@ add_shortcode('logo_item', 'logo_item_shortcode');
 
 function team_cards_shortcode($atts, $content = null) {
     $atts = shortcode_atts(array(
-        'columns' => '3', // 2, 3, 4
-        'style' => 'default', // default, card, minimal
+        'columns' => '3',
+        'style' => 'default',
     ), $atts);
     
-    $columns = esc_attr($atts['columns']);
+    $columns = intval($atts['columns']);
     $style = esc_attr($atts['style']);
+    
+    // INLINE STYLES
+    $inline_style = 'display:grid!important;gap:2rem!important;margin:2rem 0!important;width:100%!important;';
+    
+    if ($columns == 2) {
+        $inline_style .= 'grid-template-columns:repeat(2,1fr)!important;';
+    } elseif ($columns == 3) {
+        $inline_style .= 'grid-template-columns:repeat(3,1fr)!important;';
+    } elseif ($columns == 4) {
+        $inline_style .= 'grid-template-columns:repeat(4,1fr)!important;';
+    } else {
+        $inline_style .= 'grid-template-columns:repeat(' . $columns . ',1fr)!important;';
+    }
     
     ob_start();
     ?>
-    <div class="team-cards team-cards--<?php echo $style; ?>" data-columns="<?php echo $columns; ?>">
+    <div class="team-cards team-cards--<?php echo $style; ?>" 
+         data-columns="<?php echo $columns; ?>" 
+         style="<?php echo $inline_style; ?>">
         <?php echo do_shortcode($content); ?>
     </div>
     <?php
@@ -1454,13 +1513,13 @@ function team_query_shortcode($atts) {
     $atts = shortcode_atts(array(
         'number' => 3,
         'columns' => 3,
-        'order' => 'ASC', // ASC or DESC
-        'orderby' => 'menu_order', // menu_order, title, date, rand, meta_value_num (for display_order)
-        'style' => 'default', // default, card, minimal
+        'order' => 'ASC',
+        'orderby' => 'menu_order',
+        'style' => 'default',
     ), $atts);
     
     $number = intval($atts['number']);
-    $columns = esc_attr($atts['columns']);
+    $columns = intval($atts['columns']);
     $order = esc_attr($atts['order']);
     $orderby = esc_attr($atts['orderby']);
     $style = esc_attr($atts['style']);
@@ -1486,9 +1545,24 @@ function team_query_shortcode($atts) {
         return '<p>Keine Team-Mitglieder gefunden.</p>';
     }
     
+    // INLINE STYLES für garantiertes Grid
+    $inline_style = 'display:grid!important;gap:2rem!important;margin:2rem 0!important;width:100%!important;';
+    
+    if ($columns == 2) {
+        $inline_style .= 'grid-template-columns:repeat(2,1fr)!important;';
+    } elseif ($columns == 3) {
+        $inline_style .= 'grid-template-columns:repeat(3,1fr)!important;';
+    } elseif ($columns == 4) {
+        $inline_style .= 'grid-template-columns:repeat(4,1fr)!important;';
+    } else {
+        $inline_style .= 'grid-template-columns:repeat(' . $columns . ',1fr)!important;';
+    }
+    
     ob_start();
     ?>
-    <div class="team-cards team-cards--<?php echo $style; ?>" data-columns="<?php echo $columns; ?>">
+    <div class="team-cards team-cards--<?php echo $style; ?>" 
+         data-columns="<?php echo $columns; ?>" 
+         style="<?php echo $inline_style; ?>">
         <?php while ($team_query->have_posts()) : $team_query->the_post(); ?>
             <?php
             $role = get_field('role');
@@ -1884,3 +1958,193 @@ function services_query_shortcode($atts) {
     return ob_get_clean();
 }
 add_shortcode('services_query', 'services_query_shortcode');
+
+// ============================================
+// SPOILER/READ-MORE SHORTCODE
+// ============================================
+
+function spoiler_shortcode($atts, $content = null) {
+    $atts = shortcode_atts(array(
+        'open_text' => 'Mehr anzeigen',
+        'close_text' => 'Weniger anzeigen',
+        'open' => 'false',
+        'style' => 'default',
+        'icon' => 'true',
+    ), $atts);
+    
+    $open_text = esc_html($atts['open_text']);
+    $close_text = esc_html($atts['close_text']);
+    $is_open = $atts['open'] === 'true';
+    $style = esc_attr($atts['style']);
+    $show_icon = $atts['icon'] === 'true';
+    
+    $unique_id = 'spoiler-' . uniqid();
+    $open_class = $is_open ? ' is-open' : '';
+    $display = $is_open ? 'block' : 'none';
+    $button_text = $is_open ? $close_text : $open_text;
+    
+    $output = '<div class="spoiler spoiler--' . $style . $open_class . '" id="' . $unique_id . '">';
+    $output .= '<button class="spoiler__toggle" ';
+    $output .= 'data-open-text="' . esc_attr($open_text) . '" ';
+    $output .= 'data-close-text="' . esc_attr($close_text) . '" ';
+    $output .= 'aria-expanded="' . ($is_open ? 'true' : 'false') . '">';
+    $output .= '<span class="spoiler__button-text">' . $button_text . '</span>';
+    
+    if ($show_icon) {
+        $output .= '<span class="spoiler__icon">';
+        $output .= '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">';
+        $output .= '<path d="M8 4l4 4-4 4V4z"/>';
+        $output .= '</svg>';
+        $output .= '</span>';
+    }
+    
+    $output .= '</button>';
+    $output .= '<div class="spoiler__content" style="display: ' . $display . ';">';
+    $output .= wpautop(do_shortcode($content));
+    $output .= '</div>';
+    $output .= '</div>';
+    
+    return $output;
+}
+add_shortcode('spoiler', 'spoiler_shortcode');
+
+function read_more_shortcode($atts, $content = null) {
+    $defaults = array(
+        'open_text' => 'Weiterlesen',
+        'close_text' => 'Weniger anzeigen',
+        'open' => 'false',
+        'style' => 'minimal',
+        'icon' => 'true',
+    );
+    
+    $atts = shortcode_atts($defaults, $atts);
+    
+    return spoiler_shortcode($atts, $content);
+}
+add_shortcode('read_more', 'read_more_shortcode');
+
+// ============================================
+// PRICING TABLES SHORTCODE
+// ============================================
+
+function pricing_tables_shortcode($atts, $content = null) {
+    $atts = shortcode_atts(array(
+        'columns' => '3',
+        'style' => 'default',
+    ), $atts);
+    
+    $columns = intval($atts['columns']);
+    $style = esc_attr($atts['style']);
+    
+    // INLINE STYLES
+    $inline_style = 'display:grid!important;gap:2rem!important;margin:4rem 0!important;width:100%!important;align-items:stretch!important;';
+    
+    if ($columns == 2) {
+        $inline_style .= 'grid-template-columns:repeat(2,1fr)!important;';
+    } elseif ($columns == 3) {
+        $inline_style .= 'grid-template-columns:repeat(3,1fr)!important;';
+    } elseif ($columns == 4) {
+        $inline_style .= 'grid-template-columns:repeat(4,1fr)!important;';
+    } else {
+        $inline_style .= 'grid-template-columns:repeat(' . $columns . ',1fr)!important;';
+    }
+    
+    return '<div class="pricing-tables pricing-tables--' . $style . '" data-columns="' . $columns . '" style="' . $inline_style . '">' . do_shortcode($content) . '</div>';
+}
+add_shortcode('pricing_tables', 'pricing_tables_shortcode');
+
+function pricing_table_shortcode($atts, $content = null) {
+    $atts = shortcode_atts(array(
+        'title' => '',
+        'price' => '',
+        'currency' => '€',
+        'period' => 'pro Monat',
+        'featured' => 'false',
+        'button_text' => 'Jetzt starten',
+        'button_link' => '#',
+        'button_target' => '_self',
+        'badge' => '', // e.g. "Beliebt", "Empfohlen"
+        'description' => '',
+    ), $atts);
+    
+    $title = esc_html($atts['title']);
+    $price = esc_html($atts['price']);
+    $currency = esc_html($atts['currency']);
+    $period = esc_html($atts['period']);
+    $featured = $atts['featured'] === 'true';
+    $button_text = esc_html($atts['button_text']);
+    $button_link = esc_url($atts['button_link']);
+    $button_target = esc_attr($atts['button_target']);
+    $badge = esc_html($atts['badge']);
+    $description = esc_html($atts['description']);
+    
+    $featured_class = $featured ? ' pricing-table--featured' : '';
+    
+    ob_start();
+    ?>
+    <div class="pricing-table<?php echo $featured_class; ?>" data-animate="fade-in-up">
+        <?php if ($badge) : ?>
+            <div class="pricing-table__badge"><?php echo $badge; ?></div>
+        <?php endif; ?>
+        
+        <div class="pricing-table__header">
+            <?php if ($title) : ?>
+                <h3 class="pricing-table__title"><?php echo $title; ?></h3>
+            <?php endif; ?>
+            
+            <?php if ($description) : ?>
+                <p class="pricing-table__description"><?php echo $description; ?></p>
+            <?php endif; ?>
+        </div>
+        
+        <div class="pricing-table__price">
+            <span class="pricing-table__currency"><?php echo $currency; ?></span>
+            <span class="pricing-table__amount"><?php echo $price; ?></span>
+            <?php if ($period) : ?>
+                <span class="pricing-table__period"><?php echo $period; ?></span>
+            <?php endif; ?>
+        </div>
+        
+        <div class="pricing-table__features">
+            <?php echo wpautop(do_shortcode($content)); ?>
+        </div>
+        
+        <div class="pricing-table__footer">
+            <a href="<?php echo $button_link; ?>" 
+               class="pricing-table__button button button--primary" 
+               target="<?php echo $button_target; ?>">
+                <?php echo $button_text; ?>
+            </a>
+        </div>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('pricing_table', 'pricing_table_shortcode');
+
+// Helper shortcode for feature lists
+function pricing_feature_shortcode($atts, $content = null) {
+    $atts = shortcode_atts(array(
+        'icon' => 'check', // check, cross, info
+        'highlight' => 'false',
+    ), $atts);
+    
+    $icon = esc_attr($atts['icon']);
+    $highlight = $atts['highlight'] === 'true' ? ' pricing-feature--highlight' : '';
+    
+    $icon_html = '';
+    switch ($icon) {
+        case 'check':
+            $icon_html = '<span class="pricing-feature__icon pricing-feature__icon--check">✓</span>';
+            break;
+        case 'cross':
+            $icon_html = '<span class="pricing-feature__icon pricing-feature__icon--cross">✗</span>';
+            break;
+        case 'info':
+            $icon_html = '<span class="pricing-feature__icon pricing-feature__icon--info">i</span>';
+            break;
+    }
+    
+    return '<div class="pricing-feature' . $highlight . '">' . $icon_html . '<span>' . esc_html($content) . '</span></div>';
+}
+add_shortcode('pricing_feature', 'pricing_feature_shortcode');

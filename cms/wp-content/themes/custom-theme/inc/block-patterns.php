@@ -1027,3 +1027,310 @@ register_block_pattern('custom-theme/services-query-section', array(
 [services_query number="-1" columns="3"]
 <!-- /wp:shortcode -->',
 ));
+
+// Spoiler / Read-More Patterns
+register_block_pattern('custom-theme/spoiler-default', array(
+    'title'       => __('Spoiler - Standard', 'custom-theme'),
+    'description' => __('Einfacher Spoiler/Read-More', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:shortcode -->
+[spoiler open_text="Mehr anzeigen" close_text="Weniger anzeigen"]
+Dies ist zusätzlicher Inhalt, der standardmäßig versteckt ist. Der Benutzer muss aktiv auf den Button klicken, um diesen Inhalt zu sehen.
+
+Sie können hier beliebig formatieren:
+- Listen verwenden
+- **Fett** und *kursiv* schreiben
+- Links einfügen
+
+Und noch viel mehr!
+[/spoiler]
+<!-- /wp:shortcode -->',
+));
+
+register_block_pattern('custom-theme/spoiler-bordered', array(
+    'title'       => __('Spoiler - Bordered Style', 'custom-theme'),
+    'description' => __('Spoiler im Box-Design', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:shortcode -->
+[spoiler style="bordered" open_text="Details anzeigen" close_text="Details ausblenden"]
+<h3>Technische Details</h3>
+
+<strong>Spezifikationen:</strong>
+- Prozessor: Intel Core i7
+- RAM: 16 GB DDR4
+- Speicher: 512 GB SSD
+- Grafik: NVIDIA GeForce RTX 3060
+
+<strong>Maße:</strong>
+- Breite: 35 cm
+- Tiefe: 25 cm
+- Höhe: 2 cm
+- Gewicht: 1.8 kg
+[/spoiler]
+<!-- /wp:shortcode -->',
+));
+
+register_block_pattern('custom-theme/spoiler-minimal', array(
+    'title'       => __('Spoiler - Minimal Style', 'custom-theme'),
+    'description' => __('Minimalistischer Spoiler', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:shortcode -->
+[spoiler style="minimal" open_text="Weiterlesen →" close_text="← Weniger anzeigen"]
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.
+
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+[/spoiler]
+<!-- /wp:shortcode -->',
+));
+
+register_block_pattern('custom-theme/read-more-article', array(
+    'title'       => __('Read-More - Artikel', 'custom-theme'),
+    'description' => __('Read-More für lange Artikel', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:paragraph -->
+<p>Dies ist der sichtbare Teil des Artikels. Der Leser sieht zunächst nur diese Einleitung...</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:shortcode -->
+[read_more open_text="Artikel weiterlesen" close_text="Artikel einklappen"]
+<h3>Weitere Details</h3>
+
+Hier folgt der ausführliche Rest des Artikels. Dieser Inhalt ist standardmäßig versteckt und wird nur angezeigt, wenn der Benutzer aktiv "Weiterlesen" klickt.
+
+Sie können hier mehrere Absätze, Bilder und andere Inhalte einfügen, ohne dass die Seite zu lang wird.
+
+<h4>Vorteile dieser Lösung</h4>
+
+- Bessere Übersichtlichkeit
+- Kürzere Ladezeiten
+- Bessere User Experience
+- Mobile-freundlich
+
+Der Leser entscheidet selbst, ob er den vollständigen Inhalt sehen möchte.
+[/read_more]
+<!-- /wp:shortcode -->',
+));
+
+register_block_pattern('custom-theme/spoiler-faq-style', array(
+    'title'       => __('Spoiler - FAQ Style', 'custom-theme'),
+    'description' => __('Einzelner FAQ-Eintrag mit Spoiler', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:heading {"level":3} -->
+<h3>Häufig gestellte Fragen</h3>
+<!-- /wp:heading -->
+
+<!-- wp:shortcode -->
+[spoiler open_text="Wie kann ich bestellen?" close_text="Antwort ausblenden" style="bordered"]
+Sie können ganz einfach über unseren Online-Shop bestellen. Wählen Sie Ihre Produkte aus, legen Sie sie in den Warenkorb und folgen Sie dem Checkout-Prozess.
+[/spoiler]
+<!-- /wp:shortcode -->
+
+<!-- wp:shortcode -->
+[spoiler open_text="Welche Zahlungsmethoden akzeptieren Sie?" style="bordered"]
+Wir akzeptieren Kreditkarten, PayPal, Sofortüberweisung und Rechnung.
+[/spoiler]
+<!-- /wp:shortcode -->
+
+<!-- wp:shortcode -->
+[spoiler open_text="Wie lange dauert der Versand?" style="bordered"]
+Standard-Versand dauert 3-5 Werktage. Express-Versand ist innerhalb von 1-2 Werktagen möglich.
+[/spoiler]
+<!-- /wp:shortcode -->',
+));
+
+// Pricing Tables Patterns
+register_block_pattern('custom-theme/pricing-three-tier', array(
+    'title'       => __('Pricing - 3 Tiers', 'custom-theme'),
+    'description' => __('Standard 3-Tier Pricing', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:heading {"textAlign":"center"} -->
+<h2 class="has-text-align-center">Unsere Preise</h2>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph {"align":"center"} -->
+<p class="has-text-align-center">Wählen Sie das perfekte Paket für Ihre Bedürfnisse</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:shortcode -->
+[pricing_tables columns="3"]
+[pricing_table title="Starter" price="29" currency="€" period="pro Monat" description="Perfekt für Einsteiger" button_text="Jetzt starten" button_link="#"]
+[pricing_feature icon="check"]5 Projekte[/pricing_feature]
+[pricing_feature icon="check"]10 GB Speicher[/pricing_feature]
+[pricing_feature icon="check"]E-Mail Support[/pricing_feature]
+[pricing_feature icon="check"]SSL Zertifikat[/pricing_feature]
+[pricing_feature icon="cross"]Telefon Support[/pricing_feature]
+[pricing_feature icon="cross"]Priorität Support[/pricing_feature]
+[/pricing_table]
+
+[pricing_table title="Professional" price="79" currency="€" period="pro Monat" description="Für professionelle Nutzer" featured="true" badge="Beliebt" button_text="Jetzt starten" button_link="#"]
+[pricing_feature icon="check"]Unbegrenzte Projekte[/pricing_feature]
+[pricing_feature icon="check"]100 GB Speicher[/pricing_feature]
+[pricing_feature icon="check"]E-Mail Support[/pricing_feature]
+[pricing_feature icon="check"]SSL Zertifikat[/pricing_feature]
+[pricing_feature icon="check"]Telefon Support[/pricing_feature]
+[pricing_feature icon="check"]Priorität Support[/pricing_feature]
+[pricing_feature icon="check"]Wöchentliche Backups[/pricing_feature]
+[/pricing_table]
+
+[pricing_table title="Enterprise" price="199" currency="€" period="pro Monat" description="Für große Teams" button_text="Kontakt aufnehmen" button_link="/kontakt"]
+[pricing_feature icon="check"]Alles aus Professional[/pricing_feature]
+[pricing_feature icon="check"]Unbegrenzter Speicher[/pricing_feature]
+[pricing_feature icon="check"]24/7 Support[/pricing_feature]
+[pricing_feature icon="check"]Dedizierter Account Manager[/pricing_feature]
+[pricing_feature icon="check"]Custom Integrationen[/pricing_feature]
+[pricing_feature icon="check"]Tägliche Backups[/pricing_feature]
+[pricing_feature icon="check"]SLA Garantie[/pricing_feature]
+[/pricing_table]
+[/pricing_tables]
+<!-- /wp:shortcode -->',
+));
+
+register_block_pattern('custom-theme/pricing-two-tier', array(
+    'title'       => __('Pricing - 2 Tiers', 'custom-theme'),
+    'description' => __('Einfacher Vergleich zwischen 2 Paketen', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:heading {"textAlign":"center"} -->
+<h2 class="has-text-align-center">Wählen Sie Ihr Paket</h2>
+<!-- /wp:heading -->
+
+<!-- wp:shortcode -->
+[pricing_tables columns="2"]
+[pricing_table title="Monatlich" price="49" currency="€" period="pro Monat" description="Flexibel monatlich kündbar" button_text="Monatlich starten"]
+[pricing_feature icon="check"]Alle Features inklusive[/pricing_feature]
+[pricing_feature icon="check"]Monatlich kündbar[/pricing_feature]
+[pricing_feature icon="check"]E-Mail Support[/pricing_feature]
+[pricing_feature icon="info"]Keine Setup-Gebühr[/pricing_feature]
+[/pricing_table]
+
+[pricing_table title="Jährlich" price="39" currency="€" period="pro Monat" description="Sparen Sie 20% bei jährlicher Zahlung" featured="true" badge="Bestes Angebot" button_text="Jährlich sparen"]
+[pricing_feature icon="check"]Alle Features inklusive[/pricing_feature]
+[pricing_feature icon="check" highlight="true"]20% Rabatt (€468/Jahr)[/pricing_feature]
+[pricing_feature icon="check"]E-Mail Support[/pricing_feature]
+[pricing_feature icon="check"]Priorität Support[/pricing_feature]
+[pricing_feature icon="check"]Kostenlose Domain (1 Jahr)[/pricing_feature]
+[/pricing_table]
+[/pricing_tables]
+<!-- /wp:shortcode -->',
+));
+
+register_block_pattern('custom-theme/pricing-minimal', array(
+    'title'       => __('Pricing - Minimal Style', 'custom-theme'),
+    'description' => __('Minimalistisches Pricing Design', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:shortcode -->
+[pricing_tables columns="3" style="minimal"]
+[pricing_table title="Basic" price="19" currency="€" period="/Monat"]
+[pricing_feature icon="check"]1 Website[/pricing_feature]
+[pricing_feature icon="check"]10 GB Speicher[/pricing_feature]
+[pricing_feature icon="check"]E-Mail Support[/pricing_feature]
+[/pricing_table]
+
+[pricing_table title="Pro" price="49" currency="€" period="/Monat" featured="true"]
+[pricing_feature icon="check"]5 Websites[/pricing_feature]
+[pricing_feature icon="check"]50 GB Speicher[/pricing_feature]
+[pricing_feature icon="check"]24/7 Support[/pricing_feature]
+[/pricing_table]
+
+[pricing_table title="Agency" price="99" currency="€" period="/Monat"]
+[pricing_feature icon="check"]Unbegrenzte Websites[/pricing_feature]
+[pricing_feature icon="check"]200 GB Speicher[/pricing_feature]
+[pricing_feature icon="check"]Priorität Support[/pricing_feature]
+[/pricing_table]
+[/pricing_tables]
+<!-- /wp:shortcode -->',
+));
+
+register_block_pattern('custom-theme/pricing-saas', array(
+    'title'       => __('Pricing - SaaS Style', 'custom-theme'),
+    'description' => __('Moderne SaaS Pricing Tabelle', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:heading {"textAlign":"center","level":1} -->
+<h1 class="has-text-align-center">Preise die zu Ihnen passen</h1>
+<!-- /wp:heading -->
+
+<!-- wp:paragraph {"align":"center","fontSize":"large"} -->
+<p class="has-text-align-center has-large-font-size">Keine versteckten Kosten. Jederzeit kündbar.</p>
+<!-- /wp:paragraph -->
+
+<!-- wp:shortcode -->
+[pricing_tables columns="4" style="featured"]
+[pricing_table title="Free" price="0" period="für immer" description="Testen Sie alle Funktionen" button_text="Kostenlos starten"]
+[pricing_feature icon="check"]3 Projekte[/pricing_feature]
+[pricing_feature icon="check"]1 GB Speicher[/pricing_feature]
+[pricing_feature icon="check"]Community Support[/pricing_feature]
+[pricing_feature icon="cross"]Analytics[/pricing_feature]
+[pricing_feature icon="cross"]API Zugang[/pricing_feature]
+[/pricing_table]
+
+[pricing_table title="Starter" price="15" period="pro Monat" description="Für Einzelpersonen" button_text="Starten"]
+[pricing_feature icon="check"]10 Projekte[/pricing_feature]
+[pricing_feature icon="check"]10 GB Speicher[/pricing_feature]
+[pricing_feature icon="check"]E-Mail Support[/pricing_feature]
+[pricing_feature icon="check"]Basic Analytics[/pricing_feature]
+[pricing_feature icon="cross"]API Zugang[/pricing_feature]
+[/pricing_table]
+
+[pricing_table title="Business" price="49" period="pro Monat" description="Für wachsende Teams" featured="true" badge="Empfohlen" button_text="Jetzt upgraden"]
+[pricing_feature icon="check"]Unbegrenzte Projekte[/pricing_feature]
+[pricing_feature icon="check"]100 GB Speicher[/pricing_feature]
+[pricing_feature icon="check"]Priorität Support[/pricing_feature]
+[pricing_feature icon="check"]Advanced Analytics[/pricing_feature]
+[pricing_feature icon="check"]API Zugang[/pricing_feature]
+[pricing_feature icon="check"]Team Collaboration[/pricing_feature]
+[/pricing_table]
+
+[pricing_table title="Enterprise" price="Individuell" period="nach Bedarf" description="Für große Organisationen" button_text="Kontaktieren Sie uns"]
+[pricing_feature icon="check"]Alles aus Business[/pricing_feature]
+[pricing_feature icon="check"]Unbegrenzter Speicher[/pricing_feature]
+[pricing_feature icon="check"]24/7 Telefon Support[/pricing_feature]
+[pricing_feature icon="check"]Custom Integrationen[/pricing_feature]
+[pricing_feature icon="check"]SLA Garantie[/pricing_feature]
+[pricing_feature icon="check"]Dedicated Account Manager[/pricing_feature]
+[/pricing_table]
+[/pricing_tables]
+<!-- /wp:shortcode -->',
+));
+
+
+register_block_pattern('custom-theme/hero-slider-responsive', array(
+    'title'       => __('Hero Slider - Responsive Images', 'custom-theme'),
+    'description' => __('Hero Slider mit separaten Mobile/Desktop Bildern', 'custom-theme'),
+    'categories'  => array('custom-components'),
+    'content'     => '<!-- wp:shortcode -->
+[hero_slider autoplay="true" loop="true"]
+[hero_slide 
+    image="https://picsum.photos/1920/800?random=1" 
+    image_mobile="https://picsum.photos/800/1200?random=1" 
+    title="Willkommen auf unserer Website" 
+    subtitle="Ihr Partner für digitale Erfolge" 
+    button_text="Mehr erfahren" 
+    button_link="#about" 
+    text_align="left" 
+    text_color="white"]
+Wir entwickeln maßgeschneiderte digitale Lösungen für Ihr Unternehmen.
+[/hero_slide]
+
+[hero_slide 
+    image="https://picsum.photos/1920/800?random=2" 
+    image_mobile="https://picsum.photos/800/1200?random=2" 
+    title="Unsere Services" 
+    subtitle="Von Webdesign bis App-Entwicklung" 
+    button_text="Services ansehen" 
+    button_link="#services" 
+    text_align="center"]
+Professionelle Dienstleistungen für jeden Bedarf.
+[/hero_slide]
+
+[hero_slide 
+    image="https://picsum.photos/1920/800?random=3" 
+    image_mobile="https://picsum.photos/800/1200?random=3" 
+    title="Kontaktieren Sie uns" 
+    subtitle="Wir freuen uns auf Ihr Projekt" 
+    button_text="Kontakt aufnehmen" 
+    button_link="/kontakt" 
+    text_align="right"]
+Lassen Sie uns gemeinsam Großes erreichen.
+[/hero_slide]
+[/hero_slider]
+<!-- /wp:shortcode -->',
+));

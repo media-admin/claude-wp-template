@@ -1,57 +1,67 @@
 /**
- * Hero Slider Component
+ * Hero Slider
  */
 
-import Swiper from 'swiper';
-import { Navigation, Pagination, Autoplay, EffectFade } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
-import 'swiper/css/effect-fade';
-
 export default class HeroSlider {
-  constructor(element, options = {}) {
-    this.element = element;
-    this.options = {
-      modules: [Navigation, Pagination, Autoplay, EffectFade],
-      effect: 'fade',
-      speed: 1000,
-      autoplay: {
-        delay: 5000,
-        disableOnInteraction: false,
-      },
-      loop: true,
-      pagination: {
-        el: '.swiper-pagination',
-        clickable: true,
-      },
-      navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-      },
-      ...options
-    };
-    
+  constructor() {
+    this.sliders = document.querySelectorAll('.hero-slider');
     this.init();
   }
   
   init() {
-    if (!this.element) return;
+    if (this.sliders.length === 0) {
+      console.log('Keine Hero Sliders gefunden');
+      return;
+    }
     
-    this.swiper = new Swiper(this.element, this.options);
+    if (typeof Swiper === 'undefined') {
+      console.error('Swiper nicht geladen!');
+      return;
+    }
+    
+    console.log('Hero Slider Init:', this.sliders.length);
+    
+    this.sliders.forEach(slider => {
+      this.initSlider(slider);
+    });
   }
   
-  destroy() {
-    if (this.swiper) {
-      this.swiper.destroy();
-    }
+  initSlider(sliderElement) {
+    const autoplay = sliderElement.dataset.autoplay === 'true';
+    const delay = parseInt(sliderElement.dataset.delay) || 5000;
+    const loop = sliderElement.dataset.loop === 'true';
+    
+    const slideCount = sliderElement.querySelectorAll('.swiper-slide').length;
+    const shouldLoop = slideCount > 1 && loop;
+    
+    const swiperInstance = new Swiper(sliderElement, {
+      slidesPerView: 1,
+      spaceBetween: 0,
+      loop: shouldLoop,
+      autoplay: autoplay && shouldLoop ? {
+        delay: delay,
+        disableOnInteraction: false,
+      } : false,
+      pagination: {
+        el: '.swiper-pagination',  // ← Standard Swiper Klasse
+        clickable: true,
+      },
+      navigation: {
+        nextEl: '.swiper-button-next',  // ← Standard Swiper Klasse
+        prevEl: '.swiper-button-prev',  // ← Standard Swiper Klasse
+      },
+      effect: 'fade',
+      fadeEffect: {
+        crossFade: true
+      },
+      on: {
+        init: function() {
+          console.log('✅ Hero Slider initialisiert');
+        }
+      }
+    });
   }
 }
 
-// Auto-initialize
-document.addEventListener('DOMContentLoaded', () => {
-  const sliders = document.querySelectorAll('.hero-slider');
-  sliders.forEach(slider => {
-    new HeroSlider(slider);
-  });
-});
+// Initialize
+new HeroSlider();

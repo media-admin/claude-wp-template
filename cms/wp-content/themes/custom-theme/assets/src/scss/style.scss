@@ -3,13 +3,14 @@
 // ==========================================================================
 
 // Configuration
-@import 'config/variables';
-@import 'config/mixins';
+@import 'abstracts/variables';
+@import 'abstracts/mixins';
 
 // Base
 @import 'base/reset';
 @import 'base/typography';
 @import 'base/global';
+@import 'base/grid-fix';
 
 // Layout
 @import 'layout/header';
@@ -42,6 +43,10 @@
 @import 'components/faq-accordion';
 @import 'components/contact-form-7';
 @import 'components/cpt-grids';
+@import 'components/spoiler';
+@import 'layout/navigation';
+@import 'components/pricing-tables';
+
 
 // Pages
 @import 'pages/home';

@@ -14,7 +14,7 @@ if (!defined('ABSPATH')) {
  */
 function customtheme_enqueue_assets() {
     // Check if in development mode
-    $is_dev = file_exists(ABSPATH . '../.dev');
+    $is_dev = defined('WP_DEBUG') && WP_DEBUG && file_exists(get_template_directory() . '/.dev');
     
     if ($is_dev) {
         // Development: Vite Dev Server
@@ -26,29 +26,72 @@ function customtheme_enqueue_assets() {
             false
         );
         
+        // Main JS (includes CSS via Vite)
         wp_enqueue_script(
             'customtheme-main',
-            'http://localhost:3000/cms/wp-content/themes/custom-theme/assets/src/js/main.js',
+            'http://localhost:3000/src/js/main.js',
             array(),
             null,
             true
         );
     } else {
         // Production: Compiled Assets
-        wp_enqueue_style(
-            'customtheme-style',
-            get_template_directory_uri() . '/assets/dist/css/style.css',
-            array(),
-            filemtime(get_template_directory() . '/assets/dist/css/style.css')
-        );
+        $manifest_path = get_template_directory() . '/assets/dist/manifest.json';
         
-        wp_enqueue_script(
-            'customtheme-main',
-            get_template_directory_uri() . '/assets/dist/js/main.js',
-            array(),
-            filemtime(get_template_directory() . '/assets/dist/js/main.js'),
-            true
-        );
+        if (file_exists($manifest_path)) {
+            $manifest = json_decode(file_get_contents($manifest_path), true);
+            
+            // Enqueue CSS (Vite generiert main.css aus main.scss)
+            if (isset($manifest['src/scss/main.scss'])) {
+                wp_enqueue_style(
+                    'customtheme-style',
+                    get_template_directory_uri() . '/assets/dist/' . $manifest['src/scss/main.scss']['file'],
+                    array(),
+                    null
+                );
+            } elseif (isset($manifest['src/js/main.js']['css'])) {
+                // Fallback: CSS ist im main.js entry
+                foreach ($manifest['src/js/main.js']['css'] as $css_file) {
+                    wp_enqueue_style(
+                        'customtheme-style',
+                        get_template_directory_uri() . '/assets/dist/' . $css_file,
+                        array(),
+                        null
+                    );
+                }
+            }
+            
+            // Enqueue JS
+            if (isset($manifest['src/js/main.js'])) {
+                wp_enqueue_script(
+                    'customtheme-main',
+                    get_template_directory_uri() . '/assets/dist/' . $manifest['src/js/main.js']['file'],
+                    array(),
+                    null,
+                    true
+                );
+            }
+        } else {
+            // Fallback wenn kein Manifest vorhanden
+            if (file_exists(get_template_directory() . '/assets/dist/css/style.css')) {
+                wp_enqueue_style(
+                    'customtheme-style',
+                    get_template_directory_uri() . '/assets/dist/css/style.css',
+                    array(),
+                    filemtime(get_template_directory() . '/assets/dist/css/style.css')
+                );
+            }
+            
+            if (file_exists(get_template_directory() . '/assets/dist/js/main.js')) {
+                wp_enqueue_script(
+                    'customtheme-main',
+                    get_template_directory_uri() . '/assets/dist/js/main.js',
+                    array(),
+                    filemtime(get_template_directory() . '/assets/dist/js/main.js'),
+                    true
+                );
+            }
+        }
     }
     
     // Localize Script
