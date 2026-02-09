@@ -1,88 +1,147 @@
 #!/bin/bash
 
-##############################################################################
+###############################################
 # WordPress Restore Script
-# 
-# Stellt Backup wieder her
-##############################################################################
+###############################################
 
 set -e
 
-if [ -z "$1" ]; then
-    echo "Usage: ./scripts/restore.sh <backup-file>"
+# Check arguments
+if [ $# -lt 2 ]; then
+    echo "Usage: ./restore.sh [environment] [backup-name]"
+    echo ""
+    echo "Example:"
+    echo "  ./restore.sh production backup-production-20260209-120000"
+    echo ""
+    echo "Available backups:"
+    ls -1 /var/backups/wordpress/ | grep backup- | tail -10
     exit 1
 fi
 
-BACKUP_FILE="$1"
-RESTORE_DIR="$(pwd)"
-TEMP_DIR="/tmp/wp_restore_$$"
+ENVIRONMENT="$1"
+BACKUP_NAME="$2"
+BACKUP_DIR="/var/backups/wordpress"
+BACKUP_PATH="${BACKUP_DIR}/${BACKUP_NAME}"
 
-# Colors
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-RED='\033[0;31m'
-NC='\033[0m'
-
-echo -e "${GREEN}🔄 Starting WordPress Restore...${NC}"
-echo ""
+# Load environment config
+if [ "$ENVIRONMENT" = "production" ]; then
+    WP_PATH="/var/www/production"
+elif [ "$ENVIRONMENT" = "staging" ]; then
+    WP_PATH="/var/www/staging"
+else
+    echo "❌ Invalid environment: $ENVIRONMENT"
+    exit 1
+fi
 
 # Check if backup exists
-if [ ! -f "$BACKUP_FILE" ]; then
-    echo -e "${RED}Error: Backup file not found!${NC}"
+if [ ! -d "$BACKUP_PATH" ]; then
+    echo "❌ Backup not found: $BACKUP_PATH"
+    echo ""
+    echo "Available backups:"
+    ls -1 "${BACKUP_DIR}" | grep "backup-${ENVIRONMENT}-"
     exit 1
 fi
 
-# Warning
-echo -e "${RED}⚠️  WARNING: This will overwrite existing data!${NC}"
-read -p "Continue? (yes/no): " -r
-if [[ ! $REPLY =~ ^[Yy][Ee][Ss]$ ]]; then
-    echo "Restore cancelled."
+echo "⚠️  WARNING: This will OVERWRITE current ${ENVIRONMENT} data!"
+echo ""
+echo "Backup to restore: ${BACKUP_NAME}"
+echo "Target: ${WP_PATH}"
+echo ""
+read -p "Type 'RESTORE' to confirm: " CONFIRM
+
+if [ "$CONFIRM" != "RESTORE" ]; then
+    echo "❌ Restore cancelled"
     exit 0
 fi
 
-# Create temp directory
-mkdir -p "$TEMP_DIR"
+echo ""
+echo "🔄 Starting restore..."
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-# Extract backup
-echo -e "${YELLOW}→ Extracting backup...${NC}"
-tar -xzf "$BACKUP_FILE" -C "$TEMP_DIR"
+###############################################
+# 1. Create safety backup
+###############################################
 
-# Restore database
-echo -e "${YELLOW}→ Restoring database...${NC}"
-SQL_FILE=$(find "$TEMP_DIR" -name "*_db_*.sql" | head -1)
-if [ -n "$SQL_FILE" ]; then
-    cd cms
-    wp db import "$SQL_FILE"
-    echo -e "${GREEN}✓ Database restored${NC}"
-    cd ..
-fi
+echo "💾 Creating safety backup of current state..."
+SAFETY_BACKUP="${BACKUP_DIR}/safety-backup-$(date +%Y%m%d-%H%M%S)"
+mkdir -p "${SAFETY_BACKUP}"
 
-# Restore files
-echo -e "${YELLOW}→ Restoring files...${NC}"
+cd "${WP_PATH}"
+wp db export "${SAFETY_BACKUP}/database.sql" --allow-root --quiet
 
-# Uploads
-UPLOADS_FILE=$(find "$TEMP_DIR" -name "*_uploads_*.tar.gz" | head -1)
-if [ -n "$UPLOADS_FILE" ]; then
-    tar -xzf "$UPLOADS_FILE" -C cms/wp-content
-    echo -e "${GREEN}✓ Uploads restored${NC}"
-fi
+echo "✅ Safety backup created: ${SAFETY_BACKUP}"
 
-# Themes
-THEMES_FILE=$(find "$TEMP_DIR" -name "*_themes_*.tar.gz" | head -1)
-if [ -n "$THEMES_FILE" ]; then
-    tar -xzf "$THEMES_FILE" -C cms/wp-content
-    echo -e "${GREEN}✓ Themes restored${NC}"
-fi
-
-# Cleanup
-rm -rf "$TEMP_DIR"
-
-# Clear cache
-echo -e "${YELLOW}→ Clearing cache...${NC}"
-cd cms
-wp cache flush
-wp transient delete --all
-cd ..
+###############################################
+# 2. Restore Database
+###############################################
 
 echo ""
-echo -e "${GREEN}✓ Restore completed successfully!${NC}"
+echo "💾 Restoring database..."
+
+cd "${WP_PATH}"
+
+# Drop all tables
+wp db reset --yes --allow-root --quiet
+
+# Import backup
+gunzip -c "${BACKUP_PATH}/database.sql.gz" | wp db import - --allow-root
+
+echo "✅ Database restored"
+
+###############################################
+# 3. Restore Files
+###############################################
+
+echo ""
+echo "📦 Restoring files..."
+
+# Backup current uploads (just in case)
+if [ -d "${WP_PATH}/wp-content/uploads" ]; then
+    mv "${WP_PATH}/wp-content/uploads" "${SAFETY_BACKUP}/uploads-backup"
+fi
+
+# Extract backup
+tar -xzf "${BACKUP_PATH}/wp-content.tar.gz" -C "${WP_PATH}"
+
+echo "✅ Files restored"
+
+###############################################
+# 4. Fix Permissions
+###############################################
+
+echo ""
+echo "🔐 Fixing permissions..."
+
+chown -R www-data:www-data "${WP_PATH}/wp-content"
+chmod -R 755 "${WP_PATH}/wp-content"
+
+echo "✅ Permissions fixed"
+
+###############################################
+# 5. Clear Cache
+###############################################
+
+echo ""
+echo "🧹 Clearing cache..."
+
+cd "${WP_PATH}"
+wp cache flush --allow-root --quiet
+
+echo "✅ Cache cleared"
+
+###############################################
+# Summary
+###############################################
+
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "✅ Restore completed successfully!"
+echo ""
+echo "📊 Restored from: ${BACKUP_NAME}"
+echo "🔒 Safety backup: ${SAFETY_BACKUP}"
+echo ""
+echo "⚠️  Remember to:"
+echo "   1. Test the site thoroughly"
+echo "   2. Check error logs"
+echo "   3. Verify user access"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

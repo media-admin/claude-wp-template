@@ -2,7 +2,7 @@
 /**
  * Enqueue Scripts and Styles
  * 
- * @package CustomTheme
+ * @package Custom_Theme
  */
 
 if (!defined('ABSPATH')) {
@@ -10,106 +10,121 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Enqueue Theme Assets
+ * Enqueue theme assets
  */
 function customtheme_enqueue_assets() {
-    // Check if in development mode
-    $is_dev = defined('WP_DEBUG') && WP_DEBUG && file_exists(get_template_directory() . '/.dev');
+    $theme_dir = get_template_directory();
+    $theme_uri = get_template_directory_uri();
+    $manifest_path = $theme_dir . '/assets/dist/.vite/manifest.json';
     
-    if ($is_dev) {
-        // Development: Vite Dev Server
-        wp_enqueue_script(
-            'vite-client',
-            'http://localhost:3000/@vite/client',
-            array(),
-            null,
-            false
-        );
+    // Swiper CSS (CDN)
+    wp_enqueue_style(
+        'swiper',
+        'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css',
+        array(),
+        '11.0.0'
+    );
+    
+    // Check if manifest exists
+    if (!file_exists($manifest_path)) {
+        // Fallback to direct files
+        $css_path = $theme_dir . '/assets/dist/css/style.css';
+        $js_path = $theme_dir . '/assets/dist/js/main.js';
         
-        // Main JS (includes CSS via Vite)
-        wp_enqueue_script(
-            'customtheme-main',
-            'http://localhost:3000/src/js/main.js',
-            array(),
-            null,
-            true
-        );
-    } else {
-        // Production: Compiled Assets
-        $manifest_path = get_template_directory() . '/assets/dist/manifest.json';
+        if (file_exists($css_path)) {
+            wp_enqueue_style(
+                'custom-theme-style',
+                $theme_uri . '/assets/dist/css/style.css',
+                array('swiper'),
+                filemtime($css_path)
+            );
+        }
         
-        if (file_exists($manifest_path)) {
-            $manifest = json_decode(file_get_contents($manifest_path), true);
+        if (file_exists($js_path)) {
+            wp_enqueue_script(
+                'custom-theme-script',
+                $theme_uri . '/assets/dist/js/main.js',
+                array(),
+                filemtime($js_path),
+                true
+            );
+        }
+        
+        return;
+    }
+    
+    // Read manifest
+    $manifest = json_decode(file_get_contents($manifest_path), true);
+    
+    if (!$manifest) {
+        return;
+    }
+    
+    // Find the main entry (could be "src/js/main.js" or "assets/src/js/main.js")
+    $main_entry = null;
+    foreach ($manifest as $key => $entry) {
+        if (strpos($key, 'main.js') !== false && isset($entry['isEntry']) && $entry['isEntry']) {
+            $main_entry = $entry;
+            break;
+        }
+    }
+    
+    if (!$main_entry) {
+        return;
+    }
+    
+    // Enqueue CSS files
+    if (isset($main_entry['css']) && is_array($main_entry['css'])) {
+        foreach ($main_entry['css'] as $index => $css_file) {
+            $css_path = $theme_dir . '/assets/dist/' . $css_file;
             
-            // Enqueue CSS (Vite generiert main.css aus main.scss)
-            if (isset($manifest['src/scss/main.scss'])) {
+            if (file_exists($css_path)) {
                 wp_enqueue_style(
-                    'customtheme-style',
-                    get_template_directory_uri() . '/assets/dist/' . $manifest['src/scss/main.scss']['file'],
-                    array(),
-                    null
-                );
-            } elseif (isset($manifest['src/js/main.js']['css'])) {
-                // Fallback: CSS ist im main.js entry
-                foreach ($manifest['src/js/main.js']['css'] as $css_file) {
-                    wp_enqueue_style(
-                        'customtheme-style',
-                        get_template_directory_uri() . '/assets/dist/' . $css_file,
-                        array(),
-                        null
-                    );
-                }
-            }
-            
-            // Enqueue JS
-            if (isset($manifest['src/js/main.js'])) {
-                wp_enqueue_script(
-                    'customtheme-main',
-                    get_template_directory_uri() . '/assets/dist/' . $manifest['src/js/main.js']['file'],
-                    array(),
-                    null,
-                    true
-                );
-            }
-        } else {
-            // Fallback wenn kein Manifest vorhanden
-            if (file_exists(get_template_directory() . '/assets/dist/css/style.css')) {
-                wp_enqueue_style(
-                    'customtheme-style',
-                    get_template_directory_uri() . '/assets/dist/css/style.css',
-                    array(),
-                    filemtime(get_template_directory() . '/assets/dist/css/style.css')
-                );
-            }
-            
-            if (file_exists(get_template_directory() . '/assets/dist/js/main.js')) {
-                wp_enqueue_script(
-                    'customtheme-main',
-                    get_template_directory_uri() . '/assets/dist/js/main.js',
-                    array(),
-                    filemtime(get_template_directory() . '/assets/dist/js/main.js'),
-                    true
+                    'custom-theme-style-' . $index,
+                    $theme_uri . '/assets/dist/' . $css_file,
+                    array('swiper'),
+                    filemtime($css_path)
                 );
             }
         }
     }
     
-    // Localize Script
-    wp_localize_script('customtheme-main', 'customthemeData', array(
-        'ajaxUrl' => admin_url('admin-ajax.php'),
-        'nonce'   => wp_create_nonce('customtheme-nonce'),
-        'siteUrl' => get_site_url(),
-    ));
+    // Enqueue main JS
+    if (isset($main_entry['file'])) {
+        $js_path = $theme_dir . '/assets/dist/' . $main_entry['file'];
+        
+        if (file_exists($js_path)) {
+            wp_enqueue_script(
+                'custom-theme-script',
+                $theme_uri . '/assets/dist/' . $main_entry['file'],
+                array('swiper-cdn'), // ← WICHTIG: Abhängigkeit von Swiper CDN
+                filemtime($js_path),
+                true
+            );
+            
+            // Localize script
+            wp_localize_script('custom-theme-script', 'customTheme', array(
+                'ajaxUrl' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('custom-theme-nonce'),
+                'themePath' => $theme_uri,
+            ));
+        }
+    }
 }
 add_action('wp_enqueue_scripts', 'customtheme_enqueue_assets');
 
 /**
- * Add type="module" to scripts
+ * Enqueue Swiper JS from CDN
+ * 
+ * Load before theme scripts so Swiper is available globally
  */
-function customtheme_script_type_module($tag, $handle, $src) {
-    if (in_array($handle, array('customtheme-main', 'vite-client'))) {
-        $tag = str_replace('<script', '<script type="module"', $tag);
-    }
-    return $tag;
+function customtheme_enqueue_swiper_cdn() {
+    wp_enqueue_script(
+        'swiper-cdn',
+        'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js',
+        array(),
+        '11.0.0',
+        true // Load in footer
+    );
 }
-add_filter('script_loader_tag', 'customtheme_script_type_module', 10, 3);
+add_action('wp_enqueue_scripts', 'customtheme_enqueue_swiper_cdn', 5); // Priority 5 - before theme scripts (default priority 10)

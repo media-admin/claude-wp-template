@@ -1,13 +1,33 @@
 // Import CSS
 import '../scss/style.scss';
 
-// Swiper Import
-import Swiper from 'swiper';
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
+// Import Sentry
+import { initSentry } from './utils/sentry';
 
-window.Swiper = Swiper;
+// Initialize Sentry
+initSentry();
+
+// // Swiper
+// import Swiper from 'swiper';
+// import { Navigation as SwiperNavigation, Pagination as SwiperPagination, Autoplay } from 'swiper/modules';
+// import 'swiper/css';
+// import 'swiper/css/navigation';
+// import 'swiper/css/pagination';
+
+// // Stelle Swiper global zur Verfügung
+// window.Swiper = Swiper;
+// window.SwiperModules = { 
+//   Navigation: SwiperNavigation, 
+//   Pagination: SwiperPagination, 
+//   Autoplay 
+// };
+
+// // Swiper komplett aus node_modules
+// import Swiper from 'swiper/bundle';
+// import 'swiper/css/bundle';
+
+// // Global verfügbar machen
+// window.Swiper = Swiper;
 
 // Components
 import HeroSlider from './components/hero-slider';

@@ -527,32 +527,32 @@ function shortcode_buttons_js() {
         });
 
         // Pricing Tables
-    $('#insert-pricing').on('click', function(e) {
-        e.preventDefault();
-        var shortcode = '[pricing_tables columns="3"]\n' +
-            '[pricing_table title="Starter" price="29" period="pro Monat" button_text="Jetzt starten" button_link="#"]\n' +
-            '[pricing_feature icon="check"]5 Projekte[/pricing_feature]\n' +
-            '[pricing_feature icon="check"]10 GB Speicher[/pricing_feature]\n' +
-            '[pricing_feature icon="check"]E-Mail Support[/pricing_feature]\n' +
-            '[pricing_feature icon="cross"]Telefon Support[/pricing_feature]\n' +
-            '[/pricing_table]\n\n' +
-            '[pricing_table title="Professional" price="79" period="pro Monat" featured="true" badge="Beliebt" button_text="Jetzt starten" button_link="#"]\n' +
-            '[pricing_feature icon="check"]Unbegrenzte Projekte[/pricing_feature]\n' +
-            '[pricing_feature icon="check"]100 GB Speicher[/pricing_feature]\n' +
-            '[pricing_feature icon="check"]E-Mail Support[/pricing_feature]\n' +
-            '[pricing_feature icon="check"]Telefon Support[/pricing_feature]\n' +
-            '[pricing_feature icon="check"]Priorität Support[/pricing_feature]\n' +
-            '[/pricing_table]\n\n' +
-            '[pricing_table title="Enterprise" price="199" period="pro Monat" button_text="Kontakt" button_link="/kontakt"]\n' +
-            '[pricing_feature icon="check"]Alles aus Professional[/pricing_feature]\n' +
-            '[pricing_feature icon="check"]Unbegrenzter Speicher[/pricing_feature]\n' +
-            '[pricing_feature icon="check"]24/7 Support[/pricing_feature]\n' +
-            '[pricing_feature icon="check"]Dedizierter Account Manager[/pricing_feature]\n' +
-            '[pricing_feature icon="check"]Custom Integrationen[/pricing_feature]\n' +
-            '[/pricing_table]\n' +
-            '[/pricing_tables]';
-        insertShortcode(shortcode);
-    });
+        $('#insert-pricing').on('click', function(e) {
+            e.preventDefault();
+            var shortcode = '[pricing_tables columns="3"]\n' +
+                '[pricing_table title="Starter" price="29" period="pro Monat" button_text="Jetzt starten" button_link="#"]\n' +
+                '[pricing_feature icon="check"]5 Projekte[/pricing_feature]\n' +
+                '[pricing_feature icon="check"]10 GB Speicher[/pricing_feature]\n' +
+                '[pricing_feature icon="check"]E-Mail Support[/pricing_feature]\n' +
+                '[pricing_feature icon="cross"]Telefon Support[/pricing_feature]\n' +
+                '[/pricing_table]\n\n' +
+                '[pricing_table title="Professional" price="79" period="pro Monat" featured="true" badge="Beliebt" button_text="Jetzt starten" button_link="#"]\n' +
+                '[pricing_feature icon="check"]Unbegrenzte Projekte[/pricing_feature]\n' +
+                '[pricing_feature icon="check"]100 GB Speicher[/pricing_feature]\n' +
+                '[pricing_feature icon="check"]E-Mail Support[/pricing_feature]\n' +
+                '[pricing_feature icon="check"]Telefon Support[/pricing_feature]\n' +
+                '[pricing_feature icon="check"]Priorität Support[/pricing_feature]\n' +
+                '[/pricing_table]\n\n' +
+                '[pricing_table title="Enterprise" price="199" period="pro Monat" button_text="Kontakt" button_link="/kontakt"]\n' +
+                '[pricing_feature icon="check"]Alles aus Professional[/pricing_feature]\n' +
+                '[pricing_feature icon="check"]Unbegrenzter Speicher[/pricing_feature]\n' +
+                '[pricing_feature icon="check"]24/7 Support[/pricing_feature]\n' +
+                '[pricing_feature icon="check"]Dedizierter Account Manager[/pricing_feature]\n' +
+                '[pricing_feature icon="check"]Custom Integrationen[/pricing_feature]\n' +
+                '[/pricing_table]\n' +
+                '[/pricing_tables]';
+            insertShortcode(shortcode);
+        });
 
 
         
@@ -916,6 +916,9 @@ add_shortcode('notifications', 'notifications_shortcode');
 // STATS/COUNTER SHORTCODES
 // ============================================
 
+/**
+ * Stats Container (umschließt mehrere stat Items)
+ */
 function stats_shortcode($atts, $content = null) {
     $atts = shortcode_atts(array(
         'columns' => '4',
@@ -940,7 +943,58 @@ function stats_shortcode($atts, $content = null) {
     
     return '<div class="stats stats--' . $style . '" data-columns="' . $columns . '" style="' . $inline_style . '">' . do_shortcode($content) . '</div>';
 }
-add_shortcode('stats', 'stats_shortcode');
+add_shortcode('stats', 'stats_shortcode'); // ← Container Shortcode
+
+/**
+ * Single Stat Item
+ */
+function stat_shortcode($atts, $content = null) {
+    $atts = shortcode_atts(array(
+        'number' => '0',
+        'prefix' => '',
+        'suffix' => '',
+        'duration' => '2000',
+        'label' => '',
+        'icon' => '',
+        'color' => '',
+    ), $atts);
+    
+    $number = esc_attr($atts['number']);
+    $prefix = esc_html($atts['prefix']);
+    $suffix = esc_html($atts['suffix']);
+    $duration = esc_attr($atts['duration']);
+    $label = esc_html($atts['label']);
+    $icon = esc_attr($atts['icon']);
+    $color = $atts['color'] ? ' stat--' . esc_attr($atts['color']) : '';
+    
+    // Icon HTML
+    $icon_html = '';
+    if ($icon) {
+        $icon_html = '<div class="stat__icon"><span class="dashicons ' . $icon . '"></span></div>';
+    }
+    
+    // Description from content
+    $description = '';
+    if ($content) {
+        $description = '<p class="stat__description">' . wp_kses_post($content) . '</p>';
+    }
+    
+    return '
+    <div class="stat' . $color . '" data-counter>
+        ' . $icon_html . '
+        <div class="stat__content">
+            <div class="stat__number">
+                <span class="stat__prefix">' . $prefix . '</span>
+                <span class="stat__value" data-target="' . $number . '" data-duration="' . $duration . '">0</span>
+                <span class="stat__suffix">' . $suffix . '</span>
+            </div>
+            ' . ($label ? '<div class="stat__label">' . $label . '</div>' : '') . '
+            ' . $description . '
+        </div>
+    </div>';
+}
+add_shortcode('stat', 'stat_shortcode'); // ← Einzelnes Stat Item
+
 
 // ============================================
 // TIMELINE SHORTCODES

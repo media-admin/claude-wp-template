@@ -1,76 +1,83 @@
-# Wordpress - ignore core, configuration, examples, uploads and logs.
-# https://github.com/github/gitignore/blob/main/WordPress.gitignore
-
-# WordPress Core (im cms/ Verzeichnis)
+# WordPress Core
 /cms/wp-admin/
 /cms/wp-includes/
 /cms/wp-*.php
 /cms/xmlrpc.php
-/cms/license.txt
 /cms/readme.html
-/cms/index.php
+/cms/license.txt
 
-# Config
+# WordPress Config
 /cms/wp-config.php
-/cms/.htaccess
+
+# Content Uploads
+/cms/wp-content/uploads/
+
+# Node modules
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build artifacts
+/cms/wp-content/themes/custom-theme/assets/dist/
+*.map
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+*.log
+/cms/wp-content/debug.log
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Backups
+*.backup
+*-backup/
+*.sql
+*.sql.gz
 
 # Environment
 .env
-.env.*
-!.env.example
+.env.local
 
-# Dependencies
+# Composer
 /vendor/
-/node_modules/
 composer.lock
+
+# Package managers
 package-lock.json
+yarn.lock
 
-# Build
-/cms/wp-content/themes/custom-theme/assets/dist/
-*.min.js
-*.min.css
-*.map
-
-# Uploads & Cache
-/cms/wp-content/uploads/
-/cms/wp-content/upgrade/
+# Cache
 /cms/wp-content/cache/
-*.log
+/cms/wp-content/w3tc-config/
+
+# Specific plugins (wenn nicht versioniert werden sollen)
+# /cms/wp-content/plugins/
+
+# Keep custom code
+!/cms/wp-content/mu-plugins/
+!/cms/wp-content/themes/custom-theme/
+!/cms/wp-content/plugins/custom-*/
 
 
-# Example themes
-/cms/wp-content/themes/twenty*/
+# Environment-specific configs (DON'T commit these!)
+/cms/wp-config-local.php
+/cms/wp-config-staging.php
+/cms/wp-config-production.php
 
-# Example plugin
-/cms/wp-content/plugins/hello.php
-
-
-# Log files
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# htaccess
-/.htaccess
-
-# All plugins
-#
-# Note: If you wish to whitelist plugins,
-# uncomment the next line
-#/wp-content/plugins
-
-# All themes
-#
-# Note: If you wish to whitelist themes,
-# uncomment the next line
-#/wp-content/themes
-
-# OS & Editor
-.DS_Store
-Thumbs.db
-.vscode/
-.idea/
-
-# Development
-.dev
+# Keep sample files
+!/cms/wp-config-*.sample.php
