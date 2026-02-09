@@ -1,20 +1,17 @@
 <?php
 /**
- * Plugin Name: Media Lab Core Plugin
- * Plugin URI: https://www.media-lab.at
+ * Plugin Name: Agency Core
+ * Plugin URI: https://your-agency.com
  * Description: Core functionality for agency websites - Custom Post Types, ACF Fields, and Shortcodes
  * Version: 1.0.0
- * Author: Media Lab Tritremmel GmbH
- * Author URI: https://www.media-lab.at
+ * Author: Your Agency
+ * Author URI: https://your-agency.com
  * License: GPL v2 or later
  * Text Domain: agency-core
- * 
- * This plugin provides core business functionality that persists across theme changes.
- * Separates business logic from presentation layer.
  */
 
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly
+    exit;
 }
 
 // Define plugin constants
@@ -28,9 +25,6 @@ define('AGENCY_CORE_FILE', __FILE__);
  */
 class Agency_Core {
     
-    /**
-     * Single instance
-     */
     private static $instance = null;
     
     /**
@@ -96,39 +90,12 @@ class Agency_Core {
 
 /**
  * Initialize the plugin
+ * 
+ * Returns the main instance of Agency Core
  */
 function agency_core() {
     return Agency_Core::instance();
 }
 
-// Start the plugin
+// Initialize Agency Core
 agency_core();
-
-/**
- * Activation hook
- */
-register_activation_hook(__FILE__, function() {
-    // Flush rewrite rules on activation
-    flush_rewrite_rules();
-    
-    // Set activation flag
-    set_transient('agency_core_activated', true, 30);
-});
-
-/**
- * Deactivation hook
- */
-register_deactivation_hook(__FILE__, function() {
-    // Flush rewrite rules on deactivation
-    flush_rewrite_rules();
-});
-
-/**
- * Activation notice
- */
-add_action('admin_notices', function() {
-    if (get_transient('agency_core_activated')) {
-        delete_transient('agency_core_activated');
-        echo '<div class="notice notice-success is-dismissible"><p><strong>Agency Core</strong> activated successfully!</p></div>';
-    }
-});

@@ -94,3 +94,21 @@ require_once get_template_directory() . '/inc/walker-nav-menu.php';
  * Customizer Settings (optional)
  */
 // require_once get_template_directory() . '/inc/customizer.php';
+
+/**
+ * WooCommerce Support
+ */
+function customtheme_woocommerce_support() {
+    add_theme_support('woocommerce');
+    
+    // Product gallery features
+    add_theme_support('wc-product-gallery-zoom');
+    add_theme_support('wc-product-gallery-lightbox');
+    add_theme_support('wc-product-gallery-slider');
+}
+add_action('after_setup_theme', 'customtheme_woocommerce_support');
+
+/**
+ * WooCommerce customizations
+ */
+require_once get_template_directory() . '/inc/woocommerce.php';

@@ -32,6 +32,7 @@ initSentry();
 // Components
 import HeroSlider from './components/hero-slider';
 import Accordion from './components/accordion';
+import './components/carousel';
 import BackToTop from './components/back-to-top';
 import CookieNotice from './components/cookie-notice';
 import FAQAccordion from './components/faq-accordion';

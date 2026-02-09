@@ -143,13 +143,13 @@
         border-radius: $radius-sm;
         
         &.wpcf7-validation-errors {
-          background: lighten($color-error, 40%);
+          background: rgba($color-error, 0.1); // 10% Opacity statt lighten
           border: 1px solid $color-error;
           color: $color-error;
         }
         
         &.wpcf7-mail-sent-ok {
-          background: lighten($color-success, 40%);
+          background: rgba($color-error, 0.1); // 10% Opacity statt lighten
           border: 1px solid $color-success;
           color: darken($color-success, 20%);
         }

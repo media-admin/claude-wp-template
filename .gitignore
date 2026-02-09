@@ -12,6 +12,10 @@
 # Content Uploads
 /cms/wp-content/uploads/
 
+# WooCommerce Plugin
+/cms/wp-content/plugins/wooCommerce/
+*/woocommerce-de_DE*.*
+
 # Node modules
 node_modules/
 npm-debug.log

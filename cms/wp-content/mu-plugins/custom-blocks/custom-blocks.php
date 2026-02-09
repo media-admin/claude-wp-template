@@ -1450,114 +1450,79 @@ function video_player_shortcode($atts, $content = null) {
 add_shortcode('video_player', 'video_player_shortcode');
 
 // ============================================
-// FAQ ACCORDION SHORTCODE
+// FAQ ACCORDION SHORTCODES
 // ============================================
 
-function faq_accordion_shortcode($atts, $content = null) {
+/**
+ * FAQ Accordion Shortcode
+ * 
+ * Usage: [faq_accordion category="general" limit="10"]
+ */
+function faq_accordion_shortcode($atts) {
     $atts = shortcode_atts(array(
-        'style' => 'default', // default, bordered, minimal
-        'allow_multiple' => 'false',
-        'schema' => 'true', // Add Schema.org markup for SEO
+        'category' => '',
+        'limit' => '-1',
+        'style' => 'default',
     ), $atts);
     
-    $style = esc_attr($atts['style']);
-    $allow_multiple = $atts['allow_multiple'] === 'true' ? 'data-allow-multiple="true"' : '';
-    $schema = $atts['schema'] === 'true';
-    
-    // Collect FAQ items for schema
-    global $faq_items;
-    $faq_items = array();
-    
-    // Process content to collect FAQ items
-    $processed_content = do_shortcode($content);
-    
-    // Build Schema.org JSON-LD
-    $schema_markup = '';
-    if ($schema && !empty($faq_items)) {
-        $schema_data = array(
-            '@context' => 'https://schema.org',
-            '@type' => 'FAQPage',
-            'mainEntity' => array()
-        );
-        
-        foreach ($faq_items as $item) {
-            $schema_data['mainEntity'][] = array(
-                '@type' => 'Question',
-                'name' => $item['question'],
-                'acceptedAnswer' => array(
-                    '@type' => 'Answer',
-                    'text' => strip_tags($item['answer'])
-                )
-            );
-        }
-        
-        $schema_markup = '<script type="application/ld+json">' . wp_json_encode($schema_data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . '</script>';
-    }
-    
-    // Reset for next FAQ group
-    $faq_items = array();
-    
-    ob_start();
-    ?>
-    <?php echo $schema_markup; ?>
-    <div class="faq-accordion faq-accordion--<?php echo $style; ?>" <?php echo $allow_multiple; ?>>
-        <?php echo $processed_content; ?>
-    </div>
-    <?php
-    return ob_get_clean();
-}
-add_shortcode('faq_accordion', 'faq_accordion_shortcode');
-
-function faq_item_shortcode($atts, $content = null) {
-    static $faq_index = 0;
-    $faq_index++;
-    
-    $atts = shortcode_atts(array(
-        'question' => '',
-        'open' => 'false',
-        'category' => '', // Optional category/tag
-    ), $atts);
-    
-    $question = esc_html($atts['question']);
-    $answer = wpautop(do_shortcode($content));
-    $is_open = $atts['open'] === 'true';
-    $category = esc_html($atts['category']);
-    
-    // Store for schema markup
-    global $faq_items;
-    if (!isset($faq_items)) {
-        $faq_items = array();
-    }
-    $faq_items[] = array(
-        'question' => $question,
-        'answer' => $answer
+    $args = array(
+        'post_type' => 'faq',
+        'posts_per_page' => intval($atts['limit']),
+        'orderby' => 'meta_value_num',
+        'meta_key' => 'display_order',
+        'order' => 'ASC',
+        'post_status' => 'publish',
     );
     
-    $active_class = $is_open ? ' is-active' : '';
-    $expanded = $is_open ? 'true' : 'false';
-    $icon = $is_open ? '−' : '+';
-    $display = $is_open ? 'style="display:block;"' : '';
+    if (!empty($atts['category'])) {
+        $args['tax_query'] = array(
+            array(
+                'taxonomy' => 'faq_category',
+                'field' => 'slug',
+                'terms' => $atts['category'],
+            ),
+        );
+    }
     
-    ob_start();
-    ?>
-    <div class="faq-item<?php echo $active_class; ?>" data-animate="fade-in-up" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-        <?php if ($category) : ?>
-            <span class="faq-item__category"><?php echo $category; ?></span>
-        <?php endif; ?>
-        <button class="faq-item__question" aria-expanded="<?php echo $expanded; ?>" itemprop="name">
-            <span class="faq-item__question-text"><?php echo $question; ?></span>
-            <span class="faq-item__icon"><?php echo $icon; ?></span>
-        </button>
-        <div class="faq-item__answer" <?php echo $display; ?> itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-            <div class="faq-item__answer-inner" itemprop="text">
-                <?php echo $answer; ?>
-            </div>
-        </div>
-    </div>
-    <?php
-    return ob_get_clean();
+    $faqs = new WP_Query($args);
+    
+    if (!$faqs->have_posts()) {
+        return '<p>Keine FAQs gefunden.</p>';
+    }
+    
+    $output = '<div class="faq-accordion faq-accordion--' . esc_attr($atts['style']) . '">';
+    
+    $index = 0;
+    while ($faqs->have_posts()) {
+        $faqs->the_post();
+        $question = get_the_title();
+        $answer = get_field('answer');
+        $is_first = $index === 0;
+        
+        $output .= '<div class="faq-item' . ($is_first ? ' is-active' : '') . '">';
+        $output .= '<button class="faq-question" aria-expanded="' . ($is_first ? 'true' : 'false') . '">';
+        $output .= '<span class="faq-question__text">' . esc_html($question) . '</span>';
+        $output .= '<span class="faq-question__icon">';
+        $output .= '<svg width="20" height="20" viewBox="0 0 20 20" fill="none">';
+        $output .= '<path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+        $output .= '</svg>';
+        $output .= '</span>';
+        $output .= '</button>';
+        $output .= '<div class="faq-answer"' . ($is_first ? ' style="display:block;"' : '') . '>';
+        $output .= '<div class="faq-answer__content">' . wp_kses_post($answer) . '</div>';
+        $output .= '</div>';
+        $output .= '</div>';
+        
+        $index++;
+    }
+    
+    $output .= '</div>';
+    
+    wp_reset_postdata();
+    
+    return $output;
 }
-add_shortcode('faq_item', 'faq_item_shortcode');
+add_shortcode('faq_accordion', 'faq_accordion_shortcode');
 
 // ============================================
 // TEAM QUERY SHORTCODE
@@ -2202,3 +2167,76 @@ function pricing_feature_shortcode($atts, $content = null) {
     return '<div class="pricing-feature' . $highlight . '">' . $icon_html . '<span>' . esc_html($content) . '</span></div>';
 }
 add_shortcode('pricing_feature', 'pricing_feature_shortcode');
+
+// ============================================
+// WOOCOMMERCE SHORTCODES
+// ============================================
+
+/**
+ * Products Grid Shortcode
+ */
+function products_grid_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'columns' => '3',
+        'limit' => '8',
+        'category' => '',
+        'featured' => '',
+        'sale' => '',
+        'orderby' => 'date',
+    ), $atts);
+    
+    $args = array(
+        'post_type' => 'product',
+        'posts_per_page' => intval($atts['limit']),
+        'orderby' => $atts['orderby'],
+    );
+    
+    if ($atts['category']) {
+        $args['tax_query'] = array(
+            array(
+                'taxonomy' => 'product_cat',
+                'field' => 'slug',
+                'terms' => $atts['category'],
+            ),
+        );
+    }
+    
+    if ($atts['featured'] === 'true') {
+        $args['tax_query'][] = array(
+            'taxonomy' => 'product_visibility',
+            'field' => 'name',
+            'terms' => 'featured',
+        );
+    }
+    
+    if ($atts['sale'] === 'true') {
+        $args['meta_query'] = array(
+            array(
+                'key' => '_sale_price',
+                'value' => 0,
+                'compare' => '>',
+                'type' => 'NUMERIC',
+            ),
+        );
+    }
+    
+    $products = new WP_Query($args);
+    
+    ob_start();
+    
+    if ($products->have_posts()) {
+        echo '<ul class="products columns-' . esc_attr($atts['columns']) . '">';
+        
+        while ($products->have_posts()) {
+            $products->the_post();
+            wc_get_template_part('content', 'product');
+        }
+        
+        echo '</ul>';
+        
+        wp_reset_postdata();
+    }
+    
+    return ob_get_clean();
+}
+add_shortcode('products_grid', 'products_grid_shortcode');
