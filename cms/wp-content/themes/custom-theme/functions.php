@@ -43,6 +43,26 @@ require_once CUSTOMTHEME_DIR . '/inc/helpers.php';
 require_once CUSTOMTHEME_DIR . '/inc/performance.php';
 
 
+// Unnötige Dashboard-Widgets entfernen
+add_action('wp_dashboard_setup', function() {
+    remove_meta_box('dashboard_primary', 'dashboard', 'side');   // WP News
+    remove_meta_box('dashboard_quick_press', 'dashboard', 'side'); // Schneller Entwurf
+});
+
+
+// Eigenes Logo auf der Login-Seite => aus GEMINI
+
+
+
+// WP-Version aus dem Header entfernen
+add_filter('the_generator', '__return_empty_string');
+
+// Login-Fehlermeldungen generisch halten (erschwert Brute-Force)
+add_filter('login_errors', function() {
+    return 'Da lief wohl etwas schief. Bitte versuche es erneut.';
+});
+
+
 /**
  * Fix Gutenberg JSON Response für Shortcodes
  */
@@ -87,6 +107,38 @@ function customtheme_webp_is_displayable($result, $path) {
     return $result;
 }
 add_filter('file_is_displayable_image', 'customtheme_webp_is_displayable', 10, 2);
+
+
+// SVG Upload erlauben
+add_filter('upload_mimes', function($mimes) {
+    $mimes['svg'] = 'image/svg+xml';
+    return $mimes;
+});
+
+// SVG in der Mediathek korrekt anzeigen
+add_action('admin_head', function() {
+    echo '<style>
+        .attachment-266x266, .thumbnail img[src$=".svg"] { width: 100% !important; height: auto !important; }
+    </style>';
+});
+
+
+// Emojis entfernen (spart HTTP-Requests)
+add_action('init', function() {
+    remove_action('wp_head', 'print_emoji_detection_script', 7);
+    remove_action('admin_print_scripts', 'print_emoji_detection_script');
+    remove_action('wp_print_styles', 'print_emoji_styles');
+    remove_action('admin_print_styles', 'print_emoji_styles');
+});
+
+// WP-Embeds deaktivieren
+add_action('wp_footer', function() {
+    wp_deregister_script('wp-embed');
+});
+
+// XML-RPC abschalten (Sicherheitsrisiko & oft ungenutzt)
+add_filter('xmlrpc_enabled', '__return_false');
+
 
 // Load Dashicons in Frontend
 add_action('wp_enqueue_scripts', 'load_dashicons_frontend');
