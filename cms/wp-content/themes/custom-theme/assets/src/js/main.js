@@ -49,6 +49,9 @@ import StatsCounter from './components/stats-counter';
 import Tabs from './components/tabs';
 import TestimonialsSlider from './components/testimonials-slider';
 import VideoPlayer from './components/video-player';
+import './components/ajax-search';
+import './components/load-more';
+import './components/google-maps';
 
 // Theme loaded
 console.log('✨ Custom Theme loaded with Vite + Autoprefixer');

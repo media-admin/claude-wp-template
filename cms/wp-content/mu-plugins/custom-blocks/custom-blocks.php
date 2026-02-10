@@ -2240,3 +2240,461 @@ function products_grid_shortcode($atts) {
     return ob_get_clean();
 }
 add_shortcode('products_grid', 'products_grid_shortcode');
+
+// ============================================
+// AJAX SEARCH SHORTCODE
+// ============================================
+
+/**
+ * AJAX Search Shortcode
+ * 
+ * Usage: [ajax_search post_types="post,page,team,project" placeholder="Suche..." limit="10"]
+ */
+function ajax_search_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'post_types' => 'post,page',
+        'placeholder' => 'Suche nach Inhalten...',
+        'limit' => '10',
+        'min_chars' => '2',
+        'style' => 'default',
+    ), $atts);
+    
+    $search_id = 'ajax-search-' . uniqid();
+    $post_types = explode(',', $atts['post_types']);
+    $post_types_json = json_encode(array_map('trim', $post_types));
+    
+    ob_start();
+    ?>
+    <div class="ajax-search ajax-search--<?php echo esc_attr($atts['style']); ?>" id="<?php echo esc_attr($search_id); ?>">
+        <div class="ajax-search__form">
+            <div class="ajax-search__input-wrapper">
+                <input 
+                    type="search" 
+                    class="ajax-search__input" 
+                    placeholder="<?php echo esc_attr($atts['placeholder']); ?>"
+                    data-post-types='<?php echo esc_attr($post_types_json); ?>'
+                    data-limit="<?php echo esc_attr($atts['limit']); ?>"
+                    data-min-chars="<?php echo esc_attr($atts['min_chars']); ?>"
+                    autocomplete="off"
+                >
+                <span class="ajax-search__icon">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M19 19l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+                <button type="button" class="ajax-search__clear" aria-label="Clear search" style="display: none;">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M15 5L5 15M5 5l10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+                <span class="ajax-search__loading" style="display: none;">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="2" stroke-opacity="0.3"/>
+                        <path d="M10 2a8 8 0 0 1 8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                            <animateTransform attributeName="transform" type="rotate" from="0 10 10" to="360 10 10" dur="1s" repeatCount="indefinite"/>
+                        </path>
+                    </svg>
+                </span>
+            </div>
+        </div>
+        
+        <div class="ajax-search__results" style="display: none;">
+            <div class="ajax-search__results-list"></div>
+        </div>
+        
+        <div class="ajax-search__no-results" style="display: none;">
+            <p>Keine Ergebnisse gefunden.</p>
+        </div>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('ajax_search', 'ajax_search_shortcode');
+
+// ============================================
+// LOAD MORE SHORTCODES
+// ============================================
+
+/**
+ * Posts with Load More Button
+ * 
+ * Usage: [posts_load_more post_type="post" posts_per_page="6" category="news" template="card"]
+ */
+/**
+ * Posts with Load More Button
+ */
+function posts_load_more_shortcode($atts, $content = null) {
+    // Default attributes
+    $defaults = array(
+        'post_type' => 'post',
+        'posts_per_page' => '6',
+        'category' => '',
+        'orderby' => 'date',
+        'order' => 'DESC',
+        'template' => 'card',
+        'button_text' => 'Mehr laden',
+        'loading_text' => 'Lädt...',
+        'columns' => '3',
+    );
+    
+    // Merge with provided attributes
+    $atts = shortcode_atts($defaults, $atts, 'posts_load_more');
+    
+    // Ensure all required keys exist (WordPress sometimes doesn't parse all attributes)
+    foreach ($defaults as $key => $default_value) {
+        if (!isset($atts[$key]) || $atts[$key] === '') {
+            $atts[$key] = $default_value;
+        }
+    }
+    
+    // Sanitize
+    $atts['post_type'] = sanitize_text_field($atts['post_type']);
+    $atts['posts_per_page'] = intval($atts['posts_per_page']);
+    $atts['category'] = sanitize_text_field($atts['category']);
+    $atts['orderby'] = sanitize_text_field($atts['orderby']);
+    $atts['order'] = sanitize_text_field($atts['order']);
+    $atts['template'] = sanitize_text_field($atts['template']);
+    $atts['button_text'] = sanitize_text_field($atts['button_text']);
+    $atts['loading_text'] = sanitize_text_field($atts['loading_text']);
+    $atts['columns'] = sanitize_text_field($atts['columns']);
+    
+    $container_id = 'load-more-' . uniqid();
+    $grid_id = $container_id . '-grid';
+    
+    // Initial query
+    $args = array(
+        'post_type' => $atts['post_type'],
+        'posts_per_page' => $atts['posts_per_page'],
+        'post_status' => 'publish',
+        'orderby' => $atts['orderby'],
+        'order' => $atts['order'],
+    );
+    
+    if (!empty($atts['category'])) {
+        $taxonomy = agency_core_get_taxonomy_for_post_type($atts['post_type']);
+        
+        if ($taxonomy) {
+            $args['tax_query'] = array(
+                array(
+                    'taxonomy' => $taxonomy,
+                    'field' => 'slug',
+                    'terms' => $atts['category'],
+                ),
+            );
+        }
+    }
+    
+    $query = new WP_Query($args);
+    
+    ob_start();
+    ?>
+    <div class="posts-load-more" id="<?php echo esc_attr($container_id); ?>">
+        <div class="posts-load-more__grid posts-load-more__grid--columns-<?php echo esc_attr($atts['columns']); ?>" id="<?php echo esc_attr($grid_id); ?>">
+            <?php
+            if ($query->have_posts()) {
+                while ($query->have_posts()) {
+                    $query->the_post();
+                    posts_load_more_render_template($atts['template']);
+                }
+            } else {
+                echo '<p>Keine Beiträge gefunden.</p>';
+            }
+            ?>
+        </div>
+        
+        <?php if ($query->max_num_pages > 1) : ?>
+            <div class="posts-load-more__button-wrapper">
+                <button 
+                    class="posts-load-more__button"
+                    data-post-type="<?php echo esc_attr($atts['post_type']); ?>"
+                    data-posts-per-page="<?php echo esc_attr($atts['posts_per_page']); ?>"
+                    data-category="<?php echo esc_attr($atts['category']); ?>"
+                    data-orderby="<?php echo esc_attr($atts['orderby']); ?>"
+                    data-order="<?php echo esc_attr($atts['order']); ?>"
+                    data-template="<?php echo esc_attr($atts['template']); ?>"
+                    data-max-pages="<?php echo esc_attr($query->max_num_pages); ?>"
+                    data-current-page="1"
+                    data-container="#<?php echo esc_attr($grid_id); ?>"
+                    data-button-text="<?php echo esc_attr($atts['button_text']); ?>"
+                    data-loading-text="<?php echo esc_attr($atts['loading_text']); ?>"
+                >
+                    <span class="posts-load-more__button-text"><?php echo esc_html($atts['button_text']); ?></span>
+                    <span class="posts-load-more__button-icon">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M10 4v12m6-6H4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </span>
+                </button>
+            </div>
+        <?php else: ?>
+            <p class="posts-load-more__no-more">Alle Beiträge werden angezeigt.</p>
+        <?php endif; ?>
+    </div>
+    <?php
+    
+    wp_reset_postdata();
+    
+    return ob_get_clean();
+}
+add_shortcode('posts_load_more', 'posts_load_more_shortcode');
+
+/**
+ * Render template for load more
+ */
+function posts_load_more_render_template($template) {
+    switch ($template) {
+        case 'card':
+            posts_load_more_template_card();
+            break;
+            
+        case 'team':
+            posts_load_more_template_team();
+            break;
+            
+        case 'project':
+            posts_load_more_template_project();
+            break;
+            
+        case 'list':
+            posts_load_more_template_list();
+            break;
+            
+        default:
+            posts_load_more_template_card();
+            break;
+    }
+}
+
+/**
+ * Card Template
+ */
+function posts_load_more_template_card() {
+    ?>
+    <article class="post-card" data-post-id="<?php echo get_the_ID(); ?>">
+        <?php if (has_post_thumbnail()) : ?>
+            <div class="post-card__thumbnail">
+                <a href="<?php the_permalink(); ?>">
+                    <?php the_post_thumbnail('medium'); ?>
+                </a>
+            </div>
+        <?php endif; ?>
+        
+        <div class="post-card__content">
+            <h3 class="post-card__title">
+                <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+            </h3>
+            
+            <div class="post-card__meta">
+                <span class="post-card__date"><?php echo get_the_date('d.m.Y'); ?></span>
+            </div>
+            
+            <div class="post-card__excerpt">
+                <?php echo wp_trim_words(get_the_excerpt(), 20); ?>
+            </div>
+            
+            <a href="<?php the_permalink(); ?>" class="post-card__link">
+                Mehr lesen
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M6 12l4-4-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </a>
+        </div>
+    </article>
+    <?php
+}
+
+/**
+ * Team Template
+ */
+function posts_load_more_template_team() {
+    $role = get_field('role');
+    $email = get_field('email');
+    ?>
+    <div class="team-card" data-post-id="<?php echo get_the_ID(); ?>">
+        <?php if (has_post_thumbnail()) : ?>
+            <div class="team-card__image">
+                <?php the_post_thumbnail('medium'); ?>
+            </div>
+        <?php endif; ?>
+        
+        <div class="team-card__content">
+            <h3 class="team-card__name"><?php the_title(); ?></h3>
+            
+            <?php if ($role) : ?>
+                <p class="team-card__role"><?php echo esc_html($role); ?></p>
+            <?php endif; ?>
+            
+            <?php if ($email) : ?>
+                <a href="mailto:<?php echo esc_attr($email); ?>" class="team-card__email">
+                    <?php echo esc_html($email); ?>
+                </a>
+            <?php endif; ?>
+        </div>
+    </div>
+    <?php
+}
+
+/**
+ * Project Template
+ */
+function posts_load_more_template_project() {
+    $client = get_field('client');
+    $project_date = get_field('project_date');
+    ?>
+    <article class="project-card" data-post-id="<?php echo get_the_ID(); ?>">
+        <?php if (has_post_thumbnail()) : ?>
+            <div class="project-card__image">
+                <a href="<?php the_permalink(); ?>">
+                    <?php the_post_thumbnail('large'); ?>
+                </a>
+            </div>
+        <?php endif; ?>
+        
+        <div class="project-card__content">
+            <h3 class="project-card__title">
+                <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+            </h3>
+            
+            <?php if ($client) : ?>
+                <p class="project-card__client">Client: <?php echo esc_html($client); ?></p>
+            <?php endif; ?>
+            
+            <?php if ($project_date) : ?>
+                <p class="project-card__date"><?php echo esc_html($project_date); ?></p>
+            <?php endif; ?>
+        </div>
+    </article>
+    <?php
+}
+
+/**
+ * List Template
+ */
+function posts_load_more_template_list() {
+    ?>
+    <article class="post-list-item" data-post-id="<?php echo get_the_ID(); ?>">
+        <div class="post-list-item__content">
+            <h3 class="post-list-item__title">
+                <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+            </h3>
+            
+            <div class="post-list-item__meta">
+                <span class="post-list-item__date"><?php echo get_the_date('d.m.Y'); ?></span>
+            </div>
+            
+            <div class="post-list-item__excerpt">
+                <?php echo wp_trim_words(get_the_excerpt(), 30); ?>
+            </div>
+        </div>
+        
+        <?php if (has_post_thumbnail()) : ?>
+            <div class="post-list-item__thumbnail">
+                <a href="<?php the_permalink(); ?>">
+                    <?php the_post_thumbnail('thumbnail'); ?>
+                </a>
+            </div>
+        <?php endif; ?>
+    </article>
+    <?php
+}
+
+// ============================================
+// GOOGLE MAPS SHORTCODE (DSGVO)
+// ============================================
+
+/**
+ * DSGVO-konforme Google Maps
+ * 
+ * Usage: [google_map id="123" height="400px"]
+ * Usage: [google_map address="Stephansplatz 1, 1010 Wien" lat="48.2082" lng="16.3738"]
+ */
+function google_map_shortcode($atts) {
+    static $map_counter = 0;
+    $map_counter++;
+    
+    $atts = shortcode_atts(array(
+        'id' => '',
+        'address' => '',
+        'lat' => '',
+        'lng' => '',
+        'zoom' => '15',
+        'height' => '400px',
+        'marker_title' => '',
+        'style' => 'default',
+    ), $atts);
+    
+    // Load from CPT if ID provided
+    if (!empty($atts['id'])) {
+        $post_id = intval($atts['id']);
+        $atts['address'] = get_field('address', $post_id);
+        $atts['lat'] = get_field('latitude', $post_id);
+        $atts['lng'] = get_field('longitude', $post_id);
+        $atts['zoom'] = get_field('zoom', $post_id) ?: '15';
+        $atts['marker_title'] = get_field('marker_title', $post_id) ?: get_the_title($post_id);
+        $atts['style'] = get_field('map_style', $post_id) ?: 'default';
+    }
+    
+    // Validate required fields
+    if (empty($atts['lat']) || empty($atts['lng'])) {
+        return '<p>⚠️ Google Maps: Lat/Lng fehlt</p>';
+    }
+    
+    $map_id = 'gmap-' . $map_counter;
+    
+    ob_start();
+    ?>
+    <div class="google-map-wrapper" 
+         data-map-id="<?php echo esc_attr($map_id); ?>"
+         data-lat="<?php echo esc_attr($atts['lat']); ?>"
+         data-lng="<?php echo esc_attr($atts['lng']); ?>"
+         data-zoom="<?php echo esc_attr($atts['zoom']); ?>"
+         data-marker-title="<?php echo esc_attr($atts['marker_title']); ?>"
+         data-style="<?php echo esc_attr($atts['style']); ?>"
+         style="height: <?php echo esc_attr($atts['height']); ?>;">
+        
+        <!-- DSGVO Overlay (before consent) -->
+        <div class="google-map-overlay">
+            <div class="google-map-overlay__content">
+                <div class="google-map-overlay__icon">
+                    <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                        <path d="M32 4C20.96 4 12 12.96 12 24c0 13.5 20 36 20 36s20-22.5 20-36c0-11.04-8.96-20-20-20zm0 27c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z" fill="currentColor"/>
+                    </svg>
+                </div>
+                
+                <h3 class="google-map-overlay__title">Google Maps</h3>
+                
+                <p class="google-map-overlay__text">
+                    Um die Karte anzuzeigen, benötigen wir Ihre Zustimmung. 
+                    Durch das Laden der Karte akzeptieren Sie die 
+                    <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Datenschutzerklärung von Google</a>.
+                </p>
+                
+                <?php if (!empty($atts['address'])) : ?>
+                    <p class="google-map-overlay__address">
+                        <strong>Adresse:</strong><br>
+                        <?php echo nl2br(esc_html($atts['address'])); ?>
+                    </p>
+                <?php endif; ?>
+                
+                <button class="google-map-overlay__button" data-action="load-map">
+                    Karte laden
+                </button>
+                
+                <p class="google-map-overlay__privacy">
+                    <small>
+                        Es werden Cookies von Google gesetzt. 
+                        <a href="/datenschutz">Mehr erfahren</a>
+                    </small>
+                </p>
+            </div>
+        </div>
+        
+        <!-- Map Container (loaded after consent) -->
+        <div id="<?php echo esc_attr($map_id); ?>" class="google-map-canvas"></div>
+    </div>
+    <?php
+    
+    return ob_get_clean();
+}
+add_shortcode('google_map', 'google_map_shortcode');

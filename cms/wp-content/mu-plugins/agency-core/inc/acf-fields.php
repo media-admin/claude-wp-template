@@ -45,6 +45,9 @@ function agency_core_register_acf_fields() {
     // Carousel Fields
     agency_core_register_carousel_fields();
 
+    // Google Maps Fields
+    agency_core_register_maps_fields();
+
     // WooCommerce Product Fields
     agency_core_register_product_fields();
 
@@ -637,6 +640,96 @@ function agency_core_register_carousel_fields() {
                     'param' => 'post_type',
                     'operator' => '==',
                     'value' => 'carousel',
+                ),
+            ),
+        ),
+        'menu_order' => 0,
+        'position' => 'normal',
+        'style' => 'default',
+    ));
+}
+
+/**
+ * Google Maps Fields
+ */
+function agency_core_register_maps_fields() {
+    acf_add_local_field_group(array(
+        'key' => 'group_gmap',
+        'title' => 'Map Details',
+        'fields' => array(
+            array(
+                'key' => 'field_gmap_address',
+                'label' => 'Adresse',
+                'name' => 'address',
+                'type' => 'text',
+                'required' => 1,
+                'placeholder' => 'Musterstraße 123, 1010 Wien',
+                'instructions' => 'Vollständige Adresse für die Karte',
+            ),
+            array(
+                'key' => 'field_gmap_lat',
+                'label' => 'Latitude (Breitengrad)',
+                'name' => 'latitude',
+                'type' => 'text',
+                'required' => 1,
+                'placeholder' => '48.2082',
+                'instructions' => 'z.B. 48.2082 (Google Maps → Rechtsklick → Koordinaten)',
+            ),
+            array(
+                'key' => 'field_gmap_lng',
+                'label' => 'Longitude (Längengrad)',
+                'name' => 'longitude',
+                'type' => 'text',
+                'required' => 1,
+                'placeholder' => '16.3738',
+                'instructions' => 'z.B. 16.3738',
+            ),
+            array(
+                'key' => 'field_gmap_zoom',
+                'label' => 'Zoom Level',
+                'name' => 'zoom',
+                'type' => 'number',
+                'default_value' => 15,
+                'min' => 1,
+                'max' => 20,
+                'step' => 1,
+                'instructions' => '1 = Welt, 15 = Stadt, 20 = Gebäude',
+            ),
+            array(
+                'key' => 'field_gmap_marker_title',
+                'label' => 'Marker Titel',
+                'name' => 'marker_title',
+                'type' => 'text',
+                'placeholder' => 'Unser Büro',
+            ),
+            array(
+                'key' => 'field_gmap_marker_description',
+                'label' => 'Marker Beschreibung',
+                'name' => 'marker_description',
+                'type' => 'textarea',
+                'rows' => 3,
+                'placeholder' => 'Zusätzliche Infos für den Marker',
+            ),
+            array(
+                'key' => 'field_gmap_style',
+                'label' => 'Map Style',
+                'name' => 'map_style',
+                'type' => 'select',
+                'choices' => array(
+                    'default' => 'Standard',
+                    'silver' => 'Silber',
+                    'dark' => 'Dark Mode',
+                    'retro' => 'Retro',
+                ),
+                'default_value' => 'default',
+            ),
+        ),
+        'location' => array(
+            array(
+                array(
+                    'param' => 'post_type',
+                    'operator' => '==',
+                    'value' => 'gmap',
                 ),
             ),
         ),

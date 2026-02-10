@@ -53,6 +53,8 @@ class Agency_Core {
         require_once AGENCY_CORE_PATH . 'inc/acf-fields.php';
         require_once AGENCY_CORE_PATH . 'inc/shortcodes.php';
         require_once AGENCY_CORE_PATH . 'inc/admin.php';
+        require_once AGENCY_CORE_PATH . 'inc/ajax-search.php';
+        require_once AGENCY_CORE_PATH . 'inc/ajax-load-more.php';
     }
     
     /**
@@ -99,3 +101,49 @@ function agency_core() {
 
 // Initialize Agency Core
 agency_core();
+
+/**
+ * Register Google Maps Post Type
+ */
+function agency_core_register_maps_cpt() {
+    $labels = array(
+        'name'                  => _x('Maps', 'Post Type General Name', 'agency-core'),
+        'singular_name'         => _x('Map', 'Post Type Singular Name', 'agency-core'),
+        'menu_name'             => __('Google Maps', 'agency-core'),
+        'name_admin_bar'        => __('Map', 'agency-core'),
+        'all_items'             => __('All Maps', 'agency-core'),
+        'add_new_item'          => __('Add New Map', 'agency-core'),
+        'add_new'               => __('Add New', 'agency-core'),
+        'new_item'              => __('New Map', 'agency-core'),
+        'edit_item'             => __('Edit Map', 'agency-core'),
+        'update_item'           => __('Update Map', 'agency-core'),
+        'view_item'             => __('View Map', 'agency-core'),
+        'search_items'          => __('Search Map', 'agency-core'),
+        'not_found'             => __('Not found', 'agency-core'),
+        'not_found_in_trash'    => __('Not found in Trash', 'agency-core'),
+    );
+    
+    $args = array(
+        'label'                 => __('Map', 'agency-core'),
+        'description'           => __('Google Maps Locations', 'agency-core'),
+        'labels'                => $labels,
+        'supports'              => array('title'),
+        'hierarchical'          => false,
+        'public'                => false,
+        'show_ui'               => true,
+        'show_in_menu'          => true,
+        'menu_position'         => 27,
+        'menu_icon'             => 'dashicons-location-alt',
+        'show_in_admin_bar'     => true,
+        'show_in_nav_menus'     => false,
+        'can_export'            => true,
+        'has_archive'           => false,
+        'exclude_from_search'   => true,
+        'publicly_queryable'    => false,
+        'capability_type'       => 'post',
+        'show_in_rest'          => true,
+    );
+    
+    register_post_type('gmap', $args);
+}
+add_action('init', 'agency_core_register_maps_cpt', 0);

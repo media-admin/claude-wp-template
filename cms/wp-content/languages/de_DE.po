@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the WordPress - 6.9.x - Development package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2026-01-29 07:27:37+0000\n"
+"PO-Revision-Date: 2026-02-08 23:27:40+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -4904,7 +4904,7 @@ msgstr "Die URL, auf die dieser Menüeintrag zeigt."
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-menu-items-controller.php:769
 msgid "The singular label used to describe this type of menu item."
-msgstr "Die einzigartige Beschriftung, um diese Art Menüpunkt zu beschreiben."
+msgstr "Die einzigartige Beschriftung, um diese Art Menüeintrag zu beschreiben."
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-menu-items-controller.php:857
 msgid "The target attribute of the link element for this menu item."
@@ -4912,7 +4912,7 @@ msgstr "Das Zielattribut des Link-Elements für diesen Menüeintrag."
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-menu-items-controller.php:849
 msgid "The database ID of the original object this menu item represents, for example the ID for posts or the term_id for categories."
-msgstr "Die Datenbank-ID des ursprünglichen Objekts, das dieser Menüpunkt repräsentiert, zum Beispiel die ID für Beiträge oder die term_id für Kategorien."
+msgstr "Die Datenbank-ID des ursprünglichen Objekts, das dieser Menüeintrag repräsentiert, zum Beispiel die ID für Beiträge oder die term_id für Kategorien."
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-menu-items-controller.php:840
 msgid "The type of object originally represented, such as \"category\", \"post\", or \"attachment\"."
@@ -11389,17 +11389,17 @@ msgstr "Audio-Datei auswählen"
 #. translators: %s: Header height in pixels.
 #: wp-includes/customize/class-wp-customize-header-image-control.php:225
 msgid "Click &#8220;Add Image&#8221; to upload an image file from your computer. Your theme works best with an image with a header height of %s pixels &#8212; you&#8217;ll be able to crop your image once you upload it for a perfect fit."
-msgstr "Klicke auf &#8222;Bild hinzufügen&#8220;, um ein Bild von deinem Computer hochzuladen. Das Theme wirkt am besten mit einem Header-Bild, das eine Höhe von %s Pixel hat. Du kannst dein Bild nach dem Hochladen zuschneiden, um es optimal anzupassen."
+msgstr "Klicke auf &#8222;Bild hinzufügen&#8220;, um ein Bild von deinem Computer hochzuladen. Das Theme wirkt am besten mit einem Header-Bild, das eine Höhe von %s Pixel hat. Du kannst dein Bild nach dem Hochladen zuschneiden, um es optimal anzupassen."
 
 #. translators: %s: Header width in pixels.
 #: wp-includes/customize/class-wp-customize-header-image-control.php:219
 msgid "Click &#8220;Add Image&#8221; to upload an image file from your computer. Your theme works best with an image with a header width of %s pixels &#8212; you&#8217;ll be able to crop your image once you upload it for a perfect fit."
-msgstr "Klicke auf &#8222;Bild hinzufügen&#8220;, um ein Bild von deinem Computer hochzuladen. Das Theme wirkt am besten mit einem Header-Bild, das eine Breite von %s Pixel hat. Du kannst dein Bild nach dem Hochladen zuschneiden, um es optimal anzupassen."
+msgstr "Klicke auf &#8222;Bild hinzufügen&#8220;, um ein Bild von deinem Computer hochzuladen. Das Theme wirkt am besten mit einem Header-Bild, das eine Breite von %s Pixel hat. Du kannst dein Bild nach dem Hochladen zuschneiden, um es optimal anzupassen."
 
 #. translators: %s: Header size in pixels.
 #: wp-includes/customize/class-wp-customize-header-image-control.php:213
 msgid "Click &#8220;Add Image&#8221; to upload an image file from your computer. Your theme works best with an image with a header size of %s pixels &#8212; you&#8217;ll be able to crop your image once you upload it for a perfect fit."
-msgstr "Klicke auf &#8222;Bild hinzufügen&#8220;, um ein Bild von deinem Computer hochzuladen. Das Theme wirkt am besten mit einem Header-Bild, das eine Größe von %s Pixel hat. Du kannst dein Bild nach dem Hochladen zuschneiden, um es optimal anzupassen."
+msgstr "Klicke auf &#8222;Bild hinzufügen&#8220;, um ein Bild von deinem Computer hochzuladen. Das Theme wirkt am besten mit einem Header-Bild, das eine Größe von %s Pixel hat. Du kannst dein Bild nach dem Hochladen zuschneiden, um es optimal anzupassen."
 
 #: wp-includes/customize/class-wp-customize-header-image-control.php:209
 msgid "Click &#8220;Add Image&#8221; to upload an image file from your computer. Your theme works best with an image that matches the size of your video &#8212; you&#8217;ll be able to crop your image once you upload it for a perfect fit."
@@ -13279,7 +13279,7 @@ msgstr "Ergebnisse auf alle begrenzen, die mit einer Zeichenfolge übereinstimme
 #: wp-includes/rest-api/endpoints/class-wp-rest-abilities-v1-list-controller.php:350
 #: wp-includes/rest-api/endpoints/class-wp-rest-controller.php:353
 msgid "Maximum number of items to be returned in result set."
-msgstr "Maximale Anzahl der im Ergebnissatz zurückgegebenen Elemente."
+msgstr "Maximale Anzahl der im Ergebnissatz zurückzugebenden Elemente."
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-abilities-v1-categories-controller.php:279
 #: wp-includes/rest-api/endpoints/class-wp-rest-abilities-v1-list-controller.php:344
