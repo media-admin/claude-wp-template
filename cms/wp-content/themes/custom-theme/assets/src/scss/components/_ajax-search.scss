@@ -44,6 +44,72 @@
     display: flex;
     align-items: center;
   }
+
+
+  // ============================================
+  // SUBMIT BUTTON (NEU!)
+  // ============================================
+
+  &__submit {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: $color-primary;
+    color: $color-white;
+    border: none;
+    border-radius: $radius-full;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: $transition-base;
+    z-index: 2;
+    
+    &:hover {
+      background: darken($color-primary, 10%);
+      transform: translateY(-50%) scale(1.05);
+    }
+    
+    &:active {
+      transform: translateY(-50%) scale(0.95);
+    }
+    
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba($color-primary, 0.3);
+    }
+    
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  &__loading {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $color-primary;
+    display: none;
+    z-index: 2;
+    
+    svg {
+      animation: spin 1s linear infinite;
+    }
+  }
+
+  // Form styling
+  &__form {
+    position: relative;
+    width: 100%;
+  }
+
+
+
   
   &__clear,
   &__loading {

@@ -7,19 +7,27 @@ document.addEventListener('DOMContentLoaded', function() {
     if (searchContainers.length === 0) return;
     
     searchContainers.forEach(container => {
+        const form = container.querySelector('.ajax-search__form');
         const input = container.querySelector('.ajax-search__input');
         const resultsContainer = container.querySelector('.ajax-search__results');
         const loadingIndicator = container.querySelector('.ajax-search__loading');
+        const submitButton = container.querySelector('.ajax-search__submit');
+        
+        if (!input || !resultsContainer || !form) return;
         
         // Get settings from data attributes
         const limit = parseInt(container.dataset.limit) || 5;
-        const postTypes = container.dataset.postTypes ? container.dataset.postTypes.split(',').map(type => type.trim()) : ['post', 'page'];
-        
-        if (!input || !resultsContainer) return;
+        const postTypes = container.dataset.postTypes 
+            ? container.dataset.postTypes.split(',').map(type => type.trim()) 
+            : ['post', 'page'];
+        // const searchPage = container.dataset.searchPage || '/search/';
         
         let debounceTimer;
+        let isSubmitting = false;
         
-        // Debounced search function
+        // ============================================
+        // AJAX LIVE SEARCH (on input)
+        // ============================================
         input.addEventListener('input', function() {
             const query = this.value.trim();
             
@@ -35,16 +43,59 @@ document.addEventListener('DOMContentLoaded', function() {
             if (loadingIndicator) {
                 loadingIndicator.style.display = 'block';
             }
+            if (submitButton) {
+                submitButton.style.display = 'none';
+            }
             
             debounceTimer = setTimeout(() => {
-                performSearch(query, resultsContainer, loadingIndicator, limit, postTypes);
+                performSearch(query, resultsContainer, loadingIndicator, submitButton, limit, postTypes);
             }, 300);
         });
         
-        // Close results when clicking outside
+        // ============================================
+        // FORM SUBMIT (Enter oder Button Click)
+        // ============================================
+        form.addEventListener('submit', function(e) {
+            const query = input.value.trim();
+            
+            if (query.length < 2) {
+                e.preventDefault();
+                return;
+            }
+            
+            // Let form submit naturally to search page
+            // URL will be: /search/?s=query
+            isSubmitting = true;
+        });
+        
+        // ============================================
+        // CLICK ON SEARCH RESULT (navigate directly)
+        // ============================================
+        resultsContainer.addEventListener('click', function(e) {
+            const link = e.target.closest('.ajax-search__item');
+            if (link) {
+                // Let the link work naturally
+                resultsContainer.style.display = 'none';
+            }
+        });
+        
+        // ============================================
+        // CLOSE RESULTS (click outside)
+        // ============================================
         document.addEventListener('click', function(e) {
             if (!container.contains(e.target)) {
                 resultsContainer.style.display = 'none';
+            }
+        });
+        
+        // ============================================
+        // KEYBOARD NAVIGATION (optional)
+        // ============================================
+        input.addEventListener('keydown', function(e) {
+            // ESC = close results
+            if (e.key === 'Escape') {
+                resultsContainer.style.display = 'none';
+                resultsContainer.innerHTML = '';
             }
         });
     });
@@ -53,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function() {
 /**
  * Perform AJAX Search
  */
-function performSearch(query, resultsContainer, loadingIndicator, limit, postTypes) {
+function performSearch(query, resultsContainer, loadingIndicator, submitButton, limit, postTypes) {
     const ajaxUrl = window.customTheme?.ajaxUrl || '/wp-admin/admin-ajax.php';
     const nonce = window.customTheme?.nonce || '';
     
@@ -66,18 +117,21 @@ function performSearch(query, resultsContainer, loadingIndicator, limit, postTyp
             action: 'agency_search',
             nonce: nonce,
             query: query,
-            post_types: JSON.stringify(postTypes),  // ← Verwendet die Data Attribute!
+            post_types: JSON.stringify(postTypes),
             limit: limit
         })
     })
     .then(response => response.json())
     .then(data => {
-        // Hide loading
+        // Hide loading, show submit button again
         if (loadingIndicator) {
             loadingIndicator.style.display = 'none';
         }
+        if (submitButton) {
+            submitButton.style.display = 'flex';
+        }
         
-        if (data.success && data.data.results.length > 0) {
+        if (data.success && data.data.results && data.data.results.length > 0) {
             displayResults(data.data.results, resultsContainer);
         } else {
             displayNoResults(resultsContainer);
@@ -87,6 +141,9 @@ function performSearch(query, resultsContainer, loadingIndicator, limit, postTyp
         console.error('Search error:', error);
         if (loadingIndicator) {
             loadingIndicator.style.display = 'none';
+        }
+        if (submitButton) {
+            submitButton.style.display = 'flex';
         }
         displayError(resultsContainer);
     });
@@ -100,22 +157,14 @@ function displayResults(results, container) {
     
     results.forEach(result => {
         // Post Type Label
-        let typeLabel = '';
+        let typeLabel = result.post_type;
         switch(result.post_type) {
-            case 'post':
-                typeLabel = 'Beitrag';
-                break;
-            case 'page':
-                typeLabel = 'Seite';
-                break;
-            case 'product':
-                typeLabel = 'Produkt';
-                break;
-            case 'project':
-                typeLabel = 'Projekt';
-                break;
-            default:
-                typeLabel = result.post_type;
+            case 'post': typeLabel = 'Beitrag'; break;
+            case 'page': typeLabel = 'Seite'; break;
+            case 'product': typeLabel = 'Produkt'; break;
+            case 'project': typeLabel = 'Projekt'; break;
+            case 'service': typeLabel = 'Leistung'; break;
+            case 'job': typeLabel = 'Job'; break;
         }
         
         html += `
@@ -129,10 +178,10 @@ function displayResults(results, container) {
                     <div class="ajax-search__meta">
                         <span class="ajax-search__type">${typeLabel}</span>
                         ${result.date ? `<span class="ajax-search__date">${result.date}</span>` : ''}
-                        ${result.price ? `<span class="ajax-search__price">${result.price}</span>` : ''}
                     </div>
                     <div class="ajax-search__title">${result.title}</div>
                     ${result.excerpt ? `<div class="ajax-search__excerpt">${result.excerpt}</div>` : ''}
+                    ${result.price ? `<div class="ajax-search__price">${result.price}</div>` : ''}
                 </div>
             </a>
         `;

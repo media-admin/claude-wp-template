@@ -2202,13 +2202,14 @@ add_shortcode('products_grid', 'products_grid_shortcode');
 /**
  * AJAX Search Shortcode
  * 
- * Usage: [ajax_search post_types="post,page,team,project" placeholder="Suche..." limit="10"]
+ * Usage: [ajax_search post_types="post,page,product" limit="10" search_page="/search/"]
  */
 function ajax_search_shortcode($atts) {
     $atts = shortcode_atts(array(
         'placeholder' => 'Suchen...',
         'limit' => 5,
-        'post_types' => 'post,page',  // ← NEU: Standard mit post,page
+        'post_types' => 'post,page',
+        'search_page' => home_url('/'),
     ), $atts);
     
     $unique_id = 'search-' . uniqid();
@@ -2218,22 +2219,48 @@ function ajax_search_shortcode($atts) {
     <div class="ajax-search" 
          id="<?php echo esc_attr($unique_id); ?>"
          data-limit="<?php echo esc_attr($atts['limit']); ?>"
-         data-post-types="<?php echo esc_attr($atts['post_types']); ?>">  <!-- ← NEU! -->
+         data-post-types="<?php echo esc_attr($atts['post_types']); ?>"
+         data-search-page="<?php echo esc_url($atts['search_page']); ?>">
         
-        <div class="ajax-search__input-wrapper">
-            <input 
-                type="text" 
-                class="ajax-search__input" 
-                placeholder="<?php echo esc_attr($atts['placeholder']); ?>"
-                autocomplete="off"
-            >
-            <span class="ajax-search__icon">
-                <svg>...</svg>
-            </span>
-        </div>
-        
-        <div class="ajax-search__results" style="display: none;"></div>
-        <div class="ajax-search__loading" style="display: none;">Suche läuft...</div>
+        <form class="ajax-search__form" method="get" action="<?php echo esc_url(home_url('/')); ?>">
+            <div class="ajax-search__input-wrapper">
+                <!-- Search Icon -->
+                <span class="ajax-search__icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </span>
+                
+                <!-- Input Field -->
+                <input 
+                    type="search" 
+                    name="s"
+                    class="ajax-search__input" 
+                    placeholder="<?php echo esc_attr($atts['placeholder']); ?>"
+                    autocomplete="off"
+                    value="<?php echo get_search_query(); ?>"
+                >
+                
+                <!-- Submit Button -->
+                <button type="submit" class="ajax-search__submit" aria-label="Suche starten">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </button>
+                
+                <!-- Loading Indicator -->
+                <div class="ajax-search__loading" style="display: none;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- AJAX Results (Live Dropdown) -->
+            <div class="ajax-search__results" style="display: none;"></div>
+        </form>
     </div>
     <?php
     return ob_get_clean();
