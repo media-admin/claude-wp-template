@@ -8,6 +8,8 @@
 declare (strict_types=1);
 namespace WooCommerce\PayPalCommerce\Compat;
 
+use WooCommerce\PayPalCommerce\Assets\AssetGetter;
+use WooCommerce\PayPalCommerce\Assets\AssetGetterFactory;
 use WooCommerce\PayPalCommerce\Compat\Assets\CompatAssets;
 use WooCommerce\PayPalCommerce\Compat\Settings\GeneralSettingsMapHelper;
 use WooCommerce\PayPalCommerce\Compat\Settings\PaymentMethodSettingsMapHelper;
@@ -68,11 +70,13 @@ return array(
     'compat.wc_bookings.is_supported_plugin_version_active' => function (): bool {
         return class_exists('WC_Bookings');
     },
-    'compat.module.url' => static function (ContainerInterface $container): string {
-        return plugins_url('/modules/ppcp-compat/', $container->get('ppcp.path-to-plugin-main-file'));
+    'compat.asset_getter' => static function (ContainerInterface $container): AssetGetter {
+        $factory = $container->get('assets.asset_getter_factory');
+        assert($factory instanceof AssetGetterFactory);
+        return $factory->for_module('ppcp-compat');
     },
     'compat.assets' => function (ContainerInterface $container): CompatAssets {
-        return new CompatAssets($container->get('compat.module.url'), $container->get('ppcp.asset-version'), $container->get('compat.gzd.is_supported_plugin_version_active'), $container->get('compat.wc_shipment_tracking.is_supported_plugin_version_active'), $container->get('compat.wc_shipping_tax.is_supported_plugin_version_active'), $container->get('api.bearer'));
+        return new CompatAssets($container->get('compat.asset_getter'), $container->get('ppcp.asset-version'), $container->get('compat.gzd.is_supported_plugin_version_active'), $container->get('compat.wc_shipment_tracking.is_supported_plugin_version_active'), $container->get('compat.wc_shipping_tax.is_supported_plugin_version_active'), $container->get('api.bearer'));
     },
     /**
      * Configuration for the new/old settings map.

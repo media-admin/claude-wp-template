@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitf1ad62ff0a56f3dbf9600eef6de90a8a
+class ComposerStaticInita7bd3b1cdbdc420df68d5eeeaa8be8c8
 {
     public static $files = array (
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
@@ -15,7 +15,6 @@ class ComposerStaticInitf1ad62ff0a56f3dbf9600eef6de90a8a
     public static $prefixLengthsPsr4 = array (
         'W' =>
         array (
-            'WpOop\\WordPress\\' => 16,
             'WooCommerce\\WooCommerce\\Logging\\' => 32,
             'WooCommerce\\PayPalCommerce\\Webhooks\\' => 36,
             'WooCommerce\\PayPalCommerce\\WcSubscriptions\\' => 43,
@@ -28,7 +27,6 @@ class ComposerStaticInitf1ad62ff0a56f3dbf9600eef6de90a8a
             'WooCommerce\\PayPalCommerce\\StatusReport\\' => 40,
             'WooCommerce\\PayPalCommerce\\Settings\\' => 36,
             'WooCommerce\\PayPalCommerce\\Session\\' => 35,
-            'WooCommerce\\PayPalCommerce\\SavedPaymentChecker\\' => 47,
             'WooCommerce\\PayPalCommerce\\SavePaymentMethods\\' => 46,
             'WooCommerce\\PayPalCommerce\\PayPalSubscriptions\\' => 47,
             'WooCommerce\\PayPalCommerce\\PayLaterWCBlocks\\' => 44,
@@ -62,19 +60,11 @@ class ComposerStaticInitf1ad62ff0a56f3dbf9600eef6de90a8a
         ),
         'D' =>
         array (
-            'Dhii\\Versions\\' => 14,
-            'Dhii\\Validation\\' => 16,
-            'Dhii\\Util\\String\\' => 17,
-            'Dhii\\Package\\' => 13,
             'Dhii\\Modular\\Module\\' => 20,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'WpOop\\WordPress\\' =>
-        array (
-            0 => __DIR__ . '/..' . '/wp-oop/wordpress-interface/src',
-        ),
         'WooCommerce\\WooCommerce\\Logging\\' =>
         array (
             0 => __DIR__ . '/../..' . '/modules/woocommerce-logging/src',
@@ -122,10 +112,6 @@ class ComposerStaticInitf1ad62ff0a56f3dbf9600eef6de90a8a
         'WooCommerce\\PayPalCommerce\\Session\\' =>
         array (
             0 => __DIR__ . '/../..' . '/modules/ppcp-session/src',
-        ),
-        'WooCommerce\\PayPalCommerce\\SavedPaymentChecker\\' =>
-        array (
-            0 => __DIR__ . '/../..' . '/modules/ppcp-saved-payment-checker/src',
         ),
         'WooCommerce\\PayPalCommerce\\SavePaymentMethods\\' =>
         array (
@@ -223,22 +209,6 @@ class ComposerStaticInitf1ad62ff0a56f3dbf9600eef6de90a8a
         array (
             0 => __DIR__ . '/..' . '/container-interop/service-provider/src',
         ),
-        'Dhii\\Versions\\' =>
-        array (
-            0 => __DIR__ . '/..' . '/dhii/versions/src',
-        ),
-        'Dhii\\Validation\\' =>
-        array (
-            0 => __DIR__ . '/..' . '/dhii/validation-interface/src',
-        ),
-        'Dhii\\Util\\String\\' =>
-        array (
-            0 => __DIR__ . '/..' . '/dhii/human-readable-interface/src',
-        ),
-        'Dhii\\Package\\' =>
-        array (
-            0 => __DIR__ . '/..' . '/dhii/package-interface/src',
-        ),
         'Dhii\\Modular\\Module\\' =>
         array (
             0 => __DIR__ . '/..' . '/dhii/module-interface/src',
@@ -251,20 +221,6 @@ class ComposerStaticInitf1ad62ff0a56f3dbf9600eef6de90a8a
         'Dhii\\Modular\\Module\\Exception\\ModuleExceptionInterface' => __DIR__ . '/..' . '/dhii/module-interface/src/Exception/ModuleExceptionInterface.php',
         'Dhii\\Modular\\Module\\ModuleAwareInterface' => __DIR__ . '/..' . '/dhii/module-interface/src/ModuleAwareInterface.php',
         'Dhii\\Modular\\Module\\ModuleInterface' => __DIR__ . '/..' . '/dhii/module-interface/src/ModuleInterface.php',
-        'Dhii\\Package\\PackageInterface' => __DIR__ . '/..' . '/dhii/package-interface/src/PackageInterface.php',
-        'Dhii\\Package\\Version\\Constraint\\Exception\\ConstraintFailedExceptionInterface' => __DIR__ . '/..' . '/dhii/package-interface/src/Version/Constraint/Exception/ConstraintFailedExceptionInterface.php',
-        'Dhii\\Package\\Version\\Constraint\\VersionConstraintInterface' => __DIR__ . '/..' . '/dhii/package-interface/src/Version/Constraint/VersionConstraintInterface.php',
-        'Dhii\\Package\\Version\\StringVersionFactoryInterface' => __DIR__ . '/..' . '/dhii/package-interface/src/Version/StringVersionFactoryInterface.php',
-        'Dhii\\Package\\Version\\VersionInterface' => __DIR__ . '/..' . '/dhii/package-interface/src/Version/VersionInterface.php',
-        'Dhii\\Util\\String\\CaptionAwareInterface' => __DIR__ . '/..' . '/dhii/human-readable-interface/src/CaptionAwareInterface.php',
-        'Dhii\\Util\\String\\DescriptionAwareInterface' => __DIR__ . '/..' . '/dhii/human-readable-interface/src/DescriptionAwareInterface.php',
-        'Dhii\\Util\\String\\LabelAwareInterface' => __DIR__ . '/..' . '/dhii/human-readable-interface/src/LabelAwareInterface.php',
-        'Dhii\\Util\\String\\MessageAwareInterface' => __DIR__ . '/..' . '/dhii/human-readable-interface/src/MessageAwareInterface.php',
-        'Dhii\\Util\\String\\TitleAwareInterface' => __DIR__ . '/..' . '/dhii/human-readable-interface/src/TitleAwareInterface.php',
-        'Dhii\\Validation\\Exception\\ValidationFailedExceptionInterface' => __DIR__ . '/..' . '/dhii/validation-interface/src/Exception/ValidationFailedExceptionInterface.php',
-        'Dhii\\Validation\\ValidatorInterface' => __DIR__ . '/..' . '/dhii/validation-interface/src/ValidatorInterface.php',
-        'Dhii\\Versions\\StringVersionFactory' => __DIR__ . '/..' . '/dhii/versions/src/StringVersionFactory.php',
-        'Dhii\\Versions\\Version' => __DIR__ . '/..' . '/dhii/versions/src/Version.php',
         'Interop\\Container\\ServiceProviderInterface' => __DIR__ . '/..' . '/container-interop/service-provider/src/ServiceProviderInterface.php',
         'PhpToken' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/PhpToken.php',
         'Stringable' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Stringable.php',
@@ -307,7 +263,6 @@ class ComposerStaticInitf1ad62ff0a56f3dbf9600eef6de90a8a
         'WooCommerce\\PayPalCommerce\\ApiClient\\Endpoint\\PartnersEndpoint' => __DIR__ . '/../..' . '/modules/ppcp-api-client/src/Endpoint/PartnersEndpoint.php',
         'WooCommerce\\PayPalCommerce\\ApiClient\\Endpoint\\PayUponInvoiceOrderEndpoint' => __DIR__ . '/../..' . '/modules/ppcp-api-client/src/Endpoint/PayUponInvoiceOrderEndpoint.php',
         'WooCommerce\\PayPalCommerce\\ApiClient\\Endpoint\\PaymentMethodTokensEndpoint' => __DIR__ . '/../..' . '/modules/ppcp-api-client/src/Endpoint/PaymentMethodTokensEndpoint.php',
-        'WooCommerce\\PayPalCommerce\\ApiClient\\Endpoint\\PaymentTokenEndpoint' => __DIR__ . '/../..' . '/modules/ppcp-api-client/src/Endpoint/PaymentTokenEndpoint.php',
         'WooCommerce\\PayPalCommerce\\ApiClient\\Endpoint\\PaymentTokensEndpoint' => __DIR__ . '/../..' . '/modules/ppcp-api-client/src/Endpoint/PaymentTokensEndpoint.php',
         'WooCommerce\\PayPalCommerce\\ApiClient\\Endpoint\\PaymentsEndpoint' => __DIR__ . '/../..' . '/modules/ppcp-api-client/src/Endpoint/PaymentsEndpoint.php',
         'WooCommerce\\PayPalCommerce\\ApiClient\\Endpoint\\RequestTrait' => __DIR__ . '/../..' . '/modules/ppcp-api-client/src/Endpoint/RequestTrait.php',
@@ -413,6 +368,8 @@ class ComposerStaticInitf1ad62ff0a56f3dbf9600eef6de90a8a
         'WooCommerce\\PayPalCommerce\\ApiClient\\Helper\\OrderHelper' => __DIR__ . '/../..' . '/modules/ppcp-api-client/src/Helper/OrderHelper.php',
         'WooCommerce\\PayPalCommerce\\ApiClient\\Helper\\OrderTransient' => __DIR__ . '/../..' . '/modules/ppcp-api-client/src/Helper/OrderTransient.php',
         'WooCommerce\\PayPalCommerce\\ApiClient\\Helper\\PartnerAttribution' => __DIR__ . '/../..' . '/modules/ppcp-api-client/src/Helper/PartnerAttribution.php',
+        'WooCommerce\\PayPalCommerce\\ApiClient\\Helper\\PaymentLevelEligibility' => __DIR__ . '/../..' . '/modules/ppcp-api-client/src/Helper/PaymentLevelEligibility.php',
+        'WooCommerce\\PayPalCommerce\\ApiClient\\Helper\\PaymentLevelHelper' => __DIR__ . '/../..' . '/modules/ppcp-api-client/src/Helper/PaymentLevelHelper.php',
         'WooCommerce\\PayPalCommerce\\ApiClient\\Helper\\ProductStatus' => __DIR__ . '/../..' . '/modules/ppcp-api-client/src/Helper/ProductStatus.php',
         'WooCommerce\\PayPalCommerce\\ApiClient\\Helper\\PurchaseUnitSanitizer' => __DIR__ . '/../..' . '/modules/ppcp-api-client/src/Helper/PurchaseUnitSanitizer.php',
         'WooCommerce\\PayPalCommerce\\ApiClient\\Helper\\ReferenceTransactionStatus' => __DIR__ . '/../..' . '/modules/ppcp-api-client/src/Helper/ReferenceTransactionStatus.php',
@@ -420,6 +377,7 @@ class ComposerStaticInitf1ad62ff0a56f3dbf9600eef6de90a8a
         'WooCommerce\\PayPalCommerce\\ApiClient\\Repository\\OrderRepository' => __DIR__ . '/../..' . '/modules/ppcp-api-client/src/Repository/OrderRepository.php',
         'WooCommerce\\PayPalCommerce\\ApiClient\\Repository\\PartnerReferralsData' => __DIR__ . '/../..' . '/modules/ppcp-api-client/src/Repository/PartnerReferralsData.php',
         'WooCommerce\\PayPalCommerce\\ApiClient\\Repository\\PayeeRepository' => __DIR__ . '/../..' . '/modules/ppcp-api-client/src/Repository/PayeeRepository.php',
+        'WooCommerce\\PayPalCommerce\\ApiClient\\VaultV2\\PaymentTokenEndpoint' => __DIR__ . '/../..' . '/modules/ppcp-api-client/src/VaultV2/PaymentTokenEndpoint.php',
         'WooCommerce\\PayPalCommerce\\Applepay\\ApplePayGateway' => __DIR__ . '/../..' . '/modules/ppcp-applepay/src/ApplePayGateway.php',
         'WooCommerce\\PayPalCommerce\\Applepay\\ApplepayModule' => __DIR__ . '/../..' . '/modules/ppcp-applepay/src/ApplepayModule.php',
         'WooCommerce\\PayPalCommerce\\Applepay\\Assets\\ApplePayButton' => __DIR__ . '/../..' . '/modules/ppcp-applepay/src/Assets/ApplePayButton.php',
@@ -431,6 +389,8 @@ class ComposerStaticInitf1ad62ff0a56f3dbf9600eef6de90a8a
         'WooCommerce\\PayPalCommerce\\Applepay\\Assets\\ResponsesToApple' => __DIR__ . '/../..' . '/modules/ppcp-applepay/src/Assets/ResponsesToApple.php',
         'WooCommerce\\PayPalCommerce\\Applepay\\Helper\\ApmApplies' => __DIR__ . '/../..' . '/modules/ppcp-applepay/src/Helper/ApmApplies.php',
         'WooCommerce\\PayPalCommerce\\Applepay\\Helper\\AvailabilityNotice' => __DIR__ . '/../..' . '/modules/ppcp-applepay/src/Helper/AvailabilityNotice.php',
+        'WooCommerce\\PayPalCommerce\\Assets\\AssetGetter' => __DIR__ . '/../..' . '/src/Assets/AssetGetter.php',
+        'WooCommerce\\PayPalCommerce\\Assets\\AssetGetterFactory' => __DIR__ . '/../..' . '/src/Assets/AssetGetterFactory.php',
         'WooCommerce\\PayPalCommerce\\AxoBlock\\AxoBlockModule' => __DIR__ . '/../..' . '/modules/ppcp-axo-block/src/AxoBlockModule.php',
         'WooCommerce\\PayPalCommerce\\AxoBlock\\AxoBlockPaymentMethod' => __DIR__ . '/../..' . '/modules/ppcp-axo-block/src/AxoBlockPaymentMethod.php',
         'WooCommerce\\PayPalCommerce\\Axo\\Assets\\AxoManager' => __DIR__ . '/../..' . '/modules/ppcp-axo/src/Assets/AxoManager.php',
@@ -462,7 +422,6 @@ class ComposerStaticInitf1ad62ff0a56f3dbf9600eef6de90a8a
         'WooCommerce\\PayPalCommerce\\Button\\Endpoint\\RequestData' => __DIR__ . '/../..' . '/modules/ppcp-button/src/Endpoint/RequestData.php',
         'WooCommerce\\PayPalCommerce\\Button\\Endpoint\\SaveCheckoutFormEndpoint' => __DIR__ . '/../..' . '/modules/ppcp-button/src/Endpoint/SaveCheckoutFormEndpoint.php',
         'WooCommerce\\PayPalCommerce\\Button\\Endpoint\\SimulateCartEndpoint' => __DIR__ . '/../..' . '/modules/ppcp-button/src/Endpoint/SimulateCartEndpoint.php',
-        'WooCommerce\\PayPalCommerce\\Button\\Endpoint\\StartPayPalVaultingEndpoint' => __DIR__ . '/../..' . '/modules/ppcp-button/src/Endpoint/StartPayPalVaultingEndpoint.php',
         'WooCommerce\\PayPalCommerce\\Button\\Endpoint\\ValidateCheckoutEndpoint' => __DIR__ . '/../..' . '/modules/ppcp-button/src/Endpoint/ValidateCheckoutEndpoint.php',
         'WooCommerce\\PayPalCommerce\\Button\\Exception\\RuntimeException' => __DIR__ . '/../..' . '/modules/ppcp-button/src/Exception/RuntimeException.php',
         'WooCommerce\\PayPalCommerce\\Button\\Exception\\ValidationException' => __DIR__ . '/../..' . '/modules/ppcp-button/src/Exception/ValidationException.php',
@@ -479,6 +438,7 @@ class ComposerStaticInitf1ad62ff0a56f3dbf9600eef6de90a8a
         'WooCommerce\\PayPalCommerce\\Button\\Session\\CartDataFactory' => __DIR__ . '/../..' . '/modules/ppcp-button/src/Session/CartDataFactory.php',
         'WooCommerce\\PayPalCommerce\\Button\\Session\\CartDataTransientStorage' => __DIR__ . '/../..' . '/modules/ppcp-button/src/Session/CartDataTransientStorage.php',
         'WooCommerce\\PayPalCommerce\\Button\\Validation\\CheckoutFormValidator' => __DIR__ . '/../..' . '/modules/ppcp-button/src/Validation/CheckoutFormValidator.php',
+        'WooCommerce\\PayPalCommerce\\Button\\VaultV2\\StartPayPalVaultingEndpoint' => __DIR__ . '/../..' . '/modules/ppcp-button/src/VaultV2/StartPayPalVaultingEndpoint.php',
         'WooCommerce\\PayPalCommerce\\CardFields\\CardFieldsModule' => __DIR__ . '/../..' . '/modules/ppcp-card-fields/src/CardFieldsModule.php',
         'WooCommerce\\PayPalCommerce\\CardFields\\Helper\\CardFieldsApplies' => __DIR__ . '/../..' . '/modules/ppcp-card-fields/src/Helper/CardFieldsApplies.php',
         'WooCommerce\\PayPalCommerce\\CardFields\\Service\\CardCaptureValidator' => __DIR__ . '/../..' . '/modules/ppcp-card-fields/src/Service/CardCaptureValidator.php',
@@ -500,8 +460,8 @@ class ComposerStaticInitf1ad62ff0a56f3dbf9600eef6de90a8a
         'WooCommerce\\PayPalCommerce\\Compat\\Settings\\SettingsTabMapHelper' => __DIR__ . '/../..' . '/modules/ppcp-compat/src/Settings/SettingsTabMapHelper.php',
         'WooCommerce\\PayPalCommerce\\Compat\\Settings\\StylingSettingsMapHelper' => __DIR__ . '/../..' . '/modules/ppcp-compat/src/Settings/StylingSettingsMapHelper.php',
         'WooCommerce\\PayPalCommerce\\Compat\\Settings\\SubscriptionSettingsMapHelper' => __DIR__ . '/../..' . '/modules/ppcp-compat/src/Settings/SubscriptionSettingsMapHelper.php',
-        'WooCommerce\\PayPalCommerce\\FilePathPluginFactory' => __DIR__ . '/../..' . '/src/FilePathPluginFactory.php',
         'WooCommerce\\PayPalCommerce\\FraudProtection\\FraudProtectionModule' => __DIR__ . '/../..' . '/modules/ppcp-fraud-protection/src/FraudProtectionModule.php',
+        'WooCommerce\\PayPalCommerce\\FraudProtection\\PersistentCounter' => __DIR__ . '/../..' . '/modules/ppcp-fraud-protection/src/PersistentCounter.php',
         'WooCommerce\\PayPalCommerce\\FraudProtection\\Recaptcha\\Recaptcha' => __DIR__ . '/../..' . '/modules/ppcp-fraud-protection/src/Recaptcha/Recaptcha.php',
         'WooCommerce\\PayPalCommerce\\FraudProtection\\Recaptcha\\RecaptchaIntegration' => __DIR__ . '/../..' . '/modules/ppcp-fraud-protection/src/Recaptcha/RecaptchaIntegration.php',
         'WooCommerce\\PayPalCommerce\\Googlepay\\Assets\\BlocksPaymentMethod' => __DIR__ . '/../..' . '/modules/ppcp-googlepay/src/Assets/BlocksPaymentMethod.php',
@@ -576,7 +536,6 @@ class ComposerStaticInitf1ad62ff0a56f3dbf9600eef6de90a8a
         'WooCommerce\\PayPalCommerce\\PayPalSubscriptions\\RenewalHandler' => __DIR__ . '/../..' . '/modules/ppcp-paypal-subscriptions/src/RenewalHandler.php',
         'WooCommerce\\PayPalCommerce\\PayPalSubscriptions\\SubscriptionStatus' => __DIR__ . '/../..' . '/modules/ppcp-paypal-subscriptions/src/SubscriptionStatus.php',
         'WooCommerce\\PayPalCommerce\\PayPalSubscriptions\\SubscriptionsApiHandler' => __DIR__ . '/../..' . '/modules/ppcp-paypal-subscriptions/src/SubscriptionsApiHandler.php',
-        'WooCommerce\\PayPalCommerce\\Plugin' => __DIR__ . '/../..' . '/src/Plugin.php',
         'WooCommerce\\PayPalCommerce\\PluginModule' => __DIR__ . '/../..' . '/src/PluginModule.php',
         'WooCommerce\\PayPalCommerce\\SavePaymentMethods\\Endpoint\\CreatePaymentToken' => __DIR__ . '/../..' . '/modules/ppcp-save-payment-methods/src/Endpoint/CreatePaymentToken.php',
         'WooCommerce\\PayPalCommerce\\SavePaymentMethods\\Endpoint\\CreatePaymentTokenForGuest' => __DIR__ . '/../..' . '/modules/ppcp-save-payment-methods/src/Endpoint/CreatePaymentTokenForGuest.php',
@@ -584,8 +543,6 @@ class ComposerStaticInitf1ad62ff0a56f3dbf9600eef6de90a8a
         'WooCommerce\\PayPalCommerce\\SavePaymentMethods\\Helper\\SavePaymentMethodsApplies' => __DIR__ . '/../..' . '/modules/ppcp-save-payment-methods/src/Helper/SavePaymentMethodsApplies.php',
         'WooCommerce\\PayPalCommerce\\SavePaymentMethods\\SavePaymentMethodsModule' => __DIR__ . '/../..' . '/modules/ppcp-save-payment-methods/src/SavePaymentMethodsModule.php',
         'WooCommerce\\PayPalCommerce\\SavePaymentMethods\\Service\\PaymentMethodTokensChecker' => __DIR__ . '/../..' . '/modules/ppcp-save-payment-methods/src/Service/PaymentMethodTokensChecker.php',
-        'WooCommerce\\PayPalCommerce\\SavedPaymentChecker\\PaymentTokenChecker' => __DIR__ . '/../..' . '/modules/ppcp-saved-payment-checker/src/PaymentTokenChecker.php',
-        'WooCommerce\\PayPalCommerce\\SavedPaymentChecker\\SavedPaymentCheckerModule' => __DIR__ . '/../..' . '/modules/ppcp-saved-payment-checker/src/SavedPaymentCheckerModule.php',
         'WooCommerce\\PayPalCommerce\\Session\\Cancellation\\CancelController' => __DIR__ . '/../..' . '/modules/ppcp-session/src/Cancellation/CancelController.php',
         'WooCommerce\\PayPalCommerce\\Session\\Cancellation\\CancelView' => __DIR__ . '/../..' . '/modules/ppcp-session/src/Cancellation/CancelView.php',
         'WooCommerce\\PayPalCommerce\\Session\\MemoryWcSession' => __DIR__ . '/../..' . '/modules/ppcp-session/src/MemoryWcSession.php',
@@ -605,6 +562,7 @@ class ComposerStaticInitf1ad62ff0a56f3dbf9600eef6de90a8a
         'WooCommerce\\PayPalCommerce\\Settings\\Data\\OnboardingProfile' => __DIR__ . '/../..' . '/modules/ppcp-settings/src/Data/OnboardingProfile.php',
         'WooCommerce\\PayPalCommerce\\Settings\\Data\\PaymentSettings' => __DIR__ . '/../..' . '/modules/ppcp-settings/src/Data/PaymentSettings.php',
         'WooCommerce\\PayPalCommerce\\Settings\\Data\\SettingsModel' => __DIR__ . '/../..' . '/modules/ppcp-settings/src/Data/SettingsModel.php',
+        'WooCommerce\\PayPalCommerce\\Settings\\Data\\SettingsProvider' => __DIR__ . '/../..' . '/modules/ppcp-settings/src/Data/SettingsProvider.php',
         'WooCommerce\\PayPalCommerce\\Settings\\Data\\StylingSettings' => __DIR__ . '/../..' . '/modules/ppcp-settings/src/Data/StylingSettings.php',
         'WooCommerce\\PayPalCommerce\\Settings\\Data\\TodosModel' => __DIR__ . '/../..' . '/modules/ppcp-settings/src/Data/TodosModel.php',
         'WooCommerce\\PayPalCommerce\\Settings\\Endpoint\\AuthenticationRestEndpoint' => __DIR__ . '/../..' . '/modules/ppcp-settings/src/Endpoint/AuthenticationRestEndpoint.php',
@@ -642,6 +600,7 @@ class ComposerStaticInitf1ad62ff0a56f3dbf9600eef6de90a8a
         'WooCommerce\\PayPalCommerce\\Settings\\Service\\Migration\\SettingsTabMigration' => __DIR__ . '/../..' . '/modules/ppcp-settings/src/Service/Migration/SettingsTabMigration.php',
         'WooCommerce\\PayPalCommerce\\Settings\\Service\\Migration\\StylingSettingsMigration' => __DIR__ . '/../..' . '/modules/ppcp-settings/src/Service/Migration/StylingSettingsMigration.php',
         'WooCommerce\\PayPalCommerce\\Settings\\Service\\OnboardingUrlManager' => __DIR__ . '/../..' . '/modules/ppcp-settings/src/Service/OnboardingUrlManager.php',
+        'WooCommerce\\PayPalCommerce\\Settings\\Service\\PaymentMethodsEligibilityService' => __DIR__ . '/../..' . '/modules/ppcp-settings/src/Service/PaymentMethodsEligibilityService.php',
         'WooCommerce\\PayPalCommerce\\Settings\\Service\\ScriptDataHandler' => __DIR__ . '/../..' . '/modules/ppcp-settings/src/Service/ScriptDataHandler.php',
         'WooCommerce\\PayPalCommerce\\Settings\\Service\\SettingsDataManager' => __DIR__ . '/../..' . '/modules/ppcp-settings/src/Service/SettingsDataManager.php',
         'WooCommerce\\PayPalCommerce\\Settings\\Service\\TodosEligibilityService' => __DIR__ . '/../..' . '/modules/ppcp-settings/src/Service/TodosEligibilityService.php',
@@ -840,10 +799,15 @@ class ComposerStaticInitf1ad62ff0a56f3dbf9600eef6de90a8a
         'WooCommerce\\PayPalCommerce\\WcGateway\\WCGatewayModule' => __DIR__ . '/../..' . '/modules/ppcp-wc-gateway/src/WCGatewayModule.php',
         'WooCommerce\\PayPalCommerce\\WcSubscriptions\\Endpoint\\SubscriptionChangePaymentMethod' => __DIR__ . '/../..' . '/modules/ppcp-wc-subscriptions/src/Endpoint/SubscriptionChangePaymentMethod.php',
         'WooCommerce\\PayPalCommerce\\WcSubscriptions\\FreeTrialHandlerTrait' => __DIR__ . '/../..' . '/modules/ppcp-wc-subscriptions/src/FreeTrialHandlerTrait.php',
+        'WooCommerce\\PayPalCommerce\\WcSubscriptions\\Helper\\FreeTrialSubscriptionHelper' => __DIR__ . '/../..' . '/modules/ppcp-wc-subscriptions/src/Helper/FreeTrialSubscriptionHelper.php',
         'WooCommerce\\PayPalCommerce\\WcSubscriptions\\Helper\\RealTimeAccountUpdaterHelper' => __DIR__ . '/../..' . '/modules/ppcp-wc-subscriptions/src/Helper/RealTimeAccountUpdaterHelper.php',
         'WooCommerce\\PayPalCommerce\\WcSubscriptions\\Helper\\SubscriptionHelper' => __DIR__ . '/../..' . '/modules/ppcp-wc-subscriptions/src/Helper/SubscriptionHelper.php',
         'WooCommerce\\PayPalCommerce\\WcSubscriptions\\RenewalHandler' => __DIR__ . '/../..' . '/modules/ppcp-wc-subscriptions/src/RenewalHandler.php',
+        'WooCommerce\\PayPalCommerce\\WcSubscriptions\\Service\\ChangePaymentMethod' => __DIR__ . '/../..' . '/modules/ppcp-wc-subscriptions/src/Service/ChangePaymentMethod.php',
         'WooCommerce\\PayPalCommerce\\WcSubscriptions\\SubscriptionsHandlerTrait' => __DIR__ . '/../..' . '/modules/ppcp-wc-subscriptions/src/SubscriptionsHandlerTrait.php',
+        'WooCommerce\\PayPalCommerce\\WcSubscriptions\\VaultV2\\ChangePaymentMethodVaultV2' => __DIR__ . '/../..' . '/modules/ppcp-wc-subscriptions/src/VaultV2/ChangePaymentMethodVaultV2.php',
+        'WooCommerce\\PayPalCommerce\\WcSubscriptions\\VaultV2\\DisplaySavedPaymentTokens' => __DIR__ . '/../..' . '/modules/ppcp-wc-subscriptions/src/VaultV2/DisplaySavedPaymentTokens.php',
+        'WooCommerce\\PayPalCommerce\\WcSubscriptions\\VaultV2\\VaultedPayPalEmail' => __DIR__ . '/../..' . '/modules/ppcp-wc-subscriptions/src/VaultV2/VaultedPayPalEmail.php',
         'WooCommerce\\PayPalCommerce\\WcSubscriptions\\WcSubscriptionsModule' => __DIR__ . '/../..' . '/modules/ppcp-wc-subscriptions/src/WcSubscriptionsModule.php',
         'WooCommerce\\PayPalCommerce\\Webhooks\\CustomIds' => __DIR__ . '/../..' . '/modules/ppcp-webhooks/src/CustomIds.php',
         'WooCommerce\\PayPalCommerce\\Webhooks\\Endpoint\\ResubscribeEndpoint' => __DIR__ . '/../..' . '/modules/ppcp-webhooks/src/Endpoint/ResubscribeEndpoint.php',
@@ -864,11 +828,11 @@ class ComposerStaticInitf1ad62ff0a56f3dbf9600eef6de90a8a
         'WooCommerce\\PayPalCommerce\\Webhooks\\Handler\\PaymentSaleRefunded' => __DIR__ . '/../..' . '/modules/ppcp-webhooks/src/Handler/PaymentSaleRefunded.php',
         'WooCommerce\\PayPalCommerce\\Webhooks\\Handler\\RequestHandler' => __DIR__ . '/../..' . '/modules/ppcp-webhooks/src/Handler/RequestHandler.php',
         'WooCommerce\\PayPalCommerce\\Webhooks\\Handler\\RequestHandlerTrait' => __DIR__ . '/../..' . '/modules/ppcp-webhooks/src/Handler/RequestHandlerTrait.php',
-        'WooCommerce\\PayPalCommerce\\Webhooks\\Handler\\VaultPaymentTokenCreated' => __DIR__ . '/../..' . '/modules/ppcp-webhooks/src/Handler/VaultPaymentTokenCreated.php',
         'WooCommerce\\PayPalCommerce\\Webhooks\\Handler\\VaultPaymentTokenDeleted' => __DIR__ . '/../..' . '/modules/ppcp-webhooks/src/Handler/VaultPaymentTokenDeleted.php',
         'WooCommerce\\PayPalCommerce\\Webhooks\\IncomingWebhookEndpoint' => __DIR__ . '/../..' . '/modules/ppcp-webhooks/src/IncomingWebhookEndpoint.php',
         'WooCommerce\\PayPalCommerce\\Webhooks\\Status\\Assets\\WebhooksStatusPageAssets' => __DIR__ . '/../..' . '/modules/ppcp-webhooks/src/Status/Assets/WebhooksStatusPageAssets.php',
         'WooCommerce\\PayPalCommerce\\Webhooks\\Status\\WebhookSimulation' => __DIR__ . '/../..' . '/modules/ppcp-webhooks/src/Status/WebhookSimulation.php',
+        'WooCommerce\\PayPalCommerce\\Webhooks\\VaultV2\\VaultPaymentTokenCreated' => __DIR__ . '/../..' . '/modules/ppcp-webhooks/src/VaultV2/VaultPaymentTokenCreated.php',
         'WooCommerce\\PayPalCommerce\\Webhooks\\WebhookEventStorage' => __DIR__ . '/../..' . '/modules/ppcp-webhooks/src/WebhookEventStorage.php',
         'WooCommerce\\PayPalCommerce\\Webhooks\\WebhookModule' => __DIR__ . '/../..' . '/modules/ppcp-webhooks/src/WebhookModule.php',
         'WooCommerce\\PayPalCommerce\\Webhooks\\WebhookOrchestrator' => __DIR__ . '/../..' . '/modules/ppcp-webhooks/src/WebhookOrchestrator.php',
@@ -876,18 +840,14 @@ class ComposerStaticInitf1ad62ff0a56f3dbf9600eef6de90a8a
         'WooCommerce\\WooCommerce\\Logging\\Logger\\NullLogger' => __DIR__ . '/../..' . '/modules/woocommerce-logging/src/Logger/NullLogger.php',
         'WooCommerce\\WooCommerce\\Logging\\Logger\\WooCommerceLogger' => __DIR__ . '/../..' . '/modules/woocommerce-logging/src/Logger/WooCommerceLogger.php',
         'WooCommerce\\WooCommerce\\Logging\\WooCommerceLoggingModule' => __DIR__ . '/../..' . '/modules/woocommerce-logging/src/WooCommerceLoggingModule.php',
-        'WpOop\\WordPress\\Gutenberg\\BlockInterface' => __DIR__ . '/..' . '/wp-oop/wordpress-interface/src/Gutenberg/BlockInterface.php',
-        'WpOop\\WordPress\\Gutenberg\\BlockParserInterface' => __DIR__ . '/..' . '/wp-oop/wordpress-interface/src/Gutenberg/BlockParserInterface.php',
-        'WpOop\\WordPress\\Plugin\\FilePathPluginFactoryInterface' => __DIR__ . '/..' . '/wp-oop/wordpress-interface/src/Plugin/FilePathPluginFactoryInterface.php',
-        'WpOop\\WordPress\\Plugin\\PluginInterface' => __DIR__ . '/..' . '/wp-oop/wordpress-interface/src/Plugin/PluginInterface.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitf1ad62ff0a56f3dbf9600eef6de90a8a::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitf1ad62ff0a56f3dbf9600eef6de90a8a::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitf1ad62ff0a56f3dbf9600eef6de90a8a::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInita7bd3b1cdbdc420df68d5eeeaa8be8c8::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInita7bd3b1cdbdc420df68d5eeeaa8be8c8::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInita7bd3b1cdbdc420df68d5eeeaa8be8c8::$classMap;
 
         }, null, ClassLoader::class);
     }

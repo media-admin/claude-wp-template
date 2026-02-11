@@ -8,6 +8,7 @@
 declare (strict_types=1);
 namespace WooCommerce\PayPalCommerce\Googlepay;
 
+use WooCommerce\PayPalCommerce\Assets\AssetGetter;
 use WooCommerce\PayPalCommerce\Googlepay\Helper\PropertiesDictionary;
 use WooCommerce\PayPalCommerce\Onboarding\State;
 use WooCommerce\PayPalCommerce\Vendor\Psr\Container\ContainerInterface;
@@ -30,13 +31,14 @@ return array('wcgateway.settings.fields' => function (array $fields, ContainerIn
     };
     $display_manager = $container->get('wcgateway.display-manager');
     assert($display_manager instanceof DisplayManager);
-    $module_url = $container->get('googlepay.url');
+    $asset_getter = $container->get('googlepay.asset_getter');
+    assert($asset_getter instanceof AssetGetter);
     // Connection tab fields.
     $fields = $insert_after($fields, 'ppcp_reference_transactions_status', array('googlepay_status' => array('title' => __('Google Pay Payments', 'woocommerce-paypal-payments'), 'type' => 'ppcp-text', 'text' => $container->get('googlepay.settings.connection.status-text'), 'screens' => array(State::STATE_ONBOARDED), 'requirements' => array(), 'gateway' => Settings::CONNECTION_TAB_ID)));
     if (!$is_available && $is_referral) {
         $connection_url = admin_url('admin.php?page=wc-settings&tab=checkout&section=ppcp-gateway&ppcp-tab=ppcp-connection#field-credentials_feature_onboarding_heading');
         $connection_link = '<a href="' . $connection_url . '" style="pointer-events: auto">';
-        return $insert_after($fields, 'digital_wallet_heading', array('googlepay_button_enabled' => array('title' => __('Google Pay Button', 'woocommerce-paypal-payments'), 'title_html' => sprintf('<img src="%sassets/images/googlepay.svg" alt="%s" style="max-width: 150px; max-height: 45px;" />', $module_url, __('Google Pay', 'woocommerce-paypal-payments')), 'type' => 'checkbox', 'class' => array('ppcp-grayed-out-text'), 'input_class' => array('ppcp-disabled-checkbox'), 'label' => __('Enable Google Pay button', 'woocommerce-paypal-payments') . '<p class="description">' . sprintf(
+        return $insert_after($fields, 'digital_wallet_heading', array('googlepay_button_enabled' => array('title' => __('Google Pay Button', 'woocommerce-paypal-payments'), 'title_html' => sprintf('<img src="%s" alt="%s" style="max-width: 150px; max-height: 45px;" />', $asset_getter->get_static_asset_url('images/googlepay.svg'), __('Google Pay', 'woocommerce-paypal-payments')), 'type' => 'checkbox', 'class' => array('ppcp-grayed-out-text'), 'input_class' => array('ppcp-disabled-checkbox'), 'label' => __('Enable Google Pay button', 'woocommerce-paypal-payments') . '<p class="description">' . sprintf(
             // translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
             __('Your PayPal account  %1$srequires additional permissions%2$s to enable Google Pay.', 'woocommerce-paypal-payments'),
             $connection_link,
@@ -44,7 +46,7 @@ return array('wcgateway.settings.fields' => function (array $fields, ContainerIn
         ) . '</p>', 'default' => 'yes', 'screens' => array(State::STATE_ONBOARDED), 'gateway' => 'dcc', 'requirements' => array(), 'custom_attributes' => array('data-ppcp-display' => wp_json_encode(array($display_manager->rule()->condition_is_true(\false)->action_enable('googlepay_button_enabled')->to_array()))), 'classes' => array('ppcp-valign-label-middle', 'ppcp-align-label-center'))));
     }
     // Standard Payments tab fields.
-    return $insert_after($fields, 'digital_wallet_heading', array('googlepay_button_enabled' => array('title' => __('Google Pay Button', 'woocommerce-paypal-payments'), 'title_html' => sprintf('<img src="%sassets/images/googlepay.svg" alt="%s" style="max-width: 150px; max-height: 45px;" />', $module_url, __('Google Pay', 'woocommerce-paypal-payments')), 'type' => 'checkbox', 'label' => __('Enable Google Pay button', 'woocommerce-paypal-payments') . '<p class="description">' . sprintf(
+    return $insert_after($fields, 'digital_wallet_heading', array('googlepay_button_enabled' => array('title' => __('Google Pay Button', 'woocommerce-paypal-payments'), 'title_html' => sprintf('<img src="%s" alt="%s" style="max-width: 150px; max-height: 45px;" />', $asset_getter->get_static_asset_url('images/googlepay.svg'), __('Google Pay', 'woocommerce-paypal-payments')), 'type' => 'checkbox', 'label' => __('Enable Google Pay button', 'woocommerce-paypal-payments') . '<p class="description">' . sprintf(
         // translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
         __('Buyers can use %1$sGoogle Pay%2$s to make payments on the web using a web browser.', 'woocommerce-paypal-payments'),
         '<a href="https://woocommerce.com/document/woocommerce-paypal-payments/#google-pay" target="_blank">',

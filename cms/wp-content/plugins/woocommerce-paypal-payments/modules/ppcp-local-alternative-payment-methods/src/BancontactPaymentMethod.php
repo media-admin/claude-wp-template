@@ -9,17 +9,13 @@ declare (strict_types=1);
 namespace WooCommerce\PayPalCommerce\LocalAlternativePaymentMethods;
 
 use Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType;
+use WooCommerce\PayPalCommerce\Assets\AssetGetter;
 /**
  * Class BancontactPaymentMethod
  */
 class BancontactPaymentMethod extends AbstractPaymentMethodType
 {
-    /**
-     * The URL of this module.
-     *
-     * @var string
-     */
-    private $module_url;
+    private AssetGetter $asset_getter;
     /**
      * The assets version.
      *
@@ -33,15 +29,13 @@ class BancontactPaymentMethod extends AbstractPaymentMethodType
      */
     private $gateway;
     /**
-     * BancontactPaymentMethod constructor.
-     *
-     * @param string            $module_url The URL of this module.
+     * @param AssetGetter       $asset_getter
      * @param string            $version The assets version.
      * @param BancontactGateway $gateway Bancontact WC gateway.
      */
-    public function __construct(string $module_url, string $version, \WooCommerce\PayPalCommerce\LocalAlternativePaymentMethods\BancontactGateway $gateway)
+    public function __construct(AssetGetter $asset_getter, string $version, \WooCommerce\PayPalCommerce\LocalAlternativePaymentMethods\BancontactGateway $gateway)
     {
-        $this->module_url = $module_url;
+        $this->asset_getter = $asset_getter;
         $this->version = $version;
         $this->gateway = $gateway;
         $this->name = \WooCommerce\PayPalCommerce\LocalAlternativePaymentMethods\BancontactGateway::ID;
@@ -64,7 +58,7 @@ class BancontactPaymentMethod extends AbstractPaymentMethodType
      */
     public function get_payment_method_script_handles()
     {
-        wp_register_script('ppcp-bancontact-payment-method', trailingslashit($this->module_url) . 'assets/js/bancontact-payment-method.js', array(), $this->version, \true);
+        wp_register_script('ppcp-bancontact-payment-method', $this->asset_getter->get_asset_url('bancontact-payment-method.js'), array(), $this->version, \true);
         return array('ppcp-bancontact-payment-method');
     }
     /**

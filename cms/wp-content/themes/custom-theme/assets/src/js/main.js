@@ -35,7 +35,7 @@ import Accordion from './components/accordion';
 import './components/carousel';
 import BackToTop from './components/back-to-top';
 import CookieNotice from './components/cookie-notice';
-import FAQAccordion from './components/faq-accordion';
+import './components/faq-accordion';
 import DarkMode from './components/theme-switcher';
 import ImageComparison from './components/image-comparison';
 import Lightbox from './components/lightbox';

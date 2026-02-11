@@ -13,18 +13,20 @@ use WooCommerce\PayPalCommerce\ApiClient\Entity\SellerStatus;
 use WooCommerce\PayPalCommerce\Settings\Data\GeneralSettings;
 use WooCommerce\PayPalCommerce\Settings\DTO\MerchantConnectionDTO;
 use WooCommerce\PayPalCommerce\Settings\Enum\SellerTypeEnum;
-use WooCommerce\PayPalCommerce\WcGateway\Settings\Settings;
 /**
- * Class GeneralSettingsMigration
+ * Class SettingsMigration
  *
  * Handles migration of general plugin settings.
  */
 class SettingsMigration implements \WooCommerce\PayPalCommerce\Settings\Service\Migration\SettingsMigrationInterface
 {
-    protected Settings $settings;
+    /**
+     * @var array<string, mixed>
+     */
+    protected array $settings;
     protected GeneralSettings $general_settings;
     protected PartnersEndpoint $partners_endpoint;
-    public function __construct(Settings $settings, GeneralSettings $general_settings, PartnersEndpoint $partners_endpoint)
+    public function __construct(array $settings, GeneralSettings $general_settings, PartnersEndpoint $partners_endpoint)
     {
         $this->settings = $settings;
         $this->general_settings = $general_settings;
@@ -32,10 +34,10 @@ class SettingsMigration implements \WooCommerce\PayPalCommerce\Settings\Service\
     }
     public function migrate(): void
     {
-        if (!$this->settings->has('client_id') || !$this->settings->has('client_secret') || !$this->settings->has('merchant_id')) {
+        if (empty($this->settings['client_id']) || empty($this->settings['client_secret']) || empty($this->settings['merchant_id'])) {
             return;
         }
-        $connection = new MerchantConnectionDTO($this->settings->has('sandbox_on') && $this->settings->get('sandbox_on'), $this->settings->get('client_id'), $this->settings->get('client_secret'), $this->settings->get('merchant_id'), $this->settings->has('merchant_email') ? $this->settings->get('merchant_email') : '', $this->partners_endpoint->seller_status()->country(), $this->merchant_account_type($this->partners_endpoint->seller_status()));
+        $connection = new MerchantConnectionDTO(!empty($this->settings['sandbox_on']), $this->settings['client_id'], $this->settings['client_secret'], $this->settings['merchant_id'], $this->settings['merchant_email'] ?? '', $this->partners_endpoint->seller_status()->country(), $this->merchant_account_type($this->partners_endpoint->seller_status()));
         $this->general_settings->set_merchant_data($connection);
         $this->general_settings->save();
     }

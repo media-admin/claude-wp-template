@@ -1,228 +1,120 @@
-// FAQ Accordion Component
+// ============================================
+// FAQ ACCORDION
+// ============================================
+
 .faq-accordion {
-  margin: $spacing-8 0;
+  max-width: 800px;
+  margin: 2rem auto;
   
-  // Individual FAQ Item
   .faq-item {
-    margin-bottom: $spacing-4;
+    margin-bottom: 1rem;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+    overflow: hidden;
+    background: $color-white;
+    transition: $transition-base;
     
-    &:last-child {
-      margin-bottom: 0;
+    &:hover {
+      box-shadow: $shadow-md;
+    }
+    
+    &.is-active {
+      .faq-question {
+        color: $color-primary;
+        background: $color-gray-50;
+        
+        .faq-question__icon {
+          transform: rotate(180deg);
+        }
+      }
+      
+      .faq-answer {
+        display: block;
+      }
     }
   }
-}
-
-// FAQ Item
-.faq-item {
-  background: var(--color-card-bg);
-  border-radius: $radius-md;
-  overflow: hidden;
-  transition: all $transition-base;
   
-  // Category Tag
-  &__category {
-    display: inline-block;
-    padding: $spacing-1 $spacing-2;
-    margin: $spacing-3 $spacing-3 0;
-    background: rgba($color-primary, 0.1);
-    color: $color-primary;
-    font-size: $font-size-xs;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border-radius: $radius-sm;
-  }
-  
-  // Question Button
-  &__question {
+  .faq-question {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: $spacing-3;
-    padding: $spacing-4 $spacing-5;
+    padding: 1.5rem;
     background: transparent;
     border: none;
     text-align: left;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-text;
     cursor: pointer;
-    transition: all $transition-base;
-    position: relative;
-    
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 4px;
-      background: transparent;
-      transition: background $transition-base;
-    }
+    transition: $transition-base;
     
     &:hover {
-      background: var(--color-hover-bg);
-      
-      &::before {
-        background: $color-primary;
-      }
-    }
-  }
-  
-  &__question-text {
-    flex: 1;
-    font-size: $font-size-lg;
-    font-weight: 600;
-    color: var(--color-text);
-    line-height: 1.5;
-  }
-  
-  // Icon
-  &__icon {
-    flex-shrink: 0;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba($color-primary, 0.1);
-    color: $color-primary;
-    border-radius: $radius-full;
-    font-size: 24px;
-    font-weight: 300;
-    transition: all $transition-base;
-  }
-  
-  // Answer
-  &__answer {
-    display: none;
-    overflow: hidden;
-  }
-  
-  &__answer-inner {
-    padding: 0 $spacing-5 $spacing-4 $spacing-5;
-    color: var(--color-text-secondary);
-    line-height: 1.7;
-    
-    p:first-child {
-      margin-top: 0;
-    }
-    
-    p:last-child {
-      margin-bottom: 0;
-    }
-    
-    ul, ol {
-      margin: $spacing-3 0;
-    }
-    
-    a {
       color: $color-primary;
-      text-decoration: underline;
-      
-      &:hover {
-        text-decoration: none;
-      }
-    }
-  }
-  
-  // Active State
-  &.is-active {
-    box-shadow: $shadow-md;
-    
-    .faq-item__question {
-      &::before {
-        background: $color-primary;
-      }
+      background: $color-gray-50;
     }
     
-    .faq-item__icon {
-      background: $color-primary;
-      color: $color-white;
-      transform: rotate(180deg);
-    }
-    
-    .faq-item__answer {
-      display: block;
-      animation: slideDown 0.3s ease-out;
-    }
-  }
-}
-
-// ============================================
-// STYLE VARIANTS
-// ============================================
-
-// Bordered Style
-.faq-accordion--bordered {
-  .faq-item {
-    background: transparent;
-    border: 2px solid var(--color-border);
-    
-    &.is-active {
-      border-color: $color-primary;
-      background: var(--color-card-bg);
-    }
-    
-    &__question {
-      &::before {
-        display: none;
-      }
-    }
-  }
-}
-
-// Minimal Style
-.faq-accordion--minimal {
-  .faq-item {
-    background: transparent;
-    border-bottom: 1px solid var(--color-border);
-    border-radius: 0;
-    
-    &:last-child {
-      border-bottom: none;
-    }
-    
-    &__question {
-      padding: $spacing-3 0;
-      
-      &::before {
-        display: none;
-      }
-      
-      &:hover {
-        background: transparent;
-      }
-    }
-    
-    &__question-text {
-      font-size: $font-size-base;
+    &__text {
+      flex: 1;
+      padding-right: 1rem;
     }
     
     &__icon {
-      background: transparent;
-      border: 2px solid var(--color-border);
-    }
-    
-    &.is-active {
-      box-shadow: none;
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s ease;
+      color: $color-primary;
       
-      .faq-item__icon {
-        border-color: $color-primary;
-        background: $color-primary;
+      svg {
+        width: 20px;
+        height: 20px;
       }
     }
+  }
+  
+  .faq-answer {
+    display: none;
+    padding: 0 1.5rem 1.5rem;
+    animation: fadeIn 0.3s ease;
     
-    &__answer-inner {
-      padding: $spacing-3 0 $spacing-4;
+    &__content {
+      line-height: 1.8;
+      color: $color-text-muted;
+      
+      p {
+        margin-bottom: 1rem;
+        
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+      
+      ul, ol {
+        margin: 1rem 0;
+        padding-left: 1.5rem;
+      }
+      
+      li {
+        margin-bottom: 0.5rem;
+      }
+      
+      a {
+        color: $color-primary;
+        text-decoration: underline;
+        
+        &:hover {
+          color: darken($color-primary, 10%);
+        }
+      }
     }
   }
 }
 
-// ============================================
-// ANIMATIONS
-// ============================================
-
-@keyframes slideDown {
+@keyframes fadeIn {
   from {
     opacity: 0;
     transform: translateY(-10px);
@@ -230,28 +122,5 @@
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-// ============================================
-// RESPONSIVE
-// ============================================
-
-@include respond-to('sm') {
-  .faq-item {
-    &__question-text {
-      font-size: $font-size-xl;
-    }
-  }
-}
-
-// Dark Mode
-@media (prefers-color-scheme: dark) {
-  .faq-accordion--bordered {
-    .faq-item {
-      &.is-active {
-        background: rgba($color-primary, 0.1);
-      }
-    }
   }
 }

@@ -35,7 +35,29 @@ function agency_core_ajax_search() {
     }
     
     // Get post types to search
-    $post_types = isset($_POST['post_types']) ? array_map('sanitize_text_field', $_POST['post_types']) : array('post', 'page');
+    $post_types = array('post', 'page', 'product'); // Default
+
+    if (isset($_POST['post_types'])) {
+        $raw = $_POST['post_types'];
+        
+        // Handle if it's a string (e.g., "post,page" or "post")
+        if (is_string($raw)) {
+            // Check if it's JSON
+            $decoded = json_decode($raw, true);
+            if (is_array($decoded)) {
+                $raw = $decoded;
+            } else {
+                // Split by comma
+                $raw = array_map('trim', explode(',', $raw));
+            }
+        }
+        
+        // Now sanitize if it's an array
+        if (is_array($raw)) {
+            $post_types = array_map('sanitize_text_field', $raw);
+            $post_types = array_filter($post_types); // Remove empty values
+        }
+    }
     
     // Get limit
     $limit = isset($_POST['limit']) ? intval($_POST['limit']) : 10;

@@ -8,6 +8,7 @@
 declare (strict_types=1);
 namespace WooCommerce\PayPalCommerce\Axo;
 
+use WooCommerce\PayPalCommerce\Assets\AssetGetter;
 use WooCommerce\PayPalCommerce\Axo\Assets\AxoManager;
 use WooCommerce\PayPalCommerce\Axo\Endpoint\AxoScriptAttributes;
 use WooCommerce\PayPalCommerce\Axo\Endpoint\FrontendLogger;
@@ -374,11 +375,18 @@ class AxoModule implements ServiceModule, ExtendingModule, ExecutableModule
         if (!$order || !$order instanceof \WC_Order) {
             return;
         }
-        $module_url = $c->get('axo.url');
+        //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $order_key_from_url = isset($_GET['key']) ? wc_clean(wp_unslash($_GET['key'])) : '';
+        //phpcs:ignore WordPress.WP.Capabilities.Unknown
+        if ($order->get_order_key() !== $order_key_from_url && !current_user_can('view_order', $order_id)) {
+            return;
+        }
+        $asset_getter = $c->get('axo.asset_getter');
+        assert($asset_getter instanceof AssetGetter);
         $asset_version = $c->get('ppcp.asset-version');
         $insights_data = $c->get('axo.insights');
-        wp_register_script('wc-ppcp-paypal-insights-end-checkout', untrailingslashit($module_url) . '/assets/js/TrackEndCheckout.js', array('wp-plugins', 'wp-data', 'wp-element', 'wc-blocks-registry'), $asset_version, \true);
-        wp_localize_script('wc-ppcp-paypal-insights-end-checkout', 'wc_ppcp_axo_insights_data', array_merge($insights_data, array('orderId' => $order_id, 'orderTotal' => (string) $order->get_total(), 'orderCurrency' => (string) $order->get_currency(), 'paymentMethod' => (string) $order->get_payment_method(), 'orderKey' => (string) $order->get_order_key())));
+        wp_register_script('wc-ppcp-paypal-insights-end-checkout', $asset_getter->get_asset_url('Insights/EndCheckoutTracker.js'), array('wp-plugins', 'wp-data', 'wp-element', 'wc-blocks-registry'), $asset_version, \true);
+        wp_localize_script('wc-ppcp-paypal-insights-end-checkout', 'wc_ppcp_axo_insights_data', array_merge($insights_data, array('orderId' => $order_id, 'orderTotal' => (string) $order->get_total(), 'orderCurrency' => (string) $order->get_currency(), 'paymentMethod' => (string) $order->get_payment_method())));
         wp_enqueue_script('wc-ppcp-paypal-insights-end-checkout');
     }
 }

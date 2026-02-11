@@ -8,6 +8,7 @@
 declare (strict_types=1);
 namespace WooCommerce\PayPalCommerce\PayLaterBlock;
 
+use WooCommerce\PayPalCommerce\Assets\AssetGetter;
 use WooCommerce\PayPalCommerce\Button\Endpoint\CartScriptParamsEndpoint;
 use WooCommerce\PayPalCommerce\Button\Helper\MessagesApply;
 use WooCommerce\PayPalCommerce\Vendor\Inpsyde\Modularity\Module\ExecutableModule;
@@ -71,9 +72,12 @@ class PayLaterBlockModule implements ServiceModule, ExtendingModule, ExecutableM
         add_action('init', function () use ($c): void {
             $settings = $c->get('wcgateway.settings');
             assert($settings instanceof Settings);
+            $asset_getter = $c->get('paylater-block.asset_getter');
+            assert($asset_getter instanceof AssetGetter);
             $script_handle = 'ppcp-paylater-block';
-            wp_register_script($script_handle, $c->get('paylater-block.url') . '/assets/js/paylater-block.js', array(), $c->get('ppcp.asset-version'), \true);
+            wp_register_script($script_handle, $asset_getter->get_asset_url('paylater-block.js'), array(), $c->get('ppcp.asset-version'), \true);
             wp_localize_script($script_handle, 'PcpPayLaterBlock', array('ajax' => array('cart_script_params' => array('endpoint' => \WC_AJAX::get_endpoint(CartScriptParamsEndpoint::ENDPOINT))), 'settingsUrl' => admin_url('admin.php?page=wc-settings&tab=checkout&section=ppcp-gateway'), 'vaultingEnabled' => $settings->has('vault_enabled') && $settings->get('vault_enabled'), 'placementEnabled' => self::is_block_enabled($c->get('wcgateway.settings.status')), 'payLaterSettingsUrl' => admin_url('admin.php?page=wc-settings&tab=checkout&section=ppcp-gateway&ppcp-tab=ppcp-pay-later')));
+            wp_register_style('ppcp-paylater-block-style', $asset_getter->get_asset_url('edit.css'), array(), $c->get('ppcp.asset-version'));
             register_block_type($c->get('ppcp.path-to-plugin-folder') . 'modules/ppcp-paylater-block/', array('render_callback' => function (array $attributes) use ($c) {
                 $renderer = $c->get('paylater-block.renderer');
                 ob_start();

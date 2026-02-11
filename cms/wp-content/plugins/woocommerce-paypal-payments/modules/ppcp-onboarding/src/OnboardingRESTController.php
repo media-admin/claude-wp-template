@@ -8,6 +8,7 @@
 declare (strict_types=1);
 namespace WooCommerce\PayPalCommerce\Onboarding;
 
+use WooCommerce\PayPalCommerce\Assets\AssetGetter;
 use WooCommerce\PayPalCommerce\Vendor\Psr\Container\ContainerInterface;
 use WooCommerce\PayPalCommerce\WcGateway\Gateway\CreditCardGateway;
 use WooCommerce\PayPalCommerce\WcGateway\Gateway\PayPalGateway;
@@ -83,7 +84,9 @@ class OnboardingRESTController
     {
         $params = $request->get_json_params();
         $environment = isset($params['environment']) && in_array($params['environment'], array('production', 'sandbox'), \true) ? $params['environment'] : 'sandbox';
-        return array('scriptURL' => trailingslashit($this->container->get('onboarding.url')) . 'assets/js/onboarding.js', 'scriptData' => $this->container->get('onboarding.assets')->get_script_data(), 'environment' => $environment, 'onboardCompleteCallback' => 'ppcp_onboarding_' . $environment . 'Callback', 'signupLink' => $this->generate_signup_link($environment, !empty($params['returnUrlArgs']) ? $params['returnUrlArgs'] : array()));
+        $asset_getter = $this->container->get('onboarding.asset_getter');
+        assert($asset_getter instanceof AssetGetter);
+        return array('scriptURL' => $asset_getter->get_asset_url('onboarding.js'), 'scriptData' => $this->container->get('onboarding.assets')->get_script_data(), 'environment' => $environment, 'onboardCompleteCallback' => 'ppcp_onboarding_' . $environment . 'Callback', 'signupLink' => $this->generate_signup_link($environment, !empty($params['returnUrlArgs']) ? $params['returnUrlArgs'] : array()));
     }
     /**
      * Callback for the `/onboarding/get-status` endpoint.

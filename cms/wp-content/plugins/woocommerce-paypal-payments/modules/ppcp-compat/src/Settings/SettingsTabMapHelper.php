@@ -10,6 +10,7 @@ namespace WooCommerce\PayPalCommerce\Compat\Settings;
 
 use WooCommerce\PayPalCommerce\ApiClient\Entity\ExperienceContext;
 use WooCommerce\PayPalCommerce\ApiClient\Helper\PurchaseUnitSanitizer;
+use WooCommerce\PayPalCommerce\Settings\Data\Definition\FeaturesDefinition;
 /**
  * A map of old to new styling settings.
  *
@@ -31,7 +32,7 @@ class SettingsTabMapHelper
      */
     public function map(): array
     {
-        return array('disable_cards' => 'disabled_cards', 'brand_name' => 'brand_name', 'soft_descriptor' => 'soft_descriptor', 'payee_preferred' => 'instant_payments_only', 'subtotal_mismatch_behavior' => 'subtotal_adjustment', 'landing_page' => 'landing_page', 'smart_button_language' => 'button_language', 'prefix' => 'invoice_prefix', 'intent' => '', 'vault_enabled_dcc' => 'save_card_details', 'blocks_final_review_enabled' => 'enable_pay_now', 'logging_enabled' => 'enable_logging', 'vault_enabled' => 'save_paypal_and_venmo', '3d_secure_contingency' => 'three_d_secure', 'stay_updated' => 'stay_updated');
+        return array('disable_cards' => 'disabled_cards', 'brand_name' => 'brand_name', 'soft_descriptor' => 'soft_descriptor', 'payee_preferred' => 'instant_payments_only', 'subtotal_mismatch_behavior' => 'subtotal_adjustment', 'landing_page' => 'landing_page', 'smart_button_language' => 'button_language', 'prefix' => 'invoice_prefix', 'intent' => '', 'vault_enabled_dcc' => 'save_card_details', 'blocks_final_review_enabled' => 'enable_pay_now', 'logging_enabled' => 'enable_logging', 'vault_enabled' => FeaturesDefinition::FEATURE_SAVE_PAYPAL_AND_VENMO, '3d_secure_contingency' => 'three_d_secure', 'stay_updated' => 'stay_updated');
     }
     /**
      * Retrieves the value of a mapped key from the new settings.

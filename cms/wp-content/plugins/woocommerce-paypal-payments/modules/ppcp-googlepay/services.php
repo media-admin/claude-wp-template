@@ -9,6 +9,8 @@ declare (strict_types=1);
 namespace WooCommerce\PayPalCommerce\Googlepay;
 
 use Automattic\WooCommerce\Blocks\Payments\PaymentMethodTypeInterface;
+use WooCommerce\PayPalCommerce\Assets\AssetGetter;
+use WooCommerce\PayPalCommerce\Assets\AssetGetterFactory;
 use WooCommerce\PayPalCommerce\Button\Assets\ButtonInterface;
 use WooCommerce\PayPalCommerce\Common\Pattern\SingletonDecorator;
 use WooCommerce\PayPalCommerce\Googlepay\Assets\BlocksPaymentMethod;
@@ -33,7 +35,7 @@ return array(
         };
     },
     'googlepay.helpers.apm-applies' => static function (ContainerInterface $container): ApmApplies {
-        return new ApmApplies($container->get('googlepay.supported-countries'), $container->get('googlepay.supported-currencies'), $container->get('api.shop.currency.getter'), $container->get('api.shop.country'));
+        return new ApmApplies($container->get('googlepay.supported-countries'), $container->get('googlepay.supported-currencies'), $container->get('api.shop.currency.getter'), $container->get('api.merchant.country'));
     },
     // If GooglePay is configured and onboarded.
     'googlepay.available' => static function (ContainerInterface $container): bool {
@@ -210,13 +212,15 @@ return array(
         );
     },
     'googlepay.button' => static function (ContainerInterface $container): ButtonInterface {
-        return new Button($container->get('googlepay.url'), $container->get('googlepay.sdk_url'), $container->get('ppcp.asset-version'), $container->get('wc-subscriptions.helper'), $container->get('wcgateway.settings'), $container->get('settings.environment'), $container->get('wcgateway.settings.status'), $container->get('woocommerce.logger.woocommerce'), $container->get('button.helper.context'), $container->has('settings.data.settings') ? $container->get('settings.data.settings') : null);
+        return new Button($container->get('googlepay.asset_getter'), $container->get('googlepay.sdk_url'), $container->get('ppcp.asset-version'), $container->get('wc-subscriptions.helper'), $container->get('wcgateway.settings'), $container->get('settings.environment'), $container->get('wcgateway.settings.status'), $container->get('woocommerce.logger.woocommerce'), $container->get('button.helper.context'), $container->has('settings.data.settings') ? $container->get('settings.data.settings') : null);
     },
     'googlepay.blocks-payment-method' => static function (ContainerInterface $container): PaymentMethodTypeInterface {
-        return new BlocksPaymentMethod('ppcp-googlepay', $container->get('googlepay.url'), $container->get('ppcp.asset-version'), $container->get('googlepay.button'), $container->get('blocks.method'));
+        return new BlocksPaymentMethod('ppcp-googlepay', $container->get('googlepay.asset_getter'), $container->get('ppcp.asset-version'), $container->get('googlepay.button'), $container->get('blocks.method'));
     },
-    'googlepay.url' => static function (ContainerInterface $container): string {
-        return plugins_url('/modules/ppcp-googlepay/', $container->get('ppcp.path-to-plugin-main-file'));
+    'googlepay.asset_getter' => static function (ContainerInterface $container): AssetGetter {
+        $factory = $container->get('assets.asset_getter_factory');
+        assert($factory instanceof AssetGetterFactory);
+        return $factory->for_module('ppcp-googlepay');
     },
     'googlepay.sdk_url' => static function (ContainerInterface $container): string {
         return 'https://pay.google.com/gp/p/js/pay.js';
@@ -248,6 +252,6 @@ return array(
         return sprintf('<p>%1$s %2$s</p><p><a target="%3$s" href="%4$s" class="button">%5$s</a></p>', $enabled ? $enabled_status_text : $disabled_status_text, $enabled ? '<span class="dashicons dashicons-yes"></span>' : '<span class="dashicons dashicons-no"></span>', $enabled ? '_self' : '_blank', esc_url($button_url), esc_html($button_text));
     },
     'googlepay.wc-gateway' => static function (ContainerInterface $container): \WooCommerce\PayPalCommerce\Googlepay\GooglePayGateway {
-        return new \WooCommerce\PayPalCommerce\Googlepay\GooglePayGateway($container->get('wcgateway.order-processor'), $container->get('api.factory.paypal-checkout-url'), $container->get('wcgateway.processor.refunds'), $container->get('wcgateway.transaction-url-provider'), $container->get('session.handler'), $container->get('googlepay.url'), $container->get('woocommerce.logger.woocommerce'));
+        return new \WooCommerce\PayPalCommerce\Googlepay\GooglePayGateway($container->get('wcgateway.order-processor'), $container->get('api.factory.paypal-checkout-url'), $container->get('wcgateway.processor.refunds'), $container->get('wcgateway.transaction-url-provider'), $container->get('session.handler'), $container->get('googlepay.asset_getter'), $container->get('woocommerce.logger.woocommerce'));
     },
 );

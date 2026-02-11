@@ -8,7 +8,7 @@
 declare (strict_types=1);
 namespace WooCommerce\PayPalCommerce\Axo;
 
-use WooCommerce\PayPalCommerce\Axo\Helper\NoticeRenderer;
+use WooCommerce\PayPalCommerce\Assets\AssetGetter;
 use WooCommerce\PayPalCommerce\Onboarding\State;
 use WooCommerce\PayPalCommerce\Vendor\Psr\Container\ContainerInterface;
 use WooCommerce\PayPalCommerce\WcGateway\Helper\DisplayManager;
@@ -21,7 +21,8 @@ return array('wcgateway.settings.fields' => function (array $fields, ContainerIn
     };
     $display_manager = $container->get('wcgateway.display-manager');
     assert($display_manager instanceof DisplayManager);
-    $module_url = $container->get('axo.url');
+    $asset_getter = $container->get('axo.asset_getter');
+    assert($asset_getter instanceof AssetGetter);
     // Standard Payments tab fields.
     return $insert_after($fields, 'vault_enabled_dcc', array('axo_heading' => array('heading' => __('Fastlane', 'woocommerce-paypal-payments'), 'type' => 'ppcp-heading', 'description' => wp_kses_post(sprintf(
         // translators: %1$s and %2$s is a link tag.
@@ -31,7 +32,7 @@ return array('wcgateway.settings.fields' => function (array $fields, ContainerIn
                             href="https://woo.com/document/woocommerce-paypal-payments/#vaulting-a-card"
                             >',
         '</a>'
-    )), 'screens' => array(State::STATE_ONBOARDED), 'requirements' => array('dcc', 'axo'), 'gateway' => array('dcc', 'axo')), 'axo_enabled' => array('title' => __('Fastlane', 'woocommerce-paypal-payments'), 'title_html' => sprintf('<img src="%sassets/images/fastlane.png" alt="%s" style="max-width: 150px; max-height: 45px;" />', $module_url, __('Fastlane', 'woocommerce-paypal-payments')), 'type' => 'checkbox', 'label' => __('Enable Fastlane by PayPal', 'woocommerce-paypal-payments') . '<p class="description">' . sprintf(
+    )), 'screens' => array(State::STATE_ONBOARDED), 'requirements' => array('dcc', 'axo'), 'gateway' => array('dcc', 'axo')), 'axo_enabled' => array('title' => __('Fastlane', 'woocommerce-paypal-payments'), 'title_html' => sprintf('<img src="%s" alt="%s" style="max-width: 150px; max-height: 45px;" />', $asset_getter->get_static_asset_url('images/fastlane.png'), __('Fastlane', 'woocommerce-paypal-payments')), 'type' => 'checkbox', 'label' => __('Enable Fastlane by PayPal', 'woocommerce-paypal-payments') . '<p class="description">' . sprintf(
         // translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
         __('Help accelerate the checkout process for guests with PayPal\'s autofill solution. When enabled, Fastlane is presented as the default payment method for guests. See the %1$sFastlane setup guide%2$s for more details on the Fastlane configuration.', 'woocommerce-paypal-payments'),
         '<a href="https://woocommerce.com/document/woocommerce-paypal-payments/#fastlane" target="_blank">',

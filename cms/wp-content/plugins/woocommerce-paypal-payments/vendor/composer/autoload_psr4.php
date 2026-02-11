@@ -6,7 +6,6 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'WpOop\\WordPress\\' => array($vendorDir . '/wp-oop/wordpress-interface/src'),
     'WooCommerce\\WooCommerce\\Logging\\' => array($baseDir . '/modules/woocommerce-logging/src'),
     'WooCommerce\\PayPalCommerce\\Webhooks\\' => array($baseDir . '/modules/ppcp-webhooks/src'),
     'WooCommerce\\PayPalCommerce\\WcSubscriptions\\' => array($baseDir . '/modules/ppcp-wc-subscriptions/src'),
@@ -19,7 +18,6 @@ return array(
     'WooCommerce\\PayPalCommerce\\StatusReport\\' => array($baseDir . '/modules/ppcp-status-report/src'),
     'WooCommerce\\PayPalCommerce\\Settings\\' => array($baseDir . '/modules/ppcp-settings/src'),
     'WooCommerce\\PayPalCommerce\\Session\\' => array($baseDir . '/modules/ppcp-session/src'),
-    'WooCommerce\\PayPalCommerce\\SavedPaymentChecker\\' => array($baseDir . '/modules/ppcp-saved-payment-checker/src'),
     'WooCommerce\\PayPalCommerce\\SavePaymentMethods\\' => array($baseDir . '/modules/ppcp-save-payment-methods/src'),
     'WooCommerce\\PayPalCommerce\\PayPalSubscriptions\\' => array($baseDir . '/modules/ppcp-paypal-subscriptions/src'),
     'WooCommerce\\PayPalCommerce\\PayLaterWCBlocks\\' => array($baseDir . '/modules/ppcp-paylater-wc-blocks/src'),
@@ -44,9 +42,5 @@ return array(
     'Wikimedia\\Composer\\Merge\\V2\\' => array($vendorDir . '/wikimedia/composer-merge-plugin/src'),
     'Symfony\\Polyfill\\Php80\\' => array($vendorDir . '/symfony/polyfill-php80'),
     'Interop\\Container\\' => array($vendorDir . '/container-interop/service-provider/src'),
-    'Dhii\\Versions\\' => array($vendorDir . '/dhii/versions/src'),
-    'Dhii\\Validation\\' => array($vendorDir . '/dhii/validation-interface/src'),
-    'Dhii\\Util\\String\\' => array($vendorDir . '/dhii/human-readable-interface/src'),
-    'Dhii\\Package\\' => array($vendorDir . '/dhii/package-interface/src'),
     'Dhii\\Modular\\Module\\' => array($vendorDir . '/dhii/module-interface/src'),
 );

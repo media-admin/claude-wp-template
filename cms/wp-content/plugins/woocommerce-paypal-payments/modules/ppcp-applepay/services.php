@@ -17,6 +17,8 @@ use WooCommerce\PayPalCommerce\Applepay\Assets\BlocksPaymentMethod;
 use WooCommerce\PayPalCommerce\Applepay\Assets\PropertiesDictionary;
 use WooCommerce\PayPalCommerce\Applepay\Helper\ApmApplies;
 use WooCommerce\PayPalCommerce\Applepay\Helper\AvailabilityNotice;
+use WooCommerce\PayPalCommerce\Assets\AssetGetter;
+use WooCommerce\PayPalCommerce\Assets\AssetGetterFactory;
 use WooCommerce\PayPalCommerce\Common\Pattern\SingletonDecorator;
 use WooCommerce\PayPalCommerce\WcGateway\Helper\Environment;
 use WooCommerce\PayPalCommerce\Vendor\Psr\Container\ContainerInterface;
@@ -34,7 +36,7 @@ return array(
         };
     },
     'applepay.helpers.apm-applies' => static function (ContainerInterface $container): ApmApplies {
-        return new ApmApplies($container->get('applepay.supported-countries'), $container->get('applepay.supported-currencies'), $container->get('api.shop.currency.getter'), $container->get('api.shop.country'));
+        return new ApmApplies($container->get('applepay.supported-countries'), $container->get('applepay.supported-currencies'), $container->get('api.shop.currency.getter'), $container->get('api.merchant.country'));
     },
     'applepay.status-cache' => static function (ContainerInterface $container): Cache {
         return new Cache('ppcp-paypal-apple-status-cache');
@@ -101,8 +103,10 @@ return array(
         }
         return \false;
     },
-    'applepay.url' => static function (ContainerInterface $container): string {
-        return plugins_url('/modules/ppcp-applepay/', $container->get('ppcp.path-to-plugin-main-file'));
+    'applepay.asset_getter' => static function (ContainerInterface $container): AssetGetter {
+        $factory = $container->get('assets.asset_getter_factory');
+        assert($factory instanceof AssetGetterFactory);
+        return $factory->for_module('ppcp-applepay');
     },
     'applepay.sdk_script_url' => static function (ContainerInterface $container): string {
         return 'https://applepay.cdn-apple.com/jsapi/v1/apple-pay-sdk.js';
@@ -111,10 +115,10 @@ return array(
         return new DataToAppleButtonScripts($container->get('applepay.sdk_script_url'), $container->get('wcgateway.settings'));
     },
     'applepay.button' => static function (ContainerInterface $container): ApplePayButton {
-        return new ApplePayButton($container->get('wcgateway.settings'), $container->get('woocommerce.logger.woocommerce'), $container->get('wcgateway.order-processor'), $container->get('applepay.url'), $container->get('ppcp.asset-version'), $container->get('applepay.data_to_scripts'), $container->get('wcgateway.settings.status'), $container->get('button.helper.cart-products'));
+        return new ApplePayButton($container->get('wcgateway.settings'), $container->get('woocommerce.logger.woocommerce'), $container->get('wcgateway.order-processor'), $container->get('applepay.asset_getter'), $container->get('ppcp.asset-version'), $container->get('applepay.data_to_scripts'), $container->get('wcgateway.settings.status'), $container->get('button.helper.cart-products'));
     },
     'applepay.blocks-payment-method' => static function (ContainerInterface $container): PaymentMethodTypeInterface {
-        return new BlocksPaymentMethod('ppcp-applepay', $container->get('applepay.url'), $container->get('ppcp.asset-version'), $container->get('applepay.button'), $container->get('blocks.method'));
+        return new BlocksPaymentMethod('ppcp-applepay', $container->get('applepay.asset_getter'), $container->get('ppcp.asset-version'), $container->get('applepay.button'), $container->get('blocks.method'));
     },
     /**
      * The list of which countries can be used for ApplePay.
@@ -290,6 +294,6 @@ return array(
         return sprintf('<p>%1$s %2$s</p><p><a target="%3$s" href="%4$s" class="button">%5$s</a></p>', $enabled ? $enabled_status_text : $disabled_status_text, $enabled ? '<span class="dashicons dashicons-yes"></span>' : '<span class="dashicons dashicons-no"></span>', $enabled ? '_self' : '_blank', esc_url($button_url), esc_html($button_text));
     },
     'applepay.wc-gateway' => static function (ContainerInterface $container): \WooCommerce\PayPalCommerce\Applepay\ApplePayGateway {
-        return new \WooCommerce\PayPalCommerce\Applepay\ApplePayGateway($container->get('wcgateway.order-processor'), $container->get('api.factory.paypal-checkout-url'), $container->get('wcgateway.processor.refunds'), $container->get('wcgateway.transaction-url-provider'), $container->get('session.handler'), $container->get('applepay.url'), $container->get('woocommerce.logger.woocommerce'));
+        return new \WooCommerce\PayPalCommerce\Applepay\ApplePayGateway($container->get('wcgateway.order-processor'), $container->get('api.factory.paypal-checkout-url'), $container->get('wcgateway.processor.refunds'), $container->get('wcgateway.transaction-url-provider'), $container->get('session.handler'), $container->get('applepay.asset_getter'), $container->get('woocommerce.logger.woocommerce'));
     },
 );

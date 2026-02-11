@@ -12,6 +12,7 @@ use Exception;
 use WC_AJAX;
 use WC_Order;
 use WooCommerce\PayPalCommerce\ApiClient\Endpoint\OrderEndpoint;
+use WooCommerce\PayPalCommerce\Assets\AssetGetter;
 use WooCommerce\PayPalCommerce\WcGateway\Endpoint\VoidOrderEndpoint;
 use WooCommerce\PayPalCommerce\WcGateway\Gateway\PayPalGateway;
 use WooCommerce\PayPalCommerce\WcGateway\Processor\RefundProcessor;
@@ -21,12 +22,7 @@ use WP_Screen;
  */
 class VoidButtonAssets
 {
-    /**
-     * The URL of this module.
-     *
-     * @var string
-     */
-    private $module_url;
+    private AssetGetter $asset_getter;
     /**
      * The assets version.
      *
@@ -46,16 +42,14 @@ class VoidButtonAssets
      */
     private $refund_processor;
     /**
-     * VoidButtonAssets constructor.
-     *
-     * @param string          $module_url The url of this module.
+     * @param AssetGetter     $asset_getter
      * @param string          $version The assets version.
      * @param OrderEndpoint   $order_endpoint The order endpoint.
      * @param RefundProcessor $refund_processor The Refund Processor.
      */
-    public function __construct(string $module_url, string $version, OrderEndpoint $order_endpoint, RefundProcessor $refund_processor)
+    public function __construct(AssetGetter $asset_getter, string $version, OrderEndpoint $order_endpoint, RefundProcessor $refund_processor)
     {
-        $this->module_url = $module_url;
+        $this->asset_getter = $asset_getter;
         $this->version = $version;
         $this->order_endpoint = $order_endpoint;
         $this->refund_processor = $refund_processor;
@@ -108,7 +102,7 @@ class VoidButtonAssets
     {
         global $theorder;
         assert($theorder instanceof WC_Order);
-        wp_enqueue_script('ppcp-void-button', trailingslashit($this->module_url) . 'assets/js/void-button.js', array(), $this->version, \true);
+        wp_enqueue_script('ppcp-void-button', $this->asset_getter->get_asset_url('void-button.js'), array(), $this->version, \true);
         wp_localize_script('ppcp-void-button', 'PcpVoidButton', array('button_text' => __('Void authorization', 'woocommerce-paypal-payments'), 'popup_text' => __('After voiding an authorized transaction, you cannot capture any funds associated with that transaction, and the funds are returned to the customer. Voiding an authorization cancels the entire open amount.', 'woocommerce-paypal-payments'), 'error_text' => __('The operation failed. Use the Refund button if the funds were already captured.', 'woocommerce-paypal-payments'), 'wc_order_id' => $theorder->get_id(), 'ajax' => array('void' => array('endpoint' => WC_AJAX::get_endpoint(VoidOrderEndpoint::ENDPOINT), 'nonce' => wp_create_nonce(VoidOrderEndpoint::nonce())))));
     }
 }

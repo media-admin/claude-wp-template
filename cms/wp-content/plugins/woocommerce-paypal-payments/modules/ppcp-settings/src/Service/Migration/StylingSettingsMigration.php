@@ -13,7 +13,6 @@ use WooCommerce\PayPalCommerce\Googlepay\GooglePayGateway;
 use WooCommerce\PayPalCommerce\Settings\Data\StylingSettings;
 use WooCommerce\PayPalCommerce\Settings\DTO\LocationStylingDTO;
 use WooCommerce\PayPalCommerce\WcGateway\Gateway\PayPalGateway;
-use WooCommerce\PayPalCommerce\WcGateway\Settings\Settings;
 /**
  * Class StylingSettingsMigration
  *
@@ -21,9 +20,12 @@ use WooCommerce\PayPalCommerce\WcGateway\Settings\Settings;
  */
 class StylingSettingsMigration implements \WooCommerce\PayPalCommerce\Settings\Service\Migration\SettingsMigrationInterface
 {
-    protected Settings $settings;
+    /**
+     * @var array<string, mixed>
+     */
+    protected array $settings;
     protected StylingSettings $styling_settings;
-    public function __construct(Settings $settings, StylingSettings $styling_settings)
+    public function __construct(array $settings, StylingSettings $styling_settings)
     {
         $this->settings = $settings;
         $this->styling_settings = $styling_settings;
@@ -31,7 +33,7 @@ class StylingSettingsMigration implements \WooCommerce\PayPalCommerce\Settings\S
     public function migrate(): void
     {
         $location_styles = array();
-        $styling_per_location = $this->settings->has('smart_button_enable_styling_per_location') && $this->settings->get('smart_button_enable_styling_per_location');
+        $styling_per_location = !empty($this->settings['smart_button_enable_styling_per_location']);
         foreach ($this->locations_map() as $old_location => $new_location) {
             $context = $styling_per_location ? $old_location : 'general';
             $location_styles[$new_location] = new LocationStylingDTO($new_location, $this->is_button_enabled_for_location($old_location, 'smart'), $this->enabled_methods($old_location), (string) ($this->style_for_context('shape', $context) ?? 'rect'), (string) ($this->style_for_context('label', $context) ?? 'pay'), (string) ($this->style_for_context('color', $context) ?? 'gold'), (string) ($this->style_for_context('layout', $context) ?? 'vertical'), (bool) ($this->style_for_context('tagline', $context) ?? \false));
@@ -54,16 +56,16 @@ class StylingSettingsMigration implements \WooCommerce\PayPalCommerce\Settings\S
         if ($this->is_button_enabled_for_location($location, 'pay_later')) {
             $methods[] = 'pay-later';
         }
-        if ($this->settings->has('disable_funding')) {
-            $disable_funding = $this->settings->get('disable_funding');
+        if (isset($this->settings['disable_funding'])) {
+            $disable_funding = $this->settings['disable_funding'];
             if (!in_array('venmo', $disable_funding, \true)) {
                 $methods[] = 'venmo';
             }
         }
-        if ($this->settings->has('applepay_button_enabled') && $this->settings->get('applepay_button_enabled')) {
+        if (!empty($this->settings['applepay_button_enabled'])) {
             $methods[] = ApplePayGateway::ID;
         }
-        if ($this->settings->has('googlepay_button_enabled') && $this->settings->get('googlepay_button_enabled')) {
+        if (!empty($this->settings['googlepay_button_enabled'])) {
             $methods[] = GooglePayGateway::ID;
         }
         return $methods;
@@ -78,10 +80,10 @@ class StylingSettingsMigration implements \WooCommerce\PayPalCommerce\Settings\S
     protected function is_button_enabled_for_location(string $location, string $type): bool
     {
         $key = "{$type}_button_locations";
-        if (!$this->settings->has($key)) {
+        if (!isset($this->settings[$key])) {
             return \false;
         }
-        $enabled_locations = $this->settings->get($key);
+        $enabled_locations = $this->settings[$key];
         if ($location === 'cart') {
             return in_array($location, $enabled_locations, \true) || in_array('cart-block', $enabled_locations, \true);
         }
@@ -121,9 +123,9 @@ class StylingSettingsMigration implements \WooCommerce\PayPalCommerce\Settings\S
      */
     private function get_style_value(string $key)
     {
-        if (!$this->settings->has($key)) {
+        if (!isset($this->settings[$key])) {
             return null;
         }
-        return $this->settings->get($key);
+        return $this->settings[$key];
     }
 }

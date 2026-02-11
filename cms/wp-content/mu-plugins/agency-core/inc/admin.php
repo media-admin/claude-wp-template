@@ -43,9 +43,13 @@ function agency_core_admin_page() {
         <div class="card">
             <h2>Registered Custom Post Types</h2>
             <ul>
+                <li>✅ Hero Slides</li>
                 <li>✅ Team Members</li>
                 <li>✅ Projects</li>
                 <li>✅ Testimonials</li>
+                <li>✅ FAQs</li>
+                <li>✅ Google Maps</li>
+                <li>✅ Carousel</li>
                 <li>✅ Services</li>
             </ul>
         </div>

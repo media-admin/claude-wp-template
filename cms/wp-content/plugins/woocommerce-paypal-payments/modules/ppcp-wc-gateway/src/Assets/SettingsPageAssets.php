@@ -10,6 +10,7 @@ namespace WooCommerce\PayPalCommerce\WcGateway\Assets;
 
 use WooCommerce\PayPalCommerce\ApiClient\Helper\ReferenceTransactionStatus;
 use WooCommerce\PayPalCommerce\ApiClient\Helper\CurrencyGetter;
+use WooCommerce\PayPalCommerce\Assets\AssetGetter;
 use WooCommerce\PayPalCommerce\WcGateway\Endpoint\RefreshFeatureStatusEndpoint;
 use WooCommerce\PayPalCommerce\WcGateway\Helper\Environment;
 use WooCommerce\PayPalCommerce\WcSubscriptions\Helper\SubscriptionHelper;
@@ -18,12 +19,7 @@ use WooCommerce\PayPalCommerce\WcSubscriptions\Helper\SubscriptionHelper;
  */
 class SettingsPageAssets
 {
-    /**
-     * The URL of this module.
-     *
-     * @var string
-     */
-    private $module_url;
+    private AssetGetter $asset_getter;
     /**
      * The assets version.
      *
@@ -98,9 +94,7 @@ class SettingsPageAssets
      */
     private $is_paypal_payment_method_page;
     /**
-     * Assets constructor.
-     *
-     * @param string                     $module_url The url of this module.
+     * @param AssetGetter                $asset_getter
      * @param string                     $version                            The assets version.
      * @param SubscriptionHelper         $subscription_helper The subscription helper.
      * @param string                     $client_id The PayPal SDK client ID.
@@ -115,9 +109,9 @@ class SettingsPageAssets
      * @param ReferenceTransactionStatus $reference_transaction_status
      * @param bool                       $is_paypal_payment_method_page Whether we're on a settings page for our plugin's payment methods.
      */
-    public function __construct(string $module_url, string $version, SubscriptionHelper $subscription_helper, string $client_id, CurrencyGetter $currency, string $country, Environment $environment, bool $is_pay_later_button_enabled, array $disabled_sources, array $all_funding_sources, bool $is_settings_page, bool $is_acdc_enabled, ReferenceTransactionStatus $reference_transaction_status, bool $is_paypal_payment_method_page)
+    public function __construct(AssetGetter $asset_getter, string $version, SubscriptionHelper $subscription_helper, string $client_id, CurrencyGetter $currency, string $country, Environment $environment, bool $is_pay_later_button_enabled, array $disabled_sources, array $all_funding_sources, bool $is_settings_page, bool $is_acdc_enabled, ReferenceTransactionStatus $reference_transaction_status, bool $is_paypal_payment_method_page)
     {
-        $this->module_url = $module_url;
+        $this->asset_getter = $asset_getter;
         $this->version = $version;
         $this->subscription_helper = $subscription_helper;
         $this->client_id = $client_id;
@@ -154,8 +148,8 @@ class SettingsPageAssets
      */
     private function register_paypal_admin_assets(): void
     {
-        wp_enqueue_style('ppcp-gateway-settings', trailingslashit($this->module_url) . 'assets/css/gateway-settings.css', array(), $this->version);
-        wp_enqueue_script('ppcp-gateway-settings', trailingslashit($this->module_url) . 'assets/js/gateway-settings.js', array(), $this->version, \true);
+        wp_enqueue_style('ppcp-gateway-settings', $this->asset_getter->get_asset_url('gateway-settings.css'), array(), $this->version);
+        wp_enqueue_script('ppcp-gateway-settings', $this->asset_getter->get_asset_url('gateway-settings.js'), array(), $this->version, \true);
         /**
          * Psalm cannot find it for some reason.
          *
@@ -173,7 +167,7 @@ class SettingsPageAssets
      */
     private function register_admin_assets(): void
     {
-        wp_enqueue_style('ppcp-admin-common', trailingslashit($this->module_url) . 'assets/css/common.css', array(), $this->version);
-        wp_enqueue_script('ppcp-admin-common', trailingslashit($this->module_url) . 'assets/js/common.js', array(), $this->version, \true);
+        wp_enqueue_style('ppcp-admin-common', $this->asset_getter->get_asset_url('common.css'), array(), $this->version);
+        wp_enqueue_script('ppcp-admin-common', $this->asset_getter->get_asset_url('common.js'), array(), $this->version, \true);
     }
 }

@@ -69,6 +69,12 @@ class PurchaseUnit
      */
     private $payments;
     /**
+     * The supplementary data (Level 2/3 card processing).
+     *
+     * @var array|null
+     */
+    private $supplementary_data;
+    /**
      * Whether the unit contains physical goods.
      *
      * @var bool
@@ -93,7 +99,7 @@ class PurchaseUnit
      * @param string        $soft_descriptor The soft descriptor.
      * @param Payments|null $payments The Payments.
      */
-    public function __construct(\WooCommerce\PayPalCommerce\ApiClient\Entity\Amount $amount, array $items = array(), ?\WooCommerce\PayPalCommerce\ApiClient\Entity\Shipping $shipping = null, string $reference_id = 'default', string $description = '', string $custom_id = '', string $invoice_id = '', string $soft_descriptor = '', ?\WooCommerce\PayPalCommerce\ApiClient\Entity\Payments $payments = null)
+    public function __construct(\WooCommerce\PayPalCommerce\ApiClient\Entity\Amount $amount, array $items = array(), ?\WooCommerce\PayPalCommerce\ApiClient\Entity\Shipping $shipping = null, string $reference_id = 'default', string $description = '', string $custom_id = '', string $invoice_id = '', string $soft_descriptor = '', ?\WooCommerce\PayPalCommerce\ApiClient\Entity\Payments $payments = null, ?array $supplementary_data = null)
     {
         $this->amount = $amount;
         $this->shipping = $shipping;
@@ -116,6 +122,7 @@ class PurchaseUnit
         $this->invoice_id = $invoice_id;
         $this->soft_descriptor = $soft_descriptor;
         $this->payments = $payments;
+        $this->supplementary_data = $supplementary_data;
     }
     /**
      * Returns the amount.
@@ -227,6 +234,15 @@ class PurchaseUnit
         return $this->payments;
     }
     /**
+     * Returns the supplementary data.
+     *
+     * @return array|null
+     */
+    public function supplementary_data(): ?array
+    {
+        return $this->supplementary_data;
+    }
+    /**
      * Returns the Items.
      *
      * @return Item[]
@@ -271,6 +287,9 @@ class PurchaseUnit
         }
         if ($this->soft_descriptor()) {
             $purchase_unit['soft_descriptor'] = $this->soft_descriptor();
+        }
+        if ($this->supplementary_data()) {
+            $purchase_unit['supplementary_data'] = $this->supplementary_data();
         }
         $has_ditched_items_breakdown = \false;
         if ($sanitize_output && isset($this->sanitizer)) {

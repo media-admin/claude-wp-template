@@ -49,7 +49,16 @@
 @import 'components/ajax-search';
 @import 'components/load-more';
 @import 'components/google-maps';
+@import 'components/projects-grid';
+@import 'components/job-card';
 
+
+// Templates
+@import 'templates/page-builder';
+
+// Utilities
+@import 'utilities/helpers';
+@import 'utilities/animations';
 
 // Pages
 @import 'pages/home';
@@ -57,9 +66,3 @@
 
 // WooCommerce
 @import 'woocommerce/woocommerce';
-
-// Utilities
-@import 'utilities/helpers';
-@import 'utilities/animations';
-
-

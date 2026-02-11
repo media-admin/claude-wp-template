@@ -8,6 +8,7 @@
 declare (strict_types=1);
 namespace WooCommerce\PayPalCommerce\PayLaterWCBlocks;
 
+use WooCommerce\PayPalCommerce\Assets\AssetGetter;
 use WooCommerce\PayPalCommerce\Button\Endpoint\CartScriptParamsEndpoint;
 use WooCommerce\PayPalCommerce\PayLaterConfigurator\Factory\ConfigFactory;
 use WooCommerce\PayPalCommerce\Vendor\Inpsyde\Modularity\Module\ExecutableModule;
@@ -102,10 +103,12 @@ class PayLaterWCBlocksModule implements ServiceModule, ExtendingModule, Executab
             $config_factory = $c->get('paylater-configurator.factory.config');
             assert($config_factory instanceof ConfigFactory);
             $script_handle = 'ppcp-cart-paylater-block';
-            wp_register_script($script_handle, $c->get('paylater-wc-blocks.url') . 'assets/js/cart-paylater-block.js', array(), $c->get('ppcp.asset-version'), \true);
+            $asset_getter = $c->get('paylater-wc-blocks.asset_getter');
+            assert($asset_getter instanceof AssetGetter);
+            wp_register_script($script_handle, $asset_getter->get_asset_url('CartPayLaterMessagesBlock/cart-paylater-block.js'), array(), $c->get('ppcp.asset-version'), \true);
             wp_localize_script($script_handle, 'PcpCartPayLaterBlock', array('ajax' => array('cart_script_params' => array('endpoint' => \WC_AJAX::get_endpoint(CartScriptParamsEndpoint::ENDPOINT))), 'config' => $config_factory->from_settings($settings), 'settingsUrl' => admin_url('admin.php?page=wc-settings&tab=checkout&section=ppcp-gateway'), 'vaultingEnabled' => $settings->has('vault_enabled') && $settings->get('vault_enabled'), 'placementEnabled' => self::is_placement_enabled($c->get('wcgateway.settings.status'), 'cart'), 'payLaterSettingsUrl' => admin_url('admin.php?page=wc-settings&tab=checkout&section=ppcp-gateway&ppcp-tab=ppcp-pay-later'), 'underTotalsPlacementEnabled' => self::is_under_cart_totals_placement_enabled()));
             $script_handle = 'ppcp-checkout-paylater-block';
-            wp_register_script($script_handle, $c->get('paylater-wc-blocks.url') . 'assets/js/checkout-paylater-block.js', array(), $c->get('ppcp.asset-version'), \true);
+            wp_register_script($script_handle, $asset_getter->get_asset_url('CheckoutPayLaterMessagesBlock/checkout-paylater-block.js'), array(), $c->get('ppcp.asset-version'), \true);
             wp_localize_script($script_handle, 'PcpCheckoutPayLaterBlock', array('ajax' => array('cart_script_params' => array('endpoint' => \WC_AJAX::get_endpoint(CartScriptParamsEndpoint::ENDPOINT))), 'config' => $config_factory->from_settings($settings), 'settingsUrl' => admin_url('admin.php?page=wc-settings&tab=checkout&section=ppcp-gateway'), 'vaultingEnabled' => $settings->has('vault_enabled') && $settings->get('vault_enabled'), 'placementEnabled' => self::is_placement_enabled($c->get('wcgateway.settings.status'), 'checkout'), 'payLaterSettingsUrl' => admin_url('admin.php?page=wc-settings&tab=checkout&section=ppcp-gateway&ppcp-tab=ppcp-pay-later')));
         }, 20);
         /**
@@ -144,7 +147,9 @@ class PayLaterWCBlocksModule implements ServiceModule, ExtendingModule, Executab
         if (self::is_under_cart_totals_placement_enabled()) {
             add_action('enqueue_block_editor_assets', function () use ($c): void {
                 $handle = 'ppcp-checkout-paylater-block-editor-inserter';
-                $path = $c->get('paylater-wc-blocks.url') . 'assets/js/cart-paylater-block-inserter.js';
+                $asset_getter = $c->get('paylater-wc-blocks.asset_getter');
+                assert($asset_getter instanceof AssetGetter);
+                $path = $asset_getter->get_asset_url('CartPayLaterMessagesBlock/cart-paylater-block-inserter.js');
                 wp_register_script($handle, $path, array('wp-blocks', 'wp-data', 'wp-element'), $c->get('ppcp.asset-version'), \true);
                 wp_enqueue_script($handle);
             });

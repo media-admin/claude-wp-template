@@ -12,6 +12,7 @@ use Exception;
 use WooCommerce\PayPalCommerce\Vendor\Psr\Log\LoggerInterface;
 use WC_Order;
 use WC_Payment_Gateway;
+use WooCommerce\PayPalCommerce\Assets\AssetGetter;
 use WooCommerce\PayPalCommerce\Session\SessionHandler;
 use WooCommerce\PayPalCommerce\ApiClient\Exception\PayPalApiException;
 use WooCommerce\PayPalCommerce\WcGateway\Gateway\ProcessPaymentTrait;
@@ -59,20 +60,12 @@ class ApplePayGateway extends WC_Payment_Gateway
      */
     protected $session_handler;
     /**
-     * The URL to the module.
-     *
-     * @var string
-     */
-    private $module_url;
-    /**
      * The logger.
      *
      * @var LoggerInterface
      */
     private $logger;
     /**
-     * ApplePayGateway constructor.
-     *
      * @param OrderProcessor          $order_processor             The Order Processor.
      * @param callable(string):string $paypal_checkout_url_factory The function return the PayPal
      *                                                             checkout URL for the given order
@@ -81,10 +74,10 @@ class ApplePayGateway extends WC_Payment_Gateway
      * @param TransactionUrlProvider  $transaction_url_provider    Service providing transaction
      *                                                             view URL based on order.
      * @param SessionHandler          $session_handler             The Session Handler.
-     * @param string                  $module_url                  The URL to the module.
+     * @param AssetGetter             $asset_getter
      * @param LoggerInterface         $logger The logger.
      */
-    public function __construct(OrderProcessor $order_processor, callable $paypal_checkout_url_factory, RefundProcessor $refund_processor, TransactionUrlProvider $transaction_url_provider, SessionHandler $session_handler, string $module_url, LoggerInterface $logger)
+    public function __construct(OrderProcessor $order_processor, callable $paypal_checkout_url_factory, RefundProcessor $refund_processor, TransactionUrlProvider $transaction_url_provider, SessionHandler $session_handler, AssetGetter $asset_getter, LoggerInterface $logger)
     {
         $this->id = self::ID;
         $this->supports = array('refunds', 'products');
@@ -92,8 +85,7 @@ class ApplePayGateway extends WC_Payment_Gateway
         $this->method_description = __('Display Apple Pay as a standalone payment option instead of bundling it with PayPal.', 'woocommerce-paypal-payments');
         $this->title = $this->get_option('title', __('Apple Pay', 'woocommerce-paypal-payments'));
         $this->description = $this->get_option('description', '');
-        $this->module_url = $module_url;
-        $this->icon = esc_url($this->module_url) . 'assets/images/applepay.svg';
+        $this->icon = $asset_getter->get_static_asset_url('images/applepay.svg');
         $this->init_form_fields();
         $this->init_settings();
         $this->order_processor = $order_processor;

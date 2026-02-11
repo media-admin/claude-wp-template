@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the WordPress - 6.9.x - Development - Administration package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2026-02-07 17:05:06+0000\n"
+"PO-Revision-Date: 2026-02-10 15:44:09+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -4793,7 +4793,7 @@ msgstr "Hervorragende Arbeit!"
 #: wp-admin/privacy-policy-guide.php:44 wp-admin/privacy.php:42
 #: wp-admin/site-health.php:141
 msgid "Secondary menu"
-msgstr "Zweites Menü"
+msgstr "Sekundäres Menü"
 
 #: wp-admin/includes/class-wp-site-health.php:3242
 msgid "The loopback request to your site completed successfully."
@@ -10398,7 +10398,7 @@ msgstr "Bearbeiten"
 
 #: wp-admin/nav-menus.php:864
 msgid "Select a Menu"
-msgstr "Wähle ein Menü"
+msgstr "Menü auswählen"
 
 #: wp-admin/nav-menus.php:855
 msgid "Assigned Menu"

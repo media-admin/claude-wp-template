@@ -8,6 +8,7 @@
 declare (strict_types=1);
 namespace WooCommerce\PayPalCommerce\Onboarding\Render;
 
+use WooCommerce\PayPalCommerce\Assets\AssetGetter;
 use WooCommerce\PayPalCommerce\WcGateway\Settings\Settings;
 use WooCommerce\PayPalCommerce\WcGateway\Exception\NotFoundException;
 /**
@@ -15,12 +16,7 @@ use WooCommerce\PayPalCommerce\WcGateway\Exception\NotFoundException;
  */
 class OnboardingOptionsRenderer
 {
-    /**
-     * The module url.
-     *
-     * @var string
-     */
-    private $module_url;
+    private AssetGetter $asset_getter;
     /**
      * 2-letter country code of the shop.
      *
@@ -34,15 +30,13 @@ class OnboardingOptionsRenderer
      */
     protected $settings;
     /**
-     * OnboardingOptionsRenderer constructor.
-     *
-     * @param string   $module_url The module url (for assets).
-     * @param string   $country 2-letter country code of the shop.
-     * @param Settings $settings The settings.
+     * @param AssetGetter $asset_getter
+     * @param string      $country 2-letter country code of the shop.
+     * @param Settings    $settings The settings.
      */
-    public function __construct(string $module_url, string $country, Settings $settings)
+    public function __construct(AssetGetter $asset_getter, string $country, Settings $settings)
     {
-        $this->module_url = $module_url;
+        $this->asset_getter = $asset_getter;
         $this->country = $country;
         $this->settings = $settings;
     }
@@ -172,6 +166,6 @@ class OnboardingOptionsRenderer
      */
     private function get_screen_url(string $key): string
     {
-        return untrailingslashit($this->module_url) . "/assets/images/cards-screen-{$key}.png";
+        return $this->asset_getter->get_static_asset_url("images/cards-screen-{$key}.png");
     }
 }

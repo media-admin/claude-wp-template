@@ -9,6 +9,7 @@ declare (strict_types=1);
 namespace WooCommerce\PayPalCommerce\Applepay;
 
 use WooCommerce\PayPalCommerce\Applepay\Assets\PropertiesDictionary;
+use WooCommerce\PayPalCommerce\Assets\AssetGetter;
 use WooCommerce\PayPalCommerce\WcGateway\Helper\Environment;
 use WooCommerce\PayPalCommerce\Onboarding\State;
 use WooCommerce\PayPalCommerce\Vendor\Psr\Container\ContainerInterface;
@@ -57,20 +58,21 @@ return array('wcgateway.settings.fields' => function (array $fields, ContainerIn
         $device_eligibility_text = __('Status: Your current browser/device seems to support Apple Pay ✔️', 'woocommerce-paypal-payments');
         $device_eligibility_notes = __('The Apple Pay button will be visible both in previews and below the PayPal buttons in the shop.', 'woocommerce-paypal-payments');
     }
-    $module_url = $container->get('applepay.url');
+    $asset_getter = $container->get('applepay.asset_getter');
+    assert($asset_getter instanceof AssetGetter);
     // Connection tab fields.
     $fields = $insert_after($fields, 'ppcp_reference_transactions_status', array('applepay_status' => array('title' => __('Apple Pay Payments', 'woocommerce-paypal-payments'), 'type' => 'ppcp-text', 'text' => $container->get('applepay.settings.connection.status-text'), 'screens' => array(State::STATE_ONBOARDED), 'requirements' => array(), 'gateway' => Settings::CONNECTION_TAB_ID)));
     if (!$is_available && $is_referral) {
         $connection_url = admin_url('admin.php?page=wc-settings&tab=checkout&section=ppcp-gateway&ppcp-tab=ppcp-connection#field-credentials_feature_onboarding_heading');
         $connection_link = '<a href="' . $connection_url . '" style="pointer-events: auto">';
-        return $insert_after($fields, 'digital_wallet_heading', array('applepay_button_enabled' => array('title' => __('Apple Pay Button', 'woocommerce-paypal-payments'), 'title_html' => sprintf('<img src="%sassets/images/applepay.svg" alt="%s" style="max-width: 150px; max-height: 45px;" />', $module_url, __('Apple Pay', 'woocommerce-paypal-payments')), 'type' => 'checkbox', 'class' => array('ppcp-grayed-out-text'), 'input_class' => array('ppcp-disabled-checkbox'), 'label' => __('Enable Apple Pay button', 'woocommerce-paypal-payments') . '<p class="description">' . sprintf(
+        return $insert_after($fields, 'digital_wallet_heading', array('applepay_button_enabled' => array('title' => __('Apple Pay Button', 'woocommerce-paypal-payments'), 'title_html' => sprintf('<img src="%s" alt="%s" style="max-width: 150px; max-height: 45px;" />', $asset_getter->get_static_asset_url('images/applepay.svg'), __('Apple Pay', 'woocommerce-paypal-payments')), 'type' => 'checkbox', 'class' => array('ppcp-grayed-out-text'), 'input_class' => array('ppcp-disabled-checkbox'), 'label' => __('Enable Apple Pay button', 'woocommerce-paypal-payments') . '<p class="description">' . sprintf(
             // translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
             __('Your PayPal account  %1$srequires additional permissions%2$s to enable Apple Pay.', 'woocommerce-paypal-payments'),
             $connection_link,
             '</a>'
         ) . '</p>', 'default' => 'yes', 'screens' => array(State::STATE_ONBOARDED), 'gateway' => 'dcc', 'requirements' => array(), 'custom_attributes' => array('data-ppcp-display' => wp_json_encode(array($display_manager->rule()->condition_is_true(\false)->action_enable('applepay_button_enabled')->to_array()))), 'classes' => array('ppcp-valign-label-middle', 'ppcp-align-label-center'))));
     }
-    return $insert_after($fields, 'digital_wallet_heading', array('spacer' => array('title' => '', 'type' => 'ppcp-text', 'text' => '', 'class' => array(), 'classes' => array('ppcp-active-spacer'), 'screens' => array(State::STATE_ONBOARDED), 'gateway' => 'dcc', 'requirements' => array()), 'applepay_button_enabled' => array('title' => __('Apple Pay Button', 'woocommerce-paypal-payments'), 'title_html' => sprintf('<img src="%sassets/images/applepay.svg" alt="%s" style="max-width: 150px; max-height: 45px;" />', $module_url, __('Apple Pay', 'woocommerce-paypal-payments')), 'type' => 'checkbox', 'label' => __('Enable Apple Pay button', 'woocommerce-paypal-payments') . '<p class="description">' . sprintf(
+    return $insert_after($fields, 'digital_wallet_heading', array('spacer' => array('title' => '', 'type' => 'ppcp-text', 'text' => '', 'class' => array(), 'classes' => array('ppcp-active-spacer'), 'screens' => array(State::STATE_ONBOARDED), 'gateway' => 'dcc', 'requirements' => array()), 'applepay_button_enabled' => array('title' => __('Apple Pay Button', 'woocommerce-paypal-payments'), 'title_html' => sprintf('<img src="%s" alt="%s" style="max-width: 150px; max-height: 45px;" />', $asset_getter->get_static_asset_url('images/applepay.svg'), __('Apple Pay', 'woocommerce-paypal-payments')), 'type' => 'checkbox', 'label' => __('Enable Apple Pay button', 'woocommerce-paypal-payments') . '<p class="description">' . sprintf(
         // translators: %1$s and %2$s are the opening and closing of HTML <a> tag.
         __('Buyers can use %1$sApple Pay%2$s to make payments on the web using the Safari web browser or an iOS device.', 'woocommerce-paypal-payments'),
         '<a href="https://woocommerce.com/document/woocommerce-paypal-payments/#apple-pay" target="_blank">',

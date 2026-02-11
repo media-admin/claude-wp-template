@@ -8,6 +8,8 @@
 declare (strict_types=1);
 namespace WooCommerce\PayPalCommerce\Axo;
 
+use WooCommerce\PayPalCommerce\Assets\AssetGetter;
+use WooCommerce\PayPalCommerce\Assets\AssetGetterFactory;
 use WooCommerce\PayPalCommerce\Axo\Assets\AxoManager;
 use WooCommerce\PayPalCommerce\Axo\Endpoint\AxoScriptAttributes;
 use WooCommerce\PayPalCommerce\Axo\Endpoint\FrontendLogger;
@@ -34,7 +36,7 @@ return array(
         };
     },
     'axo.service.axo-applies' => static function (ContainerInterface $container): AxoApplies {
-        return new AxoApplies($container->get('axo.supported-country-currency-matrix'), $container->get('api.shop.currency.getter'), $container->get('api.shop.country'), $container->get('wcgateway.configuration.card-configuration'), $container->get('wc-subscriptions.helper'));
+        return new AxoApplies($container->get('axo.supported-country-currency-matrix'), $container->get('api.shop.currency.getter'), $container->get('api.merchant.country'), $container->get('wcgateway.configuration.card-configuration'), $container->get('wc-subscriptions.helper'));
     },
     'axo.helpers.compatibility-checker' => static function (ContainerInterface $container): CompatibilityChecker {
         return new CompatibilityChecker($container->get('axo.fastlane-incompatible-plugin-names'), $container->get('wcgateway.configuration.card-configuration'));
@@ -45,14 +47,16 @@ return array(
         assert($settings instanceof Settings);
         return $settings->has('axo_enabled') && $settings->get('axo_enabled');
     },
-    'axo.url' => static function (ContainerInterface $container): string {
-        return plugins_url('/modules/ppcp-axo/', $container->get('ppcp.path-to-plugin-main-file'));
+    'axo.asset_getter' => static function (ContainerInterface $container): AssetGetter {
+        $factory = $container->get('assets.asset_getter_factory');
+        assert($factory instanceof AssetGetterFactory);
+        return $factory->for_module('ppcp-axo');
     },
     'axo.manager' => static function (ContainerInterface $container): AxoManager {
-        return new AxoManager($container->get('axo.url'), $container->get('ppcp.asset-version'), $container->get('session.handler'), $container->get('wcgateway.settings'), $container->get('settings.environment'), $container->get('axo.insights'), $container->get('wcgateway.settings.status'), $container->get('api.shop.currency.getter'), $container->get('woocommerce.logger.woocommerce'), $container->get('wcgateway.url'), $container->get('axo.supported-country-card-type-matrix'));
+        return new AxoManager($container->get('axo.asset_getter'), $container->get('ppcp.asset-version'), $container->get('session.handler'), $container->get('wcgateway.settings'), $container->get('settings.environment'), $container->get('axo.insights'), $container->get('wcgateway.settings.status'), $container->get('api.shop.currency.getter'), $container->get('woocommerce.logger.woocommerce'), $container->get('wcgateway.asset_getter'), $container->get('axo.supported-country-card-type-matrix'));
     },
     'axo.gateway' => static function (ContainerInterface $container): AxoGateway {
-        return new AxoGateway($container->get('wcgateway.settings.render'), $container->get('wcgateway.settings'), $container->get('wcgateway.configuration.card-configuration'), $container->get('wcgateway.url'), $container->get('session.handler'), $container->get('wcgateway.order-processor'), $container->get('wcgateway.credit-card-icons'), $container->get('api.endpoint.order'), $container->get('api.factory.purchase-unit'), $container->get('api.factory.shipping-preference'), $container->get('wcgateway.transaction-url-provider'), $container->get('settings.environment'), $container->get('woocommerce.logger.woocommerce'), $container->get('wcgateway.builder.experience-context'), $container->get('settings.data.settings'));
+        return new AxoGateway($container->get('wcgateway.settings.render'), $container->get('wcgateway.settings'), $container->get('wcgateway.configuration.card-configuration'), $container->get('session.handler'), $container->get('wcgateway.order-processor'), $container->get('wcgateway.credit-card-icons'), $container->get('api.endpoint.order'), $container->get('api.factory.purchase-unit'), $container->get('api.factory.shipping-preference'), $container->get('wcgateway.transaction-url-provider'), $container->get('settings.environment'), $container->get('woocommerce.logger.woocommerce'), $container->get('wcgateway.builder.experience-context'), $container->get('settings.data.settings'));
     },
     // Data needed for the PayPal Insights.
     'axo.insights' => static function (ContainerInterface $container): array {

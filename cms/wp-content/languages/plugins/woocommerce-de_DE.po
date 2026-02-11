@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Plugins - WooCommerce - Stable (latest release) package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2026-02-09 23:44:34+0000\n"
+"PO-Revision-Date: 2026-02-11 00:58:55+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -10,6 +10,10 @@ msgstr ""
 "X-Generator: GlotPress/4.0.3\n"
 "Language: de\n"
 "Project-Id-Version: Plugins - WooCommerce - Stable (latest release)\n"
+
+#: src/Internal/FraudProtection/AdminSettingsHandler.php:135
+msgid "Connect to Jetpack"
+msgstr "Mit Jetpack verbinden"
 
 #: assets/client/blocks/coupon-code/block.json
 msgctxt "block description"
@@ -2182,7 +2186,7 @@ msgid "Prevent buyers from changing the shipping address."
 msgstr "Verhindere, dass Käufer die Lieferadresse ändern."
 
 #. translators: %s: reason
-#: src/Gateways/PayPal/WebhookHandler.php:184
+#: src/Gateways/PayPal/WebhookHandler.php:189
 msgid "Payment pending (reason: %s)."
 msgstr "Zahlung ausstehend (Grund: %s)."
 
@@ -2200,12 +2204,12 @@ msgid "PayPal Buttons"
 msgstr "PayPal-Buttons"
 
 #. translators: %1$s: Transaction ID
-#: src/Gateways/PayPal/WebhookHandler.php:216
+#: src/Gateways/PayPal/WebhookHandler.php:221
 msgid "PayPal payment authorized. Transaction ID: %1$s. Change payment status to processing or complete to capture funds."
 msgstr "PayPal-Zahlung autorisiert. Transaktions-ID: %1$s. Ändere den Zahlungsstatus auf „in Bearbeitung“ oder „Abgeschlossen“, um die Zahlung einzuziehen."
 
 #. translators: %1$s: Transaction ID
-#: src/Gateways/PayPal/WebhookHandler.php:149
+#: src/Gateways/PayPal/WebhookHandler.php:154
 msgid "PayPal payment captured. Transaction ID: %1$s."
 msgstr "PayPal-Zahlung gebucht. Transaktions-ID: %1$s."
 
@@ -2234,12 +2238,12 @@ msgid "PayPal %1$s payment failed. PayPal Order ID: %2$s"
 msgstr "Die PayPal-%1$s-Zahlung ist fehlgeschlagen. PayPal-Bestellnummer: %2$s"
 
 #. translators: %1$s: PayPal order ID
-#: src/Gateways/PayPal/WebhookHandler.php:91
+#: src/Gateways/PayPal/WebhookHandler.php:96
 msgid "PayPal payment approved. PayPal Order ID: %1$s"
 msgstr "Die PayPal-Zahlung wurde genehmigt. PayPal-Bestellnummer: %1$s"
 
 #. translators: %1$s: PayPal order ID, %2$s: Status
-#: src/Gateways/PayPal/WebhookHandler.php:111
+#: src/Gateways/PayPal/WebhookHandler.php:116
 msgid "PayPal payment approval failed. PayPal Order ID: %1$s. Status: %2$s"
 msgstr "Die PayPal-Zahlungsgenehmigung ist fehlgeschlagen. PayPal-Bestellnummer: %1$s. Status: %2$s"
 
@@ -18527,16 +18531,16 @@ msgstr "Ein Link zu einer Produktkategorie."
 msgid "Product Category Link"
 msgstr "Produktkategorie-Link"
 
-#: src/Internal/Admin/CustomerEffortScoreTracks.php:517
-msgid "How easy was it to add a product tag?"
-msgstr "Wie einfach war das Hinzufügen deines Produktschlagworts?"
-
 #. translators: %1$s: Link to WP Mail Logging plugin, %2$s: Link to Email FAQ
 #. support page.
 #: includes/admin/settings/class-wc-settings-emails.php:78
 #: includes/admin/settings/class-wc-settings-emails.php:594
 msgid "To ensure your store&rsquo;s notifications arrive in your and your customers&rsquo; inboxes, we recommend connecting your email address to your domain and setting up a dedicated SMTP server. If something doesn&rsquo;t seem to be sending correctly, install the <a href=\"%1$s\">WP Mail Logging Plugin</a> or check the <a href=\"%2$s\">Email FAQ page</a>."
 msgstr "Um sicherzustellen, dass die Benachrichtigungen deines Shops in deinem Posteingang und denen deiner Kunden ankommen, empfehlen wir dir, deine E-Mail-Adresse mit deiner Domain zu verbinden und einen dedizierten SMTP-Server einzurichten. Sollte etwas nicht korrekt gesendet werden, installiere das <a href=\"%1$s\">WP Mail Logging-Plugin</a> oder lies dir die <a href=\"%2$s\">FAQ-Seite zu E-Mails</a> durch."
+
+#: src/Internal/Admin/CustomerEffortScoreTracks.php:517
+msgid "How easy was it to add a product tag?"
+msgstr "Wie einfach war das Hinzufügen deines Produktschlagworts?"
 
 #: includes/class-wc-post-types.php:380
 msgid "A link to a product."
@@ -23502,7 +23506,7 @@ msgstr "Wert der Statistik. Gibt Null aus, wenn die Statistik nicht existiert od
 msgid "A list of stats to query must be provided."
 msgstr "Eine Liste der abzufragenden Statistiken muss angegeben werden."
 
-#: includes/admin/class-wc-admin-dashboard.php:626
+#: includes/admin/class-wc-admin-dashboard.php:578
 #: src/Admin/API/Reports/PerformanceIndicators/Controller.php:147
 msgid "Sorry, fetching performance indicators failed."
 msgstr "Der Abruf der Leistungskennzahlen ist leider fehlgeschlagen."
@@ -27265,6 +27269,13 @@ msgstr "Anfrage zum Zurücksetzen des Passworts für {site_title}"
 msgid "Action [%1$s] has invalid arguments. It cannot be JSON decoded to an array. $args = %2$s"
 msgstr "Die Aktion [%1$s] hat ungültige Argumente. Sie kann nicht von JSON zu einem Array umgewandelt werden. $args = %2$s"
 
+#. translators: %s: amount of claims
+#: packages/action-scheduler/classes/ActionScheduler_ListTable.php:381
+msgid "Maximum simultaneous queues already in progress (%s queue). No additional queues will begin processing until the current queues are complete."
+msgid_plural "Maximum simultaneous queues already in progress (%s queues). No additional queues will begin processing until the current queues are complete."
+msgstr[0] "Maximum an gleichzeitigen Warteschlangen bereits in Bearbeitung (%s Warteschlange). Bis zum Abschluss der aktuellen Warteschlangen werden keine zusätzlichen Warteschlangen verarbeitet."
+msgstr[1] "Maximum an gleichzeitigen Warteschlangen bereits in Bearbeitung (%s Warteschlangen). Bis zum Abschluss der aktuellen Warteschlangen werden keine zusätzlichen Warteschlangen verarbeitet."
+
 #. translators: 1: error message 2: filename 3: line
 #: packages/action-scheduler/classes/abstracts/ActionScheduler_Logger.php:183
 msgid "unexpected shutdown: PHP Fatal error %1$s in %2$s on line %3$s"
@@ -27274,13 +27285,6 @@ msgstr "Unerwartete Abschaltung: Fataler PHP-Fehler %1$s in %2$s in Zeile %3$s"
 #: packages/action-scheduler/classes/ActionScheduler_ListTable.php:437
 msgid "Could not process change for action: \"%1$s\" (ID: %2$d). Error: %3$s"
 msgstr "Änderung für folgende Aktion konnte nicht verarbeitet werden: „%1$s“ (ID: %2$d). Fehler: %3$s"
-
-#. translators: %s: amount of claims
-#: packages/action-scheduler/classes/ActionScheduler_ListTable.php:381
-msgid "Maximum simultaneous queues already in progress (%s queue). No additional queues will begin processing until the current queues are complete."
-msgid_plural "Maximum simultaneous queues already in progress (%s queues). No additional queues will begin processing until the current queues are complete."
-msgstr[0] "Maximum an gleichzeitigen Warteschlangen bereits in Bearbeitung (%s Warteschlange). Bis zum Abschluss der aktuellen Warteschlangen werden keine zusätzlichen Warteschlangen verarbeitet."
-msgstr[1] "Maximum an gleichzeitigen Warteschlangen bereits in Bearbeitung (%s Warteschlangen). Bis zum Abschluss der aktuellen Warteschlangen werden keine zusätzlichen Warteschlangen verarbeitet."
 
 #. translators: %s: group name(s)
 #. translators: %s is the group name
@@ -28837,7 +28841,7 @@ msgstr "Unzureichende Berechtigungen für den Import von Produkten."
 msgid "Insufficient privileges to export products."
 msgstr "Unzureichende Berechtigungen für den Export von Produkten."
 
-#: includes/admin/class-wc-admin-dashboard.php:559
+#: includes/admin/class-wc-admin-dashboard.php:511
 msgid "Loading network orders"
 msgstr "Netzwerkbestellungen werden geladen"
 
@@ -40005,12 +40009,6 @@ msgctxt "Item name in quotes"
 msgid "&ldquo;%s&rdquo;"
 msgstr "&#8222;%s&#8220;"
 
-#. translators: %s: order status
-#: includes/shortcodes/class-wc-shortcode-checkout.php:127
-#: includes/shortcodes/class-wc-shortcode-checkout.php:249
-msgid "This order&rsquo;s status is &ldquo;%s&rdquo;&mdash;it cannot be paid for. Please contact us if you need assistance."
-msgstr "Der Status dieser Bestellung ist &#8222;%s&#8220;&mdash; sie kann nicht bezahlt werden. Bitte kontaktiere uns, falls du Hilfe benötigst."
-
 #: includes/shortcodes/class-wc-shortcode-checkout.php:97
 #: includes/shortcodes/class-wc-shortcode-checkout.php:252
 msgid "Sorry, this order is invalid and cannot be paid for."
@@ -40330,6 +40328,12 @@ msgstr "rechnung"
 msgctxt "edit-address-slug"
 msgid "shipping"
 msgstr "versand"
+
+#. translators: %s: order status
+#: includes/shortcodes/class-wc-shortcode-checkout.php:127
+#: includes/shortcodes/class-wc-shortcode-checkout.php:249
+msgid "This order&rsquo;s status is &ldquo;%s&rdquo;&mdash;it cannot be paid for. Please contact us if you need assistance."
+msgstr "Der Status dieser Bestellung ist &#8222;%s&#8220; &ndash; sie kann nicht bezahlt werden. Bitte kontaktiere uns, falls du Hilfe benötigst."
 
 #. translators: %s: number of orders
 #. translators: %s: count
@@ -41799,7 +41803,7 @@ msgstr "Bestellung bearbeiten"
 msgid "Search orders"
 msgstr "Bestellungen suchen"
 
-#: includes/admin/class-wc-admin-dashboard.php:577
+#: includes/admin/class-wc-admin-dashboard.php:529
 #: includes/class-wc-post-types.php:502
 msgid "No orders found"
 msgstr "Keine Bestellungen gefunden"
@@ -43718,11 +43722,6 @@ msgstr "Individuell"
 msgid "Allows customers to checkout without an account."
 msgstr "Ermöglicht Kunden das Bezahlen ohne Konto."
 
-#: includes/customizer/class-wc-shop-customizer.php:369
-#: includes/wc-template-functions.php:1094
-msgid "This is a demo store for testing purposes &mdash; no orders shall be fulfilled."
-msgstr "Dies ist ein Demo-Shop zu Testzwecken &mdash; Bestellungen werden nicht ausgeführt."
-
 #: includes/admin/settings/views/html-keys-edit.php:132
 #: includes/class-wc-ajax.php:2414
 msgid "Revoke key"
@@ -43739,6 +43738,11 @@ msgstr "API-Schlüssel generieren"
 #: includes/admin/settings/class-wc-settings-advanced.php:106
 msgid "Checkout page"
 msgstr "Kassenseite"
+
+#: includes/customizer/class-wc-shop-customizer.php:369
+#: includes/wc-template-functions.php:1094
+msgid "This is a demo store for testing purposes &mdash; no orders shall be fulfilled."
+msgstr "Dies ist ein Demo-Shop zu Testzwecken &ndash; Bestellungen werden nicht ausgeführt."
 
 #: includes/admin/meta-boxes/views/html-variation-admin.php:268
 msgid "If managing stock, this controls whether or not backorders are allowed. If enabled, stock quantity can go below 0."
@@ -44778,7 +44782,7 @@ msgid "Variation description."
 msgstr "Variationsbeschreibung."
 
 #. translators: 1: total income 2: days
-#: includes/admin/class-wc-admin-dashboard.php:704
+#: includes/admin/class-wc-admin-dashboard.php:656
 #: includes/admin/reports/class-wc-admin-report.php:639
 msgid "Sold %1$s worth in the last %2$d days"
 msgstr "Verkaufter Warenwert von %1$s in den letzten %2$d Tagen"
@@ -44947,7 +44951,7 @@ msgid "Cost"
 msgstr "Kosten"
 
 #. translators: 1: total items sold 2: days
-#: includes/admin/class-wc-admin-dashboard.php:707
+#: includes/admin/class-wc-admin-dashboard.php:659
 #: includes/admin/reports/class-wc-admin-report.php:642
 msgid "Sold %1$d item in the last %2$d days"
 msgid_plural "Sold %1$d items in the last %2$d days"
@@ -46382,7 +46386,7 @@ msgstr "Verwendung / Limit"
 msgid "Expiry date"
 msgstr "Ablaufdatum"
 
-#: includes/admin/class-wc-admin-dashboard.php:567
+#: includes/admin/class-wc-admin-dashboard.php:519
 #: includes/admin/class-wc-admin-menus.php:190
 #: includes/admin/class-wc-admin-webhooks-table-list.php:51
 #: includes/admin/list-tables/class-wc-admin-list-table-orders.php:125
@@ -46875,7 +46879,7 @@ msgstr "Rechnung"
 msgid "Ship to"
 msgstr "Versand"
 
-#: includes/admin/class-wc-admin-dashboard.php:568
+#: includes/admin/class-wc-admin-dashboard.php:520
 #: includes/admin/list-tables/class-wc-admin-list-table-orders.php:128
 #: includes/admin/list-tables/class-wc-admin-list-table-orders.php:263
 #: includes/admin/meta-boxes/views/html-order-item.php:158
@@ -47090,7 +47094,7 @@ msgid "Search"
 msgstr "Suchen"
 
 #: includes/abstracts/abstract-wc-order.php:2531
-#: includes/admin/class-wc-admin-dashboard.php:566
+#: includes/admin/class-wc-admin-dashboard.php:518
 #: includes/admin/list-tables/class-wc-admin-list-table-orders.php:123
 #: includes/admin/meta-boxes/class-wc-meta-box-order-data.php:214
 #: includes/admin/reports/class-wc-report-downloads.php:87
@@ -48567,7 +48571,6 @@ msgid "Reviews"
 msgstr "Rezensionen"
 
 #: includes/admin/class-wc-admin-dashboard.php:472
-#: includes/admin/class-wc-admin-dashboard.php:527
 msgid "There are no product reviews yet."
 msgstr "Es sind noch keine Produktrezensionen vorhanden."
 

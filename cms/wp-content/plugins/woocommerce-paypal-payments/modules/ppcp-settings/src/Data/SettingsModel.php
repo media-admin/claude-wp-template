@@ -9,6 +9,7 @@ declare (strict_types=1);
 namespace WooCommerce\PayPalCommerce\Settings\Data;
 
 use RuntimeException;
+use WooCommerce\PayPalCommerce\Settings\Data\Definition\FeaturesDefinition;
 use WooCommerce\PayPalCommerce\Settings\Service\DataSanitizer;
 /**
  * Class SettingsModel
@@ -92,15 +93,17 @@ class SettingsModel extends \WooCommerce\PayPalCommerce\Settings\Data\AbstractDa
             // Boolean flags.
             'authorize_only' => \false,
             'capture_virtual_orders' => \false,
-            'save_paypal_and_venmo' => \false,
+            FeaturesDefinition::FEATURE_SAVE_PAYPAL_AND_VENMO => \false,
             'instant_payments_only' => \false,
             'enable_contact_module' => \true,
             'save_card_details' => \false,
             'enable_pay_now' => \false,
             'enable_logging' => \false,
             'stay_updated' => \true,
+            'payment_level_processing' => \true,
             // Array of string values.
             'disabled_cards' => array(),
+            'ships_from_postal_code' => '',
         );
     }
     /**
@@ -247,6 +250,24 @@ class SettingsModel extends \WooCommerce\PayPalCommerce\Settings\Data\AbstractDa
         $this->data['three_d_secure'] = $this->sanitizer->sanitize_enum($setting, self::THREE_D_SECURE_OPTIONS);
     }
     /**
+     * Gets the Ship-from ZIP code.
+     *
+     * @return string The Ship-from ZIP code.
+     */
+    public function get_ships_from_postal_code(): string
+    {
+        return !empty($this->data['ships_from_postal_code']) ? $this->data['ships_from_postal_code'] : get_option('woocommerce_store_postcode', '');
+    }
+    /**
+     * Sets the Ship-from ZIP code.
+     *
+     * @param string $zip_code The Ship-from ZIP code to set.
+     */
+    public function set_ships_from_postal_code(string $zip_code): void
+    {
+        $this->data['ships_from_postal_code'] = $this->sanitizer->sanitize_text($zip_code);
+    }
+    /**
      * Gets the authorize only setting.
      *
      * @return bool True if authorize only is enabled, false otherwise.
@@ -289,7 +310,7 @@ class SettingsModel extends \WooCommerce\PayPalCommerce\Settings\Data\AbstractDa
      */
     public function get_save_paypal_and_venmo(): bool
     {
-        return $this->data['save_paypal_and_venmo'];
+        return $this->data[FeaturesDefinition::FEATURE_SAVE_PAYPAL_AND_VENMO];
     }
     /**
      * Sets the save PayPal and Venmo setting.
@@ -298,7 +319,7 @@ class SettingsModel extends \WooCommerce\PayPalCommerce\Settings\Data\AbstractDa
      */
     public function set_save_paypal_and_venmo(bool $save): void
     {
-        $this->data['save_paypal_and_venmo'] = $this->sanitizer->sanitize_bool($save);
+        $this->data[FeaturesDefinition::FEATURE_SAVE_PAYPAL_AND_VENMO] = $this->sanitizer->sanitize_bool($save);
     }
     /**
      * Gets the instant payments only setting.
@@ -425,5 +446,24 @@ class SettingsModel extends \WooCommerce\PayPalCommerce\Settings\Data\AbstractDa
     public function set_stay_updated(bool $save): void
     {
         $this->data['stay_updated'] = $this->sanitizer->sanitize_bool($save);
+    }
+    /**
+     * Get payment level processing.
+     *
+     * @return bool
+     */
+    public function get_payment_level_processing(): bool
+    {
+        return (bool) $this->data['payment_level_processing'];
+    }
+    /**
+     * Set payment level processing.
+     *
+     * @param bool $save Whether to save the payment level processing.
+     * @return void
+     */
+    public function set_payment_level_processing(bool $save): void
+    {
+        $this->data['payment_level_processing'] = $this->sanitizer->sanitize_bool($save);
     }
 }

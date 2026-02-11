@@ -8,6 +8,7 @@
 declare (strict_types=1);
 namespace WooCommerce\PayPalCommerce\Compat\Settings;
 
+use WooCommerce\PayPalCommerce\Settings\Data\Definition\FeaturesDefinition;
 use WooCommerce\PayPalCommerce\WcSubscriptions\Helper\SubscriptionHelper;
 /**
  * Handles mapping between old and new subscription settings.
@@ -66,7 +67,7 @@ class SubscriptionSettingsMapHelper
         if ($old_key !== 'subscriptions_mode' || !$this->subscription_helper->plugin_is_active()) {
             return null;
         }
-        $vaulting = $settings_model['save_paypal_and_venmo'] ?? \false;
+        $vaulting = $settings_model[FeaturesDefinition::FEATURE_SAVE_PAYPAL_AND_VENMO] ?? \false;
         $subscription_mode_value = $vaulting ? self::OLD_SETTINGS_SUBSCRIPTION_MODE_VALUE_VAULTING : self::OLD_SETTINGS_SUBSCRIPTION_MODE_VALUE_SUBSCRIPTIONS;
         /**
          * Allows disabling the subscription mode when using the new settings UI.

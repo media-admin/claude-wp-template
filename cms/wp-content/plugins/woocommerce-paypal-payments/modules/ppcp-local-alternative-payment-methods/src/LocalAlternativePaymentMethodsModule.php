@@ -10,6 +10,8 @@ namespace WooCommerce\PayPalCommerce\LocalAlternativePaymentMethods;
 
 use WC_Order;
 use Automattic\WooCommerce\Blocks\Payments\PaymentMethodRegistry;
+use WooCommerce\PayPalCommerce\Assets\AssetGetter;
+use WooCommerce\PayPalCommerce\Settings\Data\Definition\FeaturesDefinition;
 use WooCommerce\PayPalCommerce\Vendor\Inpsyde\Modularity\Module\ExecutableModule;
 use WooCommerce\PayPalCommerce\Vendor\Inpsyde\Modularity\Module\ExtendingModule;
 use WooCommerce\PayPalCommerce\Vendor\Inpsyde\Modularity\Module\ModuleClassNameIdTrait;
@@ -67,6 +69,15 @@ class LocalAlternativePaymentMethodsModule implements ServiceModule, ExtendingMo
             return;
         }
         $this->register_pwc_feature_flag_filters();
+        add_action('wp_enqueue_scripts', function () use ($c) {
+            if (!is_checkout() && !is_cart() && !is_wc_endpoint_url('order-pay')) {
+                return;
+            }
+            $asset_getter = $c->get('ppcp-local-apms.asset_getter');
+            assert($asset_getter instanceof AssetGetter);
+            $asset_version = $c->get('ppcp.asset-version');
+            wp_enqueue_style('ppcp-local-apms-gateway', $asset_getter->get_asset_url('gateway.css'), array(), $asset_version);
+        });
         /**
          * The "woocommerce_payment_gateways" filter is responsible for ADDING
          * custom payment gateways to WooCommerce. Here, we add all the local
@@ -163,6 +174,7 @@ class LocalAlternativePaymentMethodsModule implements ServiceModule, ExtendingMo
             return $data;
         });
         add_action('woocommerce_before_thankyou', array($this, 'handle_cancelled_local_apm'));
+        add_action('template_redirect', array($this, 'handle_pwc_order_received_redirect'));
         add_action('woocommerce_paypal_payments_payment_capture_completed_webhook_handler', function (WC_Order $wc_order, string $order_id) use ($c) {
             $payment_methods = $c->get('ppcp-local-apms.payment-methods');
             if (!$this->is_local_apm($wc_order->get_payment_method(), $payment_methods)) {
@@ -329,7 +341,7 @@ class LocalAlternativePaymentMethodsModule implements ServiceModule, ExtendingMo
          */
         add_filter('woocommerce_paypal_payments_features_list', function (array $features): array {
             if (!$this->is_pwc_feature_enabled()) {
-                unset($features['pwc']);
+                unset($features[FeaturesDefinition::FEATURE_PAY_WITH_CRYPTO]);
             }
             return $features;
         });
@@ -348,6 +360,50 @@ class LocalAlternativePaymentMethodsModule implements ServiceModule, ExtendingMo
             $data['url_params']['disable-funding'] = implode(',', array_unique($funding_sources));
             return $data;
         }, 11);
+    }
+    /**
+     * Handle PWC order received page redirect to strip token parameter.
+     *
+     * PayPal automatically appends a 'token' parameter to return URLs after crypto payments.
+     * When the 'token' parameter is present on the order-received page, WooCommerce displays
+     * a minimal page instead of the full order details.
+     *
+     * This intercepts PWC orders on 'template_redirect' (before any output buffering)
+     * and redirects to a clean URL without the token, allowing WooCommerce to display
+     * the full order-received page.
+     *
+     * Note: PWC uses ORDER_COMPLETE_ON_PAYMENT_APPROVAL, so the token serves no purpose
+     * but we can't prevent PayPal from appending it.
+     *
+     * @return void
+     */
+    public function handle_pwc_order_received_redirect(): void
+    {
+        // Only run on order-received endpoint.
+        if (!is_wc_endpoint_url('order-received')) {
+            return;
+        }
+        // Check if 'token' exists anywhere in the URL first.
+        $request_uri = isset($_SERVER['REQUEST_URI']) ? esc_url_raw(wp_unslash($_SERVER['REQUEST_URI'])) : '';
+        if (strpos($request_uri, 'token=') === \false) {
+            return;
+        }
+        // Get order ID from the URL endpoint.
+        global $wp;
+        $order_id = isset($wp->query_vars['order-received']) ? absint($wp->query_vars['order-received']) : 0;
+        if (!$order_id) {
+            return;
+        }
+        $order = wc_get_order($order_id);
+        if (!$order instanceof WC_Order) {
+            return;
+        }
+        // Only handle PWC - other payment methods may use 'token' legitimately (e.g., 3DS).
+        if ($order->get_payment_method() !== \WooCommerce\PayPalCommerce\LocalAlternativePaymentMethods\PWCGateway::ID) {
+            return;
+        }
+        wp_safe_redirect($order->get_checkout_order_received_url());
+        exit;
     }
     /**
      * Checks, whether the current request is trying to access a WooCommerce REST endpoint.

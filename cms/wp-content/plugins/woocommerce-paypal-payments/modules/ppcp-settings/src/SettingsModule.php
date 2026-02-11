@@ -12,22 +12,11 @@ use WC_Payment_Gateway;
 use WooCommerce\PayPalCommerce\Vendor\Psr\Log\LoggerInterface;
 use WooCommerce\PayPalCommerce\AdminNotices\Entity\Message;
 use WooCommerce\PayPalCommerce\AdminNotices\Repository\Repository;
-use WooCommerce\PayPalCommerce\ApiClient\Helper\DccApplies;
 use WooCommerce\PayPalCommerce\ApiClient\Helper\PartnerAttribution;
 use WooCommerce\PayPalCommerce\Applepay\ApplePayGateway;
-use WooCommerce\PayPalCommerce\Applepay\Assets\AppleProductStatus;
+use WooCommerce\PayPalCommerce\Assets\AssetGetter;
 use WooCommerce\PayPalCommerce\Axo\Gateway\AxoGateway;
 use WooCommerce\PayPalCommerce\Googlepay\GooglePayGateway;
-use WooCommerce\PayPalCommerce\Googlepay\Helper\ApmProductStatus;
-use WooCommerce\PayPalCommerce\LocalAlternativePaymentMethods\BancontactGateway;
-use WooCommerce\PayPalCommerce\LocalAlternativePaymentMethods\BlikGateway;
-use WooCommerce\PayPalCommerce\LocalAlternativePaymentMethods\EPSGateway;
-use WooCommerce\PayPalCommerce\LocalAlternativePaymentMethods\IDealGateway;
-use WooCommerce\PayPalCommerce\LocalAlternativePaymentMethods\MultibancoGateway;
-use WooCommerce\PayPalCommerce\LocalAlternativePaymentMethods\MyBankGateway;
-use WooCommerce\PayPalCommerce\LocalAlternativePaymentMethods\P24Gateway;
-use WooCommerce\PayPalCommerce\LocalAlternativePaymentMethods\PWCGateway;
-use WooCommerce\PayPalCommerce\LocalAlternativePaymentMethods\TrustlyGateway;
 use WooCommerce\PayPalCommerce\Settings\Ajax\SwitchSettingsUiEndpoint;
 use WooCommerce\PayPalCommerce\Settings\Data\OnboardingProfile;
 use WooCommerce\PayPalCommerce\Settings\Data\SettingsModel;
@@ -39,6 +28,7 @@ use WooCommerce\PayPalCommerce\Settings\Service\BrandedExperience\PathRepository
 use WooCommerce\PayPalCommerce\Settings\Service\GatewayRedirectService;
 use WooCommerce\PayPalCommerce\Settings\Service\LoadingScreenService;
 use WooCommerce\PayPalCommerce\Settings\Service\Migration\PaymentSettingsMigration;
+use WooCommerce\PayPalCommerce\Settings\Service\PaymentMethodsEligibilityService;
 use WooCommerce\PayPalCommerce\Settings\Service\ScriptDataHandler;
 use WooCommerce\PayPalCommerce\Vendor\Inpsyde\Modularity\Module\ExecutableModule;
 use WooCommerce\PayPalCommerce\Vendor\Inpsyde\Modularity\Module\ModuleClassNameIdTrait;
@@ -49,7 +39,6 @@ use WooCommerce\PayPalCommerce\WcGateway\Gateway\CreditCardGateway;
 use WooCommerce\PayPalCommerce\WcGateway\Gateway\OXXO\OXXO;
 use WooCommerce\PayPalCommerce\WcGateway\Gateway\PayPalGateway;
 use WooCommerce\PayPalCommerce\WcGateway\Gateway\PayUponInvoice\PayUponInvoiceGateway;
-use WooCommerce\PayPalCommerce\WcGateway\Helper\DCCProductStatus;
 use WooCommerce\PayPalCommerce\Settings\Service\SettingsDataManager;
 use WooCommerce\PayPalCommerce\Settings\DTO\ConfigurationFlagsDTO;
 use WooCommerce\PayPalCommerce\Settings\Enum\ProductChoicesEnum;
@@ -108,6 +97,7 @@ class SettingsModule implements ServiceModule, ExecutableModule
              * Adds notes to old UI settings screens.
              *
              * @param Message[] $notices
+             *
              * @return Message[]
              */
             add_filter(Repository::NOTICES_FILTER, static function (array $notices) use ($container): array {
@@ -116,17 +106,18 @@ class SettingsModule implements ServiceModule, ExecutableModule
                 }
                 $message = sprintf(
                     // translators: %1$s is the URL for the startup guide.
-                    __('<strong>📢 Important: New PayPal Payments settings UI becoming default in January!</strong><br>We\'ve redesigned the settings for better performance and usability. Starting late January, this improved design will be the default for all WooCommerce installations to enjoy faster navigation, cleaner organization, and improved performance. Check out the <a href="%1$s" target="_blank">Startup Guide</a>, then click <a href="#" class="settings-switch-ui" role="button" aria-describedby="switch-ui-desc"><strong>Switch to New Settings</strong></a> to activate it.', 'woocommerce-paypal-payments'),
+                    __('<strong>📢 Important: New PayPal Payments settings UI becoming default soon!</strong><br>We\'ve redesigned the settings for better performance and usability. This improved design will be the default for all WooCommerce installations to enjoy faster navigation, cleaner organization, and improved performance. Check out the <a href="%1$s" target="_blank">Startup Guide</a>, then click <a href="#" class="settings-switch-ui" role="button" aria-describedby="switch-ui-desc"><strong>Switch to New Settings</strong></a> to activate it.', 'woocommerce-paypal-payments'),
                     'https://woocommerce.com/document/woocommerce-paypal-payments/paypal-payments-startup-guide/'
                 );
                 $notices[] = new Message($message, 'info', \false, 'ppcp-notice-wrapper');
                 return $notices;
             });
             add_action('admin_enqueue_scripts', static function () use ($container) {
-                $module_url = $container->get('settings.url');
+                $asset_getter = $container->get('settings.asset_getter');
+                assert($asset_getter instanceof AssetGetter);
                 /** @psalm-suppress UnresolvableInclude */
-                $script_asset_file = require $container->get('ppcp.path-to-plugin-folder') . 'modules/ppcp-settings/assets/switchSettingsUi.asset.php';
-                wp_register_script('ppcp-switch-settings-ui', untrailingslashit($module_url) . '/assets/switchSettingsUi.js', $script_asset_file['dependencies'], $script_asset_file['version'], \true);
+                $script_asset_file = require $asset_getter->get_asset_php_path('switchSettingsUi.js');
+                wp_register_script('ppcp-switch-settings-ui', $asset_getter->get_asset_url('switchSettingsUi.js'), $script_asset_file['dependencies'], $script_asset_file['version'], \true);
                 wp_localize_script('ppcp-switch-settings-ui', 'ppcpSwitchSettingsUi', array('endpoint' => \WC_AJAX::get_endpoint(SwitchSettingsUiEndpoint::ENDPOINT), 'nonce' => wp_create_nonce(SwitchSettingsUiEndpoint::nonce()), 'confirmMessage' => __('Are you sure you want to switch to the new settings interface?This action cannot be undone.', 'woocommerce-paypal-payments'), 'settingsUrl' => admin_url('admin.php?page=wc-settings&tab=checkout&section=ppcp-gateway')));
                 wp_enqueue_script('ppcp-switch-settings-ui', '', array('wp-i18n'), $script_asset_file['version'], \false);
                 wp_set_script_translations('ppcp-switch-settings-ui', 'woocommerce-paypal-payments');
@@ -146,7 +137,7 @@ class SettingsModule implements ServiceModule, ExecutableModule
         $loading_screen_service = $container->get('settings.services.loading-screen-service');
         assert($loading_screen_service instanceof LoadingScreenService);
         $loading_screen_service->register();
-        $this->apply_branded_only_limitations($container);
+        add_action('init', fn() => $this->apply_branded_only_limitations($container), 1);
         /**
          * Override ACDC status with BCDC for eligible merchants.
          *
@@ -154,6 +145,7 @@ class SettingsModule implements ServiceModule, ExecutableModule
          * for merchants instead of ACDC (Advanced Card processing). It handles two scenarios:
          *
          * @param bool|null $use_bcdc Whether to use BCDC instead of ACDC.
+         *
          * @return bool|null True to force BCDC classification, false/null otherwise.
          */
         add_filter('woocommerce_paypal_payments_override_acdc_status_with_bcdc', static function (?bool $use_bcdc) use ($container) {
@@ -286,68 +278,12 @@ class SettingsModule implements ServiceModule, ExecutableModule
             $data_manager->set_defaults_for_new_merchant($flags);
         });
         add_filter('woocommerce_paypal_payments_payment_methods', function (array $payment_methods) use ($container): array {
-            $all_payment_methods = $payment_methods;
-            $merchant_capabilities = $container->get('settings.service.merchant_capabilities');
-            $dcc_product_status = $container->get('wcgateway.helper.dcc-product-status');
-            assert($dcc_product_status instanceof DCCProductStatus);
-            $googlepay_product_status = $container->get('googlepay.helpers.apm-product-status');
-            assert($googlepay_product_status instanceof ApmProductStatus);
-            $applepay_product_status = $container->get('applepay.apple-product-status');
-            assert($applepay_product_status instanceof AppleProductStatus);
-            $dcc_applies = $container->get('api.helpers.dccapplies');
-            assert($dcc_applies instanceof DCCApplies);
-            $general_settings = $container->get('settings.data.general');
-            assert($general_settings instanceof GeneralSettings);
-            $merchant_data = $general_settings->get_merchant_data();
-            $merchant_country = $merchant_data->merchant_country;
-            // Unset BCDC if merchant is eligible for ACDC and country is eligible for card fields.
-            $card_fields_eligible = $container->get('card-fields.eligible');
-            if ('MX' !== $container->get('api.shop.country')) {
-                if ($dcc_product_status->is_active() && $card_fields_eligible) {
-                    unset($payment_methods[CardButtonGateway::ID]);
-                } else {
-                    // For non-ACDC regions unset ACDC.
-                    unset($payment_methods[CreditCardGateway::ID]);
+            $payment_methods_eligibility_service = $container->get('settings.service.payment_methods_eligibilities');
+            assert($payment_methods_eligibility_service instanceof PaymentMethodsEligibilityService);
+            foreach ($payment_methods_eligibility_service->get_eligibility_checks() as $payment_method_id => $payment_method_check) {
+                if (isset($payment_methods[$payment_method_id]) && call_user_func($payment_method_check) === \false) {
+                    unset($payment_methods[$payment_method_id]);
                 }
-            }
-            // Unset Venmo when store location is not United States.
-            if ($container->get('api.shop.country') !== 'US') {
-                unset($payment_methods['venmo']);
-            }
-            // Unset if country/currency is not supported or merchant not eligible for Google Pay.
-            if (!$container->get('googlepay.eligible') || !$googlepay_product_status->is_active()) {
-                unset($payment_methods['ppcp-googlepay']);
-            }
-            // Unset if country/currency is not supported or merchant not eligible for Apple Pay.
-            if (!$container->get('applepay.eligible') || !$applepay_product_status->is_active()) {
-                unset($payment_methods['ppcp-applepay']);
-            }
-            // Unset Fastlane if country/currency is not supported or merchant is not eligible for BCDC.
-            if (!$container->get('axo.eligible') || !$dcc_product_status->is_active()) {
-                unset($payment_methods['ppcp-axo-gateway']);
-            }
-            // Unset OXXO if merchant country is not Mexico.
-            if ('MX' !== $merchant_country) {
-                unset($payment_methods[OXXO::ID]);
-            }
-            // Unset Pay Upon Invoice if merchant country is not Germany.
-            if ('DE' !== $merchant_country) {
-                unset($payment_methods[PayUponInvoiceGateway::ID]);
-            }
-            // Unset all APMs other than OXXO for Mexico.
-            if ('MX' === $merchant_country) {
-                unset($payment_methods[BancontactGateway::ID]);
-                unset($payment_methods[BlikGateway::ID]);
-                unset($payment_methods[EPSGateway::ID]);
-                unset($payment_methods[IDealGateway::ID]);
-                unset($payment_methods[MyBankGateway::ID]);
-                unset($payment_methods[P24Gateway::ID]);
-                unset($payment_methods[TrustlyGateway::ID]);
-                unset($payment_methods[MultibancoGateway::ID]);
-            }
-            // Unset PWC if the merchant does not have capability.
-            if (!$merchant_capabilities['pwc']) {
-                unset($payment_methods[PWCGateway::ID]);
             }
             return $payment_methods;
         });
@@ -369,12 +305,14 @@ class SettingsModule implements ServiceModule, ExecutableModule
                 assert($googlepay_gateway instanceof WC_Payment_Gateway);
                 $applepay_gateway = $container->get('applepay.wc-gateway');
                 assert($applepay_gateway instanceof WC_Payment_Gateway);
-                $axo_gateway = $container->get('axo.gateway');
-                assert($axo_gateway instanceof WC_Payment_Gateway);
                 $methods[] = $card_button_gateway;
                 $methods[] = $googlepay_gateway;
                 $methods[] = $applepay_gateway;
-                $methods[] = $axo_gateway;
+                if ($container->has('axo.eligible') && $container->get('axo.eligible')) {
+                    $axo_gateway = $container->get('axo.gateway');
+                    assert($axo_gateway instanceof WC_Payment_Gateway);
+                    $methods[] = $axo_gateway;
+                }
                 return $methods;
             },
             99
@@ -549,12 +487,43 @@ class SettingsModule implements ServiceModule, ExecutableModule
             }
             return $disable_funding;
         });
+        add_action(
+            'woocommerce_paypal_payments_gateway_migrate',
+            /**
+             * Migrates payment level processing setting during plugin update.
+             *
+             * For merchants updating from version 3.3.2 or older, disables Level 2/3
+             * processing if they previously opted out of automatic updates (stay_updated=false).
+             * Merchants who opted into updates inherit the default enabled state.
+             *
+             * @param false|string $previous_version The previously installed plugin version,
+             *                                       or false on first installation.
+             */
+            static function ($previous_version) use ($container): void {
+                // Only run this migration logic when updating from version 3.3.2 or older.
+                if ($previous_version && version_compare($previous_version, '3.3.2', 'gt')) {
+                    return;
+                }
+                try {
+                    $settings_model = $container->get('settings.data.settings');
+                    assert($settings_model instanceof SettingsModel);
+                    if (!$settings_model->get_stay_updated()) {
+                        $settings_model->set_payment_level_processing(\false);
+                        $settings_model->save();
+                    }
+                } catch (Throwable $error) {
+                    // Something failed - ignore the error and assume there is no migration data.
+                    return;
+                }
+            }
+        );
         return \true;
     }
     /**
      * Checks the branded-only state and applies relevant site-wide feature limitations, if needed.
      *
      * @param ContainerInterface $container The DI container provider.
+     *
      * @return void
      */
     protected function apply_branded_only_limitations(ContainerInterface $container): void
@@ -587,6 +556,7 @@ class SettingsModule implements ServiceModule, ExecutableModule
      *    is injected to the DOM, and not while the UI is used.
      *
      * @param ContainerInterface $container The DI container provider.
+     *
      * @return void
      */
     protected function initialize_branded_only(ContainerInterface $container): void
@@ -624,6 +594,7 @@ class SettingsModule implements ServiceModule, ExecutableModule
      * Checks if the payment gateway with the given name is enabled.
      *
      * @param string $gateway_name The gateway name.
+     *
      * @return bool True if the payment gateway with the given name is enabled, otherwise false.
      */
     protected function is_gateway_enabled(string $gateway_name): bool

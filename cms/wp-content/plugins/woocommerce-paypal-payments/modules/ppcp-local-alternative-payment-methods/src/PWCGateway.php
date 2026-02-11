@@ -14,6 +14,8 @@ use WooCommerce\PayPalCommerce\ApiClient\Endpoint\Orders;
 use WooCommerce\PayPalCommerce\ApiClient\Factory\ExperienceContextBuilder;
 use WooCommerce\PayPalCommerce\ApiClient\Factory\PurchaseUnitFactory;
 use WooCommerce\PayPalCommerce\ApiClient\Factory\ShippingPreferenceFactory;
+use WooCommerce\PayPalCommerce\Assets\AssetGetter;
+use WooCommerce\PayPalCommerce\Settings\Data\Definition\PaymentMethodsDefinition;
 use WooCommerce\PayPalCommerce\WcGateway\Gateway\PayPalGateway;
 use WooCommerce\PayPalCommerce\WcGateway\Gateway\TransactionUrlProvider;
 use WooCommerce\PayPalCommerce\WcGateway\Processor\RefundProcessor;
@@ -23,12 +25,6 @@ use WooCommerce\PayPalCommerce\WcGateway\Processor\RefundProcessor;
 class PWCGateway extends WC_Payment_Gateway
 {
     public const ID = 'ppcp-pwc';
-    /**
-     * The URL to the WC Gateway module.
-     *
-     * @var string
-     */
-    private string $wc_gateway_module_url;
     /**
      * PayPal Orders endpoint.
      *
@@ -68,7 +64,7 @@ class PWCGateway extends WC_Payment_Gateway
     /**
      * PWCGateway constructor.
      *
-     * @param string                    $wc_gateway_module_url The URL to the WC Gateway module.
+     * @param AssetGetter               $wc_gateway_module_asset_getter
      * @param Orders                    $orders_endpoint PayPal Orders endpoint.
      * @param PurchaseUnitFactory       $purchase_unit_factory Purchase unit factory.
      * @param RefundProcessor           $refund_processor The Refund Processor.
@@ -76,19 +72,16 @@ class PWCGateway extends WC_Payment_Gateway
      * @param TransactionUrlProvider    $transaction_url_provider Service providing transaction view URL based on order.
      * @param ExperienceContextBuilder  $experience_context_builder The ExperienceContextBuilder.
      */
-    public function __construct(string $wc_gateway_module_url, Orders $orders_endpoint, PurchaseUnitFactory $purchase_unit_factory, RefundProcessor $refund_processor, ShippingPreferenceFactory $shipping_preference_factory, TransactionUrlProvider $transaction_url_provider, ExperienceContextBuilder $experience_context_builder)
+    public function __construct(AssetGetter $wc_gateway_module_asset_getter, Orders $orders_endpoint, PurchaseUnitFactory $purchase_unit_factory, RefundProcessor $refund_processor, ShippingPreferenceFactory $shipping_preference_factory, TransactionUrlProvider $transaction_url_provider, ExperienceContextBuilder $experience_context_builder)
     {
         $this->id = self::ID;
         $this->supports = array('refunds', 'products');
-        $this->method_title = __('Pay with Crypto', 'woocommerce-paypal-payments');
-        $this->method_description = __('Accept cryptocurrency payments through PayPal, supporting various digital currencies for global customers.', 'woocommerce-paypal-payments');
-        $this->title = $this->get_option('title', __('Pay with Crypto', 'woocommerce-paypal-payments'));
-        $this->description = $this->get_option('description', __('Clicking “Place order” will redirect you to PayPal\'s encrypted checkout to complete your cryptocurrency purchase.', 'woocommerce-paypal-payments'));
-        $this->wc_gateway_module_url = $wc_gateway_module_url;
+        $this->init_apm_defaults();
         // TODO: Change to the official svg asset when it's available: Something like https://www.paypalobjects.com/images/checkout/alternative_payments/paypal_crypto_color.svg.
-        $this->icon = esc_url($this->wc_gateway_module_url) . 'assets/images/pwc.svg';
+        $this->icon = $wc_gateway_module_asset_getter->get_static_asset_url('images/pwc.svg');
         $this->init_form_fields();
         $this->init_settings();
+        $this->init_apm_settings();
         add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
         $this->orders_endpoint = $orders_endpoint;
         $this->purchase_unit_factory = $purchase_unit_factory;
@@ -192,5 +185,23 @@ class PWCGateway extends WC_Payment_Gateway
             }
         }
         return '';
+    }
+    /**
+     * Initialize APM gateway defaults from centralized definition.
+     */
+    private function init_apm_defaults(): void
+    {
+        $defaults = PaymentMethodsDefinition::get_apm_defaults()[self::ID];
+        $this->method_title = $defaults['method_title'];
+        $this->method_description = $defaults['method_description'];
+    }
+    /**
+     * Load saved settings and override defaults.
+     */
+    private function init_apm_settings(): void
+    {
+        $defaults = PaymentMethodsDefinition::get_apm_defaults()[self::ID];
+        $this->title = $this->get_option('title', $defaults['title']);
+        $this->description = $this->get_option('description', $defaults['description']);
     }
 }

@@ -10,6 +10,7 @@ namespace WooCommerce\PayPalCommerce\Button\Assets;
 
 use Exception;
 use WooCommerce\PayPalCommerce\Vendor\Psr\Log\LoggerInterface;
+use WC_Cart;
 use WC_Order;
 use WC_Payment_Tokens;
 use WC_Product;
@@ -21,6 +22,7 @@ use WooCommerce\PayPalCommerce\ApiClient\Factory\PayerFactory;
 use WooCommerce\PayPalCommerce\ApiClient\Helper\CurrencyGetter;
 use WooCommerce\PayPalCommerce\ApiClient\Helper\DccApplies;
 use WooCommerce\PayPalCommerce\ApiClient\Helper\PartnerAttribution;
+use WooCommerce\PayPalCommerce\Assets\AssetGetter;
 use WooCommerce\PayPalCommerce\Blocks\Endpoint\UpdateShippingEndpoint;
 use WooCommerce\PayPalCommerce\Button\Endpoint\ApproveOrderEndpoint;
 use WooCommerce\PayPalCommerce\Button\Endpoint\ApproveSubscriptionEndpoint;
@@ -32,29 +34,28 @@ use WooCommerce\PayPalCommerce\Button\Endpoint\GetOrderEndpoint;
 use WooCommerce\PayPalCommerce\Button\Endpoint\RequestData;
 use WooCommerce\PayPalCommerce\Button\Endpoint\SaveCheckoutFormEndpoint;
 use WooCommerce\PayPalCommerce\Button\Endpoint\SimulateCartEndpoint;
-use WooCommerce\PayPalCommerce\Button\Endpoint\StartPayPalVaultingEndpoint;
 use WooCommerce\PayPalCommerce\Button\Endpoint\ValidateCheckoutEndpoint;
 use WooCommerce\PayPalCommerce\Button\Helper\Context;
 use WooCommerce\PayPalCommerce\Button\Helper\DisabledFundingSources;
 use WooCommerce\PayPalCommerce\Button\Helper\MessagesApply;
-use WooCommerce\PayPalCommerce\WcGateway\Helper\Environment;
+use WooCommerce\PayPalCommerce\Button\VaultV2\StartPayPalVaultingEndpoint;
 use WooCommerce\PayPalCommerce\PayLaterBlock\PayLaterBlockModule;
 use WooCommerce\PayPalCommerce\PayLaterWCBlocks\PayLaterWCBlocksModule;
 use WooCommerce\PayPalCommerce\SavePaymentMethods\Endpoint\CreatePaymentToken;
-use WooCommerce\PayPalCommerce\SavePaymentMethods\Endpoint\CreateSetupToken;
 use WooCommerce\PayPalCommerce\SavePaymentMethods\Endpoint\CreatePaymentTokenForGuest;
+use WooCommerce\PayPalCommerce\SavePaymentMethods\Endpoint\CreateSetupToken;
 use WooCommerce\PayPalCommerce\Session\SessionHandler;
-use WooCommerce\PayPalCommerce\WcSubscriptions\FreeTrialHandlerTrait;
-use WooCommerce\PayPalCommerce\WcSubscriptions\Helper\SubscriptionHelper;
 use WooCommerce\PayPalCommerce\Vaulting\PaymentTokenRepository;
 use WooCommerce\PayPalCommerce\WcGateway\Exception\NotFoundException;
 use WooCommerce\PayPalCommerce\WcGateway\Gateway\CardButtonGateway;
 use WooCommerce\PayPalCommerce\WcGateway\Gateway\CreditCardGateway;
 use WooCommerce\PayPalCommerce\WcGateway\Gateway\PayPalGateway;
+use WooCommerce\PayPalCommerce\WcGateway\Helper\CardPaymentsConfiguration;
+use WooCommerce\PayPalCommerce\WcGateway\Helper\Environment;
 use WooCommerce\PayPalCommerce\WcGateway\Helper\SettingsStatus;
 use WooCommerce\PayPalCommerce\WcGateway\Settings\Settings;
-use WC_Cart;
-use WooCommerce\PayPalCommerce\WcGateway\Helper\CardPaymentsConfiguration;
+use WooCommerce\PayPalCommerce\WcSubscriptions\FreeTrialHandlerTrait;
+use WooCommerce\PayPalCommerce\WcSubscriptions\Helper\SubscriptionHelper;
 /**
  * Class SmartButton
  */
@@ -73,12 +74,7 @@ class SmartButton implements \WooCommerce\PayPalCommerce\Button\Assets\SmartButt
      * @var Context
      */
     protected Context $context;
-    /**
-     * The URL to the module.
-     *
-     * @var string
-     */
-    private $module_url;
+    private AssetGetter $asset_getter;
     /**
      * The assets version.
      *
@@ -236,9 +232,7 @@ class SmartButton implements \WooCommerce\PayPalCommerce\Button\Assets\SmartButt
      */
     private bool $final_review_enabled;
     /**
-     * SmartButton constructor.
-     *
-     * @param string                    $module_url                        The URL to the module.
+     * @param AssetGetter               $asset_getter
      * @param string                    $version                           The assets version.
      * @param SessionHandler            $session_handler                   The Session handler.
      * @param Settings                  $settings                          The Settings.
@@ -267,9 +261,9 @@ class SmartButton implements \WooCommerce\PayPalCommerce\Button\Assets\SmartButt
      * @param PartnerAttribution        $partner_attribution The PayPal Partner Attribution Helper.
      * @param bool                      $final_review_enabled              Whether the final review is enabled in blocks settings.
      */
-    public function __construct(string $module_url, string $version, SessionHandler $session_handler, Settings $settings, PayerFactory $payer_factory, string $client_id, RequestData $request_data, DccApplies $dcc_applies, SubscriptionHelper $subscription_helper, MessagesApply $messages_apply, Environment $environment, PaymentTokenRepository $payment_token_repository, SettingsStatus $settings_status, CurrencyGetter $currency, bool $basic_checkout_validation_enabled, bool $early_validation_enabled, array $pay_now_contexts, array $funding_sources_without_redirect, bool $vault_v3_enabled, PaymentTokensEndpoint $payment_tokens_endpoint, LoggerInterface $logger, bool $should_handle_shipping_in_paypal, bool $server_side_shipping_callback_enabled, bool $appswitch_enabled, DisabledFundingSources $disabled_funding_sources, CardPaymentsConfiguration $dcc_configuration, PartnerAttribution $partner_attribution, bool $final_review_enabled, Context $context)
+    public function __construct(AssetGetter $asset_getter, string $version, SessionHandler $session_handler, Settings $settings, PayerFactory $payer_factory, string $client_id, RequestData $request_data, DccApplies $dcc_applies, SubscriptionHelper $subscription_helper, MessagesApply $messages_apply, Environment $environment, PaymentTokenRepository $payment_token_repository, SettingsStatus $settings_status, CurrencyGetter $currency, bool $basic_checkout_validation_enabled, bool $early_validation_enabled, array $pay_now_contexts, array $funding_sources_without_redirect, bool $vault_v3_enabled, PaymentTokensEndpoint $payment_tokens_endpoint, LoggerInterface $logger, bool $should_handle_shipping_in_paypal, bool $server_side_shipping_callback_enabled, bool $appswitch_enabled, DisabledFundingSources $disabled_funding_sources, CardPaymentsConfiguration $dcc_configuration, PartnerAttribution $partner_attribution, bool $final_review_enabled, Context $context)
     {
-        $this->module_url = $module_url;
+        $this->asset_getter = $asset_getter;
         $this->version = $version;
         $this->session_handler = $session_handler;
         $this->settings = $settings;
@@ -314,27 +308,7 @@ class SmartButton implements \WooCommerce\PayPalCommerce\Button\Assets\SmartButt
         if ($this->dcc_configuration->is_enabled()) {
             $this->render_dcc_wrapper();
         }
-        if ($this->is_free_trial_cart()) {
-            add_action('woocommerce_review_order_after_submit', function () {
-                $vaulted_email = $this->get_vaulted_paypal_email();
-                if (!$vaulted_email) {
-                    return;
-                }
-                ?>
-					<div class="ppcp-vaulted-paypal-details">
-						<?php 
-                echo wp_kses_post(sprintf(
-                    // translators: %1$s - email, %2$s, %3$s - HTML tags for a link.
-                    esc_html__('Using %2$s%1$s%3$s PayPal.', 'woocommerce-paypal-payments'),
-                    $vaulted_email,
-                    '<b>',
-                    '</b>'
-                ));
-                ?>
-					</div>
-					<?php 
-            });
-        }
+        do_action('woocommerce_paypal_payments_smart_button_render_wrapper');
         $this->sanitize_woocommerce_filters();
         return \true;
     }
@@ -561,10 +535,10 @@ document.querySelector("#payment").before(document.querySelector(".ppcp-messages
     public function enqueue(): void
     {
         if ($this->can_render_dcc()) {
-            wp_enqueue_style('ppcp-hosted-fields', untrailingslashit($this->module_url) . '/assets/css/hosted-fields.css', array(), $this->version);
+            wp_enqueue_style('ppcp-hosted-fields', $this->asset_getter->get_asset_url('hosted-fields.css'), array(), $this->version);
         }
-        wp_enqueue_style('gateway', untrailingslashit($this->module_url) . '/assets/css/gateway.css', array(), $this->version);
-        wp_enqueue_script('ppcp-smart-button', untrailingslashit($this->module_url) . '/assets/js/button.js', array('jquery'), $this->version, \true);
+        wp_enqueue_style('gateway', $this->asset_getter->get_asset_url('gateway.css'), array(), $this->version);
+        wp_enqueue_script('ppcp-smart-button', $this->asset_getter->get_asset_url('button.js'), array('jquery'), $this->version, \true);
         wp_localize_script('ppcp-smart-button', 'PayPalCommerceGateway', $this->script_data());
     }
     /**
@@ -848,7 +822,7 @@ document.querySelector("#payment").before(document.querySelector(".ppcp-messages
         $url_params = $this->url_params();
         $current_context = $this->context->context();
         $this->request_data->enqueue_nonce_fix();
-        $localize = array('url' => add_query_arg($url_params, 'https://www.paypal.com/sdk/js'), 'url_params' => $url_params, 'script_attributes' => $this->attributes(), 'client_id' => $this->client_id, 'currency' => $this->currency->get(), 'data_client_id' => array('set_attribute' => is_checkout() && $is_acdc_enabled || $this->can_save_vault_token(), 'endpoint' => \WC_AJAX::get_endpoint(DataClientIdEndpoint::ENDPOINT), 'nonce' => wp_create_nonce(DataClientIdEndpoint::nonce()), 'user' => get_current_user_id(), 'has_subscriptions' => $this->has_subscriptions(), 'paypal_subscriptions_enabled' => $this->paypal_subscriptions_enabled()), 'redirect' => wc_get_checkout_url(), 'context' => $current_context, 'ajax' => array('simulate_cart' => array('endpoint' => \WC_AJAX::get_endpoint(SimulateCartEndpoint::ENDPOINT), 'nonce' => wp_create_nonce(SimulateCartEndpoint::nonce())), 'change_cart' => array('endpoint' => \WC_AJAX::get_endpoint(ChangeCartEndpoint::ENDPOINT), 'nonce' => wp_create_nonce(ChangeCartEndpoint::nonce())), 'create_order' => array('endpoint' => \WC_AJAX::get_endpoint(CreateOrderEndpoint::ENDPOINT), 'nonce' => wp_create_nonce(CreateOrderEndpoint::nonce())), 'approve_order' => array('endpoint' => \WC_AJAX::get_endpoint(ApproveOrderEndpoint::ENDPOINT), 'nonce' => wp_create_nonce(ApproveOrderEndpoint::nonce())), 'get_order' => array('endpoint' => \WC_AJAX::get_endpoint(GetOrderEndpoint::ENDPOINT), 'nonce' => wp_create_nonce(GetOrderEndpoint::nonce())), 'approve_subscription' => array('endpoint' => \WC_AJAX::get_endpoint(ApproveSubscriptionEndpoint::ENDPOINT), 'nonce' => wp_create_nonce(ApproveSubscriptionEndpoint::nonce())), 'vault_paypal' => array('endpoint' => \WC_AJAX::get_endpoint(StartPayPalVaultingEndpoint::ENDPOINT), 'nonce' => wp_create_nonce(StartPayPalVaultingEndpoint::nonce())), 'save_checkout_form' => array('endpoint' => \WC_AJAX::get_endpoint(SaveCheckoutFormEndpoint::ENDPOINT), 'nonce' => wp_create_nonce(SaveCheckoutFormEndpoint::nonce())), 'validate_checkout' => array('endpoint' => \WC_AJAX::get_endpoint(ValidateCheckoutEndpoint::ENDPOINT), 'nonce' => wp_create_nonce(ValidateCheckoutEndpoint::nonce())), 'cart_script_params' => array('endpoint' => \WC_AJAX::get_endpoint(CartScriptParamsEndpoint::ENDPOINT)), 'create_setup_token' => array('endpoint' => \WC_AJAX::get_endpoint(CreateSetupToken::ENDPOINT), 'nonce' => wp_create_nonce(CreateSetupToken::nonce())), 'create_payment_token' => array('endpoint' => \WC_AJAX::get_endpoint(CreatePaymentToken::ENDPOINT), 'nonce' => wp_create_nonce(CreatePaymentToken::nonce())), 'create_payment_token_for_guest' => array('endpoint' => \WC_AJAX::get_endpoint(CreatePaymentTokenForGuest::ENDPOINT), 'nonce' => wp_create_nonce(CreatePaymentTokenForGuest::nonce())), 'update_shipping' => array('endpoint' => \WC_AJAX::get_endpoint(UpdateShippingEndpoint::ENDPOINT), 'nonce' => wp_create_nonce(UpdateShippingEndpoint::nonce())), 'update_customer_shipping' => array('shipping_options' => array('endpoint' => home_url(UpdateShippingEndpoint::WC_STORE_API_ENDPOINT . 'select-shipping-rate')), 'shipping_address' => array('cart_endpoint' => home_url(UpdateShippingEndpoint::WC_STORE_API_ENDPOINT), 'update_customer_endpoint' => home_url(UpdateShippingEndpoint::WC_STORE_API_ENDPOINT . 'update-customer')), 'wp_rest_nonce' => wp_create_nonce('wc_store_api'), 'update_shipping_method' => \WC_AJAX::get_endpoint('update_shipping_method'))), 'cart_contains_subscription' => $this->subscription_helper->cart_contains_subscription(), 'subscription_plan_id' => $this->subscription_helper->paypal_subscription_id(), 'vault_v3_enabled' => $this->vault_v3_enabled, 'variable_paypal_subscription_variations' => $this->subscription_helper->variable_paypal_subscription_variations(), 'variable_paypal_subscription_variation_from_cart' => $this->subscription_helper->paypal_subscription_variation_from_cart(), 'subscription_product_allowed' => $this->subscription_helper->checkout_subscription_product_allowed(), 'locations_with_subscription_product' => $this->subscription_helper->locations_with_subscription_product(), 'enforce_vault' => $this->has_subscriptions(), 'can_save_vault_token' => $this->can_save_vault_token(), 'is_free_trial_cart' => $is_free_trial_cart, 'vaulted_paypal_email' => is_checkout() && $is_free_trial_cart ? $this->get_vaulted_paypal_email() : '', 'bn_codes' => $this->bn_codes(), 'payer' => $this->payerData(), 'button' => array('wrapper' => '#ppc-button-' . PayPalGateway::ID, 'is_disabled' => $this->is_button_disabled(), 'mini_cart_wrapper' => '#ppc-button-minicart', 'is_mini_cart_disabled' => $this->is_button_disabled('mini-cart'), 'cancel_wrapper' => '#ppcp-cancel', 'mini_cart_style' => $this->normalize_style(array('layout' => $this->style_for_context('layout', 'mini-cart'), 'color' => $this->style_for_context('color', 'mini-cart'), 'shape' => $this->style_for_context('shape', 'mini-cart'), 'label' => $this->style_for_context('label', 'mini-cart'), 'tagline' => $this->style_for_context('tagline', 'mini-cart'), 'height' => $this->normalize_height($this->style_for_context('height', 'mini-cart', 35), 25, 55))), 'style' => $this->normalize_style(array('layout' => $this->style_for_context('layout', $current_context), 'color' => $this->style_for_context('color', $current_context), 'shape' => $this->style_for_context('shape', $current_context), 'label' => $this->style_for_context('label', $current_context), 'tagline' => $this->style_for_context('tagline', $current_context), 'height' => in_array($current_context, array('cart-block', 'checkout-block'), \true) ? $this->normalize_height($this->style_for_context('height', $current_context, 48), 40, 55) : null))), 'separate_buttons' => array('card' => array('id' => CardButtonGateway::ID, 'wrapper' => '#ppc-button-' . CardButtonGateway::ID, 'style' => $this->normalize_style(array('shape' => $this->style_for_apm('shape', 'card'), 'color' => $this->style_for_apm('color', 'card', 'black'), 'layout' => $this->style_for_apm('poweredby_tagline', 'card', \false) === $this->normalize_style_value(\true) ? 'vertical' : 'horizontal')))), 'hosted_fields' => array('wrapper' => '#ppcp-hosted-fields', 'labels' => array('credit_card_number' => '', 'cvv' => '', 'mm_yy' => __('MM/YY', 'woocommerce-paypal-payments'), 'fields_empty' => __('Card payment details are missing. Please fill in all required fields.', 'woocommerce-paypal-payments'), 'fields_not_valid' => __('Unfortunately, your credit card details are not valid.', 'woocommerce-paypal-payments'), 'card_not_supported' => __('Unfortunately, we do not support your credit card.', 'woocommerce-paypal-payments'), 'cardholder_name_required' => __('Cardholder\'s first and last name are required, please fill the checkout form required fields.', 'woocommerce-paypal-payments')), 'valid_cards' => $this->dcc_applies->valid_cards(), 'contingency' => $this->get_3ds_contingency()), 'messages' => $this->message_values(), 'labels' => array(
+        $localize = array('url' => add_query_arg($url_params, 'https://www.paypal.com/sdk/js'), 'url_params' => $url_params, 'script_attributes' => $this->attributes(), 'client_id' => $this->client_id, 'currency' => $this->currency->get(), 'data_client_id' => array('set_attribute' => is_checkout() && $is_acdc_enabled || $this->can_save_vault_token(), 'endpoint' => \WC_AJAX::get_endpoint(DataClientIdEndpoint::ENDPOINT), 'nonce' => wp_create_nonce(DataClientIdEndpoint::nonce()), 'user' => get_current_user_id(), 'has_subscriptions' => $this->has_subscriptions(), 'paypal_subscriptions_enabled' => $this->paypal_subscriptions_enabled()), 'redirect' => wc_get_checkout_url(), 'context' => $current_context, 'ajax' => array('simulate_cart' => array('endpoint' => \WC_AJAX::get_endpoint(SimulateCartEndpoint::ENDPOINT), 'nonce' => wp_create_nonce(SimulateCartEndpoint::nonce())), 'change_cart' => array('endpoint' => \WC_AJAX::get_endpoint(ChangeCartEndpoint::ENDPOINT), 'nonce' => wp_create_nonce(ChangeCartEndpoint::nonce())), 'create_order' => array('endpoint' => \WC_AJAX::get_endpoint(CreateOrderEndpoint::ENDPOINT), 'nonce' => wp_create_nonce(CreateOrderEndpoint::nonce())), 'approve_order' => array('endpoint' => \WC_AJAX::get_endpoint(ApproveOrderEndpoint::ENDPOINT), 'nonce' => wp_create_nonce(ApproveOrderEndpoint::nonce())), 'get_order' => array('endpoint' => \WC_AJAX::get_endpoint(GetOrderEndpoint::ENDPOINT), 'nonce' => wp_create_nonce(GetOrderEndpoint::nonce())), 'approve_subscription' => array('endpoint' => \WC_AJAX::get_endpoint(ApproveSubscriptionEndpoint::ENDPOINT), 'nonce' => wp_create_nonce(ApproveSubscriptionEndpoint::nonce())), 'vault_paypal' => array('endpoint' => \WC_AJAX::get_endpoint(StartPayPalVaultingEndpoint::ENDPOINT), 'nonce' => wp_create_nonce(StartPayPalVaultingEndpoint::nonce())), 'save_checkout_form' => array('endpoint' => \WC_AJAX::get_endpoint(SaveCheckoutFormEndpoint::ENDPOINT), 'nonce' => wp_create_nonce(SaveCheckoutFormEndpoint::nonce())), 'validate_checkout' => array('endpoint' => \WC_AJAX::get_endpoint(ValidateCheckoutEndpoint::ENDPOINT), 'nonce' => wp_create_nonce(ValidateCheckoutEndpoint::nonce())), 'cart_script_params' => array('endpoint' => \WC_AJAX::get_endpoint(CartScriptParamsEndpoint::ENDPOINT)), 'create_setup_token' => array('endpoint' => \WC_AJAX::get_endpoint(CreateSetupToken::ENDPOINT), 'nonce' => wp_create_nonce(CreateSetupToken::nonce())), 'create_payment_token' => array('endpoint' => \WC_AJAX::get_endpoint(CreatePaymentToken::ENDPOINT), 'nonce' => wp_create_nonce(CreatePaymentToken::nonce())), 'create_payment_token_for_guest' => array('endpoint' => \WC_AJAX::get_endpoint(CreatePaymentTokenForGuest::ENDPOINT), 'nonce' => wp_create_nonce(CreatePaymentTokenForGuest::nonce())), 'update_shipping' => array('endpoint' => \WC_AJAX::get_endpoint(UpdateShippingEndpoint::ENDPOINT), 'nonce' => wp_create_nonce(UpdateShippingEndpoint::nonce())), 'update_customer_shipping' => array('shipping_options' => array('endpoint' => home_url(UpdateShippingEndpoint::WC_STORE_API_ENDPOINT . 'select-shipping-rate')), 'shipping_address' => array('cart_endpoint' => home_url(UpdateShippingEndpoint::WC_STORE_API_ENDPOINT), 'update_customer_endpoint' => home_url(UpdateShippingEndpoint::WC_STORE_API_ENDPOINT . 'update-customer')), 'wp_rest_nonce' => wp_create_nonce('wc_store_api'), 'update_shipping_method' => \WC_AJAX::get_endpoint('update_shipping_method'))), 'cart_contains_subscription' => $this->subscription_helper->cart_contains_subscription(), 'subscription_plan_id' => $this->subscription_helper->paypal_subscription_id(), 'vault_v3_enabled' => $this->vault_v3_enabled, 'variable_paypal_subscription_variations' => $this->subscription_helper->variable_paypal_subscription_variations(), 'variable_paypal_subscription_variation_from_cart' => $this->subscription_helper->paypal_subscription_variation_from_cart(), 'subscription_product_allowed' => $this->subscription_helper->checkout_subscription_product_allowed(), 'locations_with_subscription_product' => $this->subscription_helper->locations_with_subscription_product(), 'enforce_vault' => $this->has_subscriptions(), 'can_save_vault_token' => $this->can_save_vault_token(), 'is_free_trial_cart' => $is_free_trial_cart, 'bn_codes' => $this->bn_codes(), 'payer' => $this->payerData(), 'button' => array('wrapper' => '#ppc-button-' . PayPalGateway::ID, 'is_disabled' => $this->is_button_disabled(), 'mini_cart_wrapper' => '#ppc-button-minicart', 'is_mini_cart_disabled' => $this->is_button_disabled('mini-cart'), 'cancel_wrapper' => '#ppcp-cancel', 'mini_cart_style' => $this->normalize_style(array('layout' => $this->style_for_context('layout', 'mini-cart'), 'color' => $this->style_for_context('color', 'mini-cart'), 'shape' => $this->style_for_context('shape', 'mini-cart'), 'label' => $this->style_for_context('label', 'mini-cart'), 'tagline' => $this->style_for_context('tagline', 'mini-cart'), 'height' => $this->normalize_height($this->style_for_context('height', 'mini-cart', 35), 25, 55))), 'style' => $this->normalize_style(array('layout' => $this->style_for_context('layout', $current_context), 'color' => $this->style_for_context('color', $current_context), 'shape' => $this->style_for_context('shape', $current_context), 'label' => $this->style_for_context('label', $current_context), 'tagline' => $this->style_for_context('tagline', $current_context), 'height' => in_array($current_context, array('cart-block', 'checkout-block'), \true) ? $this->normalize_height($this->style_for_context('height', $current_context, 48), 40, 55) : null))), 'separate_buttons' => array('card' => array('id' => CardButtonGateway::ID, 'wrapper' => '#ppc-button-' . CardButtonGateway::ID, 'style' => $this->normalize_style(array('shape' => $this->style_for_apm('shape', 'card'), 'color' => $this->style_for_apm('color', 'card', 'black'), 'layout' => $this->style_for_apm('poweredby_tagline', 'card', \false) === $this->normalize_style_value(\true) ? 'vertical' : 'horizontal')))), 'hosted_fields' => array('wrapper' => '#ppcp-hosted-fields', 'labels' => array('credit_card_number' => '', 'cvv' => '', 'mm_yy' => __('MM/YY', 'woocommerce-paypal-payments'), 'fields_empty' => __('Card payment details are missing. Please fill in all required fields.', 'woocommerce-paypal-payments'), 'fields_not_valid' => __('Unfortunately, your credit card details are not valid.', 'woocommerce-paypal-payments'), 'card_not_supported' => __('Unfortunately, we do not support your credit card.', 'woocommerce-paypal-payments'), 'cardholder_name_required' => __('Cardholder\'s first and last name are required, please fill the checkout form required fields.', 'woocommerce-paypal-payments')), 'valid_cards' => $this->dcc_applies->valid_cards(), 'contingency' => $this->get_3ds_contingency()), 'messages' => $this->message_values(), 'labels' => array(
             'error' => array('generic' => __('Something went wrong. Please try again or choose another payment source.', 'woocommerce-paypal-payments'), 'required' => array(
                 'generic' => __('Required form fields are not filled.', 'woocommerce-paypal-payments'),
                 // phpcs:ignore WordPress.WP.I18n
@@ -866,7 +840,7 @@ document.querySelector("#payment").before(document.querySelector(".ppcp-messages
             'billing_field' => _x('Billing %s', 'checkout-validation', 'woocommerce'),
             // phpcs:ignore WordPress.WP.I18n
             'shipping_field' => _x('Shipping %s', 'checkout-validation', 'woocommerce'),
-        ), 'simulate_cart' => array('enabled' => apply_filters('woocommerce_paypal_payments_simulate_cart_enabled', \true), 'throttling' => apply_filters('woocommerce_paypal_payments_simulate_cart_throttling', 5000)), 'order_id' => 'pay-now' === $current_context ? $this->get_order_pay_id() : 0, 'single_product_buttons_enabled' => $this->settings_status->is_smart_button_enabled_for_location('product'), 'mini_cart_buttons_enabled' => $this->settings_status->is_smart_button_enabled_for_location('mini-cart'), 'basic_checkout_validation_enabled' => $this->basic_checkout_validation_enabled, 'early_checkout_validation_enabled' => $this->early_validation_enabled, 'funding_sources_without_redirect' => $this->funding_sources_without_redirect, 'user' => array('is_logged' => is_user_logged_in(), 'has_wc_card_payment_tokens' => $this->user_has_wc_card_payment_tokens(get_current_user_id())), 'should_handle_shipping_in_paypal' => $this->should_handle_shipping_in_paypal && !$this->context->is_checkout(), 'server_side_shipping_callback' => array('enabled' => $this->server_side_shipping_callback_enabled), 'appswitch' => array('enabled' => $this->appswitch_enabled), 'needShipping' => $this->need_shipping(), 'vaultingEnabled' => $this->settings->has('vault_enabled') && $this->settings->get('vault_enabled'), 'productType' => null, 'manualRenewalEnabled' => $this->subscription_helper->accept_manual_renewals(), 'final_review_enabled' => $this->final_review_enabled);
+        ), 'simulate_cart' => array('enabled' => apply_filters('woocommerce_paypal_payments_simulate_cart_enabled', \true), 'throttling' => apply_filters('woocommerce_paypal_payments_simulate_cart_throttling', 5000)), 'order_id' => 'pay-now' === $current_context ? $this->get_order_pay_id() : 0, 'order_key' => 'pay-now' === $current_context ? $this->get_order_pay_key() : '', 'single_product_buttons_enabled' => $this->settings_status->is_smart_button_enabled_for_location('product'), 'mini_cart_buttons_enabled' => $this->settings_status->is_smart_button_enabled_for_location('mini-cart'), 'basic_checkout_validation_enabled' => $this->basic_checkout_validation_enabled, 'early_checkout_validation_enabled' => $this->early_validation_enabled, 'funding_sources_without_redirect' => $this->funding_sources_without_redirect, 'user' => array('is_logged' => is_user_logged_in(), 'has_wc_card_payment_tokens' => $this->user_has_wc_card_payment_tokens(get_current_user_id())), 'should_handle_shipping_in_paypal' => $this->should_handle_shipping_in_paypal && !$this->context->is_checkout(), 'server_side_shipping_callback' => array('enabled' => $this->server_side_shipping_callback_enabled), 'appswitch' => array('enabled' => $this->appswitch_enabled), 'needShipping' => $this->need_shipping(), 'vaultingEnabled' => $this->settings->has('vault_enabled') && $this->settings->get('vault_enabled'), 'productType' => null, 'manualRenewalEnabled' => $this->subscription_helper->accept_manual_renewals(), 'final_review_enabled' => $this->final_review_enabled);
         if (is_product()) {
             $product = wc_get_product(get_the_ID());
             if (is_a($product, \WC_Product::class)) {
@@ -1405,47 +1379,6 @@ document.querySelector("#payment").before(document.querySelector(".ppcp-messages
         return $this->is_pay_later_filter_enabled_for_location($location, $context_data) && $this->settings_status->is_pay_later_messaging_enabled_for_location($location);
     }
     /**
-     * Retrieves all payment tokens for the user, via API or cached if already queried.
-     *
-     * @return PaymentToken[]
-     */
-    private function get_payment_tokens(): array
-    {
-        if (null === $this->payment_tokens) {
-            $this->payment_tokens = $this->payment_token_repository->all_for_user_id(get_current_user_id());
-        }
-        return $this->payment_tokens;
-    }
-    /**
-     * Returns the vaulted PayPal email or empty string.
-     *
-     * @return string
-     */
-    private function get_vaulted_paypal_email(): string
-    {
-        try {
-            $customer_id = get_user_meta(get_current_user_id(), '_ppcp_target_customer_id', \true);
-            if ($customer_id) {
-                $customer_tokens = $this->payment_tokens_endpoint->payment_tokens_for_customer($customer_id);
-                foreach ($customer_tokens as $token) {
-                    $email_address = $token['payment_source']->properties()->email_address ?? '';
-                    if ($email_address) {
-                        return $email_address;
-                    }
-                }
-            }
-            $tokens = $this->get_payment_tokens();
-            foreach ($tokens as $token) {
-                if (isset($token->source()->paypal)) {
-                    return $token->source()->paypal->payer->email_address;
-                }
-            }
-        } catch (Exception $exception) {
-            $this->logger->error('Failed to get PayPal vaulted email. ' . $exception->getMessage());
-        }
-        return '';
-    }
-    /**
      * Checks if variations contain any in stock variation.
      *
      * @param WC_Product_Variation[] $variations The list of variations.
@@ -1487,6 +1420,17 @@ document.querySelector("#payment").before(document.querySelector(".ppcp-messages
             return 0;
         }
         return absint($wp->query_vars['order-pay']);
+    }
+    /**
+     * Returns the order key from the pay-for-order page URL, or empty string.
+     *
+     * @return string
+     */
+    protected function get_order_pay_key(): string
+    {
+        //phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $key = isset($_GET['key']) ? wc_clean(wp_unslash($_GET['key'])) : '';
+        return is_string($key) ? $key : '';
     }
     /**
      * Sanitize woocommerce filter on unexpected states.

@@ -13,10 +13,9 @@ if (!defined('ABSPATH')) {
 
 /**
  * Register ACF Field Groups
- * 
- * WICHTIG: acf/include_field_types Hook wird nach ACF init aufgerufen
  */
 add_action('acf/include_field_types', 'agency_core_register_acf_fields');
+
 
 function agency_core_register_acf_fields() {
     // Check if ACF is available
@@ -42,6 +41,9 @@ function agency_core_register_acf_fields() {
     // FAQ Fields
     agency_core_register_faq_fields();
 
+    // Job Fields
+    agency_core_register_job_fields();
+
     // Carousel Fields
     agency_core_register_carousel_fields();
 
@@ -51,8 +53,174 @@ function agency_core_register_acf_fields() {
     // WooCommerce Product Fields
     agency_core_register_product_fields();
 
+    // Page Builder Fields
+    agency_core_register_page_builder_fields();
+
+    
+
 
 }
+add_action('acf/init', 'agency_core_register_acf_fields');
+
+
+
+// Accordion Block Fields
+if (function_exists('acf_add_local_field_group')) {
+    
+    acf_add_local_field_group(array(
+        'key' => 'group_accordion_block',
+        'title' => 'Accordion Settings',
+        'fields' => array(
+            array(
+                'key' => 'field_accordion_items',
+                'label' => 'Accordion Items',
+                'name' => 'accordion_items',
+                'type' => 'repeater',
+                'layout' => 'block',
+                'button_label' => '+ Item hinzufügen',
+                'min' => 1,
+                'sub_fields' => array(
+                    array(
+                        'key' => 'field_accordion_title',
+                        'label' => 'Titel',
+                        'name' => 'title',
+                        'type' => 'text',
+                        'required' => 1,
+                        'placeholder' => 'z.B. Wie funktioniert das?',
+                    ),
+                    array(
+                        'key' => 'field_accordion_content',
+                        'label' => 'Inhalt',
+                        'name' => 'content',
+                        'type' => 'wysiwyg',
+                        'tabs' => 'all',
+                        'toolbar' => 'full',
+                        'media_upload' => 1,
+                        'required' => 1,
+                    ),
+                ),
+            ),
+            array(
+                'key' => 'field_allow_multiple_open',
+                'label' => 'Mehrere Items gleichzeitig öffnen?',
+                'name' => 'allow_multiple_open',
+                'type' => 'true_false',
+                'default_value' => 0,
+                'ui' => 1,
+                'instructions' => 'Wenn aktiviert, können mehrere Accordion-Items gleichzeitig geöffnet sein.',
+            ),
+            array(
+                'key' => 'field_first_item_open',
+                'label' => 'Erstes Item standardmäßig offen?',
+                'name' => 'first_item_open',
+                'type' => 'true_false',
+                'default_value' => 0,
+                'ui' => 1,
+            ),
+        ),
+        'location' => array(
+            array(
+                array(
+                    'param' => 'block',
+                    'operator' => '==',
+                    'value' => 'acf/accordion',
+                ),
+            ),
+        ),
+    ));
+    
+    // Hero Slider Block Fields
+    acf_add_local_field_group(array(
+        'key' => 'group_hero_slider_block',
+        'title' => 'Hero Slider Settings',
+        'fields' => array(
+            array(
+                'key' => 'field_hero_slides',
+                'label' => 'Slides',
+                'name' => 'hero_slides',
+                'type' => 'repeater',
+                'layout' => 'block',
+                'button_label' => '+ Slide hinzufügen',
+                'min' => 1,
+                'sub_fields' => array(
+                    array(
+                        'key' => 'field_slide_image',
+                        'label' => 'Hintergrundbild',
+                        'name' => 'image',
+                        'type' => 'image',
+                        'return_format' => 'array',
+                        'preview_size' => 'medium',
+                        'required' => 1,
+                    ),
+                    array(
+                        'key' => 'field_slide_title',
+                        'label' => 'Titel',
+                        'name' => 'title',
+                        'type' => 'text',
+                        'required' => 1,
+                    ),
+                    array(
+                        'key' => 'field_slide_subtitle',
+                        'label' => 'Untertitel',
+                        'name' => 'subtitle',
+                        'type' => 'textarea',
+                        'rows' => 3,
+                    ),
+                    array(
+                        'key' => 'field_slide_button_text',
+                        'label' => 'Button Text',
+                        'name' => 'button_text',
+                        'type' => 'text',
+                    ),
+                    array(
+                        'key' => 'field_slide_button_link',
+                        'label' => 'Button Link',
+                        'name' => 'button_link',
+                        'type' => 'link',
+                        'return_format' => 'array',
+                    ),
+                ),
+            ),
+            array(
+                'key' => 'field_slider_autoplay',
+                'label' => 'Autoplay aktivieren?',
+                'name' => 'autoplay',
+                'type' => 'true_false',
+                'default_value' => 1,
+                'ui' => 1,
+            ),
+            array(
+                'key' => 'field_slider_delay',
+                'label' => 'Autoplay Verzögerung (ms)',
+                'name' => 'delay',
+                'type' => 'number',
+                'default_value' => 5000,
+                'min' => 1000,
+                'step' => 1000,
+                'conditional_logic' => array(
+                    array(
+                        array(
+                            'field' => 'field_slider_autoplay',
+                            'operator' => '==',
+                            'value' => '1',
+                        ),
+                    ),
+                ),
+            ),
+        ),
+        'location' => array(
+            array(
+                array(
+                    'param' => 'block',
+                    'operator' => '==',
+                    'value' => 'acf/hero-slider',
+                ),
+            ),
+        ),
+    ));
+}
+
+
 
 /**
  * Team Member Fields
@@ -736,5 +904,724 @@ function agency_core_register_maps_fields() {
         'menu_order' => 0,
         'position' => 'normal',
         'style' => 'default',
+    ));
+}
+
+
+
+
+
+
+
+
+/**
+ * Page Builder Flexible Content Fields
+ */
+function agency_core_register_page_builder_fields() {
+    acf_add_local_field_group(array(
+        'key' => 'group_page_builder',
+        'title' => 'Page Builder',
+        'fields' => array(
+            array(
+                'key' => 'field_content_builder',
+                'label' => 'Content Builder',
+                'name' => 'content_builder',
+                'type' => 'flexible_content',
+                'instructions' => 'Baue deine Seite mit flexiblen Content-Blöcken',
+                'button_label' => 'Block hinzufügen',
+                'layouts' => array(
+                    
+                    // ============================================
+                    // HERO SECTION
+                    // ============================================
+                    'hero' => array(
+                        'key' => 'layout_hero',
+                        'name' => 'hero',
+                        'label' => 'Hero Section',
+                        'display' => 'block',
+                        'sub_fields' => array(
+                            array(
+                                'key' => 'field_hero_title',
+                                'label' => 'Title',
+                                'name' => 'title',
+                                'type' => 'text',
+                            ),
+                            array(
+                                'key' => 'field_hero_subtitle',
+                                'label' => 'Subtitle',
+                                'name' => 'subtitle',
+                                'type' => 'text',
+                            ),
+                            array(
+                                'key' => 'field_hero_content',
+                                'label' => 'Content',
+                                'name' => 'content',
+                                'type' => 'textarea',
+                                'rows' => 3,
+                            ),
+                            array(
+                                'key' => 'field_hero_button_text',
+                                'label' => 'Button Text',
+                                'name' => 'button_text',
+                                'type' => 'text',
+                            ),
+                            array(
+                                'key' => 'field_hero_button_url',
+                                'label' => 'Button URL',
+                                'name' => 'button_url',
+                                'type' => 'url',
+                            ),
+                            array(
+                                'key' => 'field_hero_background_image',
+                                'label' => 'Background Image',
+                                'name' => 'background_image',
+                                'type' => 'image',
+                                'return_format' => 'array',
+                                'preview_size' => 'medium',
+                            ),
+                        ),
+                    ),
+                    
+                    // ============================================
+                    // TEXT SECTION
+                    // ============================================
+                    'text' => array(
+                        'key' => 'layout_text',
+                        'name' => 'text',
+                        'label' => 'Text Section',
+                        'display' => 'block',
+                        'sub_fields' => array(
+                            array(
+                                'key' => 'field_text_title',
+                                'label' => 'Title',
+                                'name' => 'title',
+                                'type' => 'text',
+                            ),
+                            array(
+                                'key' => 'field_text_content',
+                                'label' => 'Content',
+                                'name' => 'content',
+                                'type' => 'wysiwyg',
+                                'tabs' => 'all',
+                                'toolbar' => 'full',
+                                'media_upload' => 1,
+                            ),
+                            array(
+                                'key' => 'field_text_width',
+                                'label' => 'Width',
+                                'name' => 'width',
+                                'type' => 'select',
+                                'choices' => array(
+                                    'narrow' => 'Narrow (800px)',
+                                    'normal' => 'Normal (1200px)',
+                                    'wide' => 'Wide (1400px)',
+                                    'full' => 'Full Width',
+                                ),
+                                'default_value' => 'normal',
+                            ),
+                        ),
+                    ),
+                    
+                    // ============================================
+                    // TWO COLUMNS
+                    // ============================================
+                    'two_columns' => array(
+                        'key' => 'layout_two_columns',
+                        'name' => 'two_columns',
+                        'label' => 'Two Columns',
+                        'display' => 'block',
+                        'sub_fields' => array(
+                            array(
+                                'key' => 'field_col_left',
+                                'label' => 'Left Column',
+                                'name' => 'left_column',
+                                'type' => 'wysiwyg',
+                            ),
+                            array(
+                                'key' => 'field_col_right',
+                                'label' => 'Right Column',
+                                'name' => 'right_column',
+                                'type' => 'wysiwyg',
+                            ),
+                            array(
+                                'key' => 'field_col_ratio',
+                                'label' => 'Column Ratio',
+                                'name' => 'ratio',
+                                'type' => 'select',
+                                'choices' => array(
+                                    '50-50' => '50% / 50%',
+                                    '60-40' => '60% / 40%',
+                                    '40-60' => '40% / 60%',
+                                    '70-30' => '70% / 30%',
+                                    '30-70' => '30% / 70%',
+                                ),
+                                'default_value' => '50-50',
+                            ),
+                        ),
+                    ),
+                    
+                    // ============================================
+                    // IMAGE + TEXT
+                    // ============================================
+                    'image_text' => array(
+                        'key' => 'layout_image_text',
+                        'name' => 'image_text',
+                        'label' => 'Image + Text',
+                        'display' => 'block',
+                        'sub_fields' => array(
+                            array(
+                                'key' => 'field_it_image',
+                                'label' => 'Image',
+                                'name' => 'image',
+                                'type' => 'image',
+                                'return_format' => 'array',
+                                'preview_size' => 'medium',
+                            ),
+                            array(
+                                'key' => 'field_it_title',
+                                'label' => 'Title',
+                                'name' => 'title',
+                                'type' => 'text',
+                            ),
+                            array(
+                                'key' => 'field_it_content',
+                                'label' => 'Content',
+                                'name' => 'content',
+                                'type' => 'wysiwyg',
+                            ),
+                            array(
+                                'key' => 'field_it_position',
+                                'label' => 'Image Position',
+                                'name' => 'image_position',
+                                'type' => 'select',
+                                'choices' => array(
+                                    'left' => 'Image Left',
+                                    'right' => 'Image Right',
+                                ),
+                                'default_value' => 'left',
+                            ),
+                        ),
+                    ),
+                    
+                    // ============================================
+                    // SHORTCODE BLOCK
+                    // ============================================
+                    'shortcode' => array(
+                        'key' => 'layout_shortcode',
+                        'name' => 'shortcode',
+                        'label' => 'Shortcode',
+                        'display' => 'block',
+                        'sub_fields' => array(
+                            array(
+                                'key' => 'field_shortcode_content',
+                                'label' => 'Shortcode',
+                                'name' => 'shortcode',
+                                'type' => 'textarea',
+                                'instructions' => 'Füge einen Shortcode ein, z.B. [team_query] oder [pricing_tables]',
+                                'rows' => 3,
+                            ),
+                        ),
+                    ),
+                    
+                    // ============================================
+                    // CTA SECTION
+                    // ============================================
+                    'cta' => array(
+                        'key' => 'layout_cta',
+                        'name' => 'cta',
+                        'label' => 'Call to Action',
+                        'display' => 'block',
+                        'sub_fields' => array(
+                            array(
+                                'key' => 'field_cta_title',
+                                'label' => 'Title',
+                                'name' => 'title',
+                                'type' => 'text',
+                            ),
+                            array(
+                                'key' => 'field_cta_text',
+                                'label' => 'Text',
+                                'name' => 'text',
+                                'type' => 'textarea',
+                                'rows' => 3,
+                            ),
+                            array(
+                                'key' => 'field_cta_button_text',
+                                'label' => 'Button Text',
+                                'name' => 'button_text',
+                                'type' => 'text',
+                            ),
+                            array(
+                                'key' => 'field_cta_button_url',
+                                'label' => 'Button URL',
+                                'name' => 'button_url',
+                                'type' => 'url',
+                            ),
+                            array(
+                                'key' => 'field_cta_background',
+                                'label' => 'Background Color',
+                                'name' => 'background',
+                                'type' => 'select',
+                                'choices' => array(
+                                    'primary' => 'Primary Color',
+                                    'secondary' => 'Secondary Color',
+                                    'gray' => 'Gray',
+                                ),
+                                'default_value' => 'primary',
+                            ),
+                        ),
+                    ),
+                    
+                ),
+            ),
+        ),
+        'location' => array(
+            array(
+                array(
+                    'param' => 'page_template',
+                    'operator' => '==',
+                    'value' => 'page-templates/page-builder-acf.php',
+                ),
+            ),
+        ),
+        'menu_order' => 0,
+        'position' => 'normal',
+        'style' => 'default',
+        'label_placement' => 'top',
+        'instruction_placement' => 'label',
+    ));
+}
+
+
+
+// Accordion Block Fields
+if (function_exists('acf_add_local_field_group')) {
+    
+    acf_add_local_field_group(array(
+        'key' => 'group_accordion_block',
+        'title' => 'Accordion Settings',
+        'fields' => array(
+            array(
+                'key' => 'field_accordion_items',
+                'label' => 'Accordion Items',
+                'name' => 'accordion_items',
+                'type' => 'repeater',
+                'layout' => 'block',
+                'button_label' => '+ Item hinzufügen',
+                'min' => 1,
+                'sub_fields' => array(
+                    array(
+                        'key' => 'field_accordion_title',
+                        'label' => 'Titel',
+                        'name' => 'title',
+                        'type' => 'text',
+                        'required' => 1,
+                        'placeholder' => 'z.B. Wie funktioniert das?',
+                    ),
+                    array(
+                        'key' => 'field_accordion_content',
+                        'label' => 'Inhalt',
+                        'name' => 'content',
+                        'type' => 'wysiwyg',
+                        'tabs' => 'all',
+                        'toolbar' => 'full',
+                        'media_upload' => 1,
+                        'required' => 1,
+                    ),
+                ),
+            ),
+            array(
+                'key' => 'field_allow_multiple_open',
+                'label' => 'Mehrere Items gleichzeitig öffnen?',
+                'name' => 'allow_multiple_open',
+                'type' => 'true_false',
+                'default_value' => 0,
+                'ui' => 1,
+                'instructions' => 'Wenn aktiviert, können mehrere Accordion-Items gleichzeitig geöffnet sein.',
+            ),
+            array(
+                'key' => 'field_first_item_open',
+                'label' => 'Erstes Item standardmäßig offen?',
+                'name' => 'first_item_open',
+                'type' => 'true_false',
+                'default_value' => 0,
+                'ui' => 1,
+            ),
+        ),
+        'location' => array(
+            array(
+                array(
+                    'param' => 'block',
+                    'operator' => '==',
+                    'value' => 'acf/accordion',
+                ),
+            ),
+        ),
+    ));
+    
+    // Hero Slider Block Fields
+    acf_add_local_field_group(array(
+        'key' => 'group_hero_slider_block',
+        'title' => 'Hero Slider Settings',
+        'fields' => array(
+            array(
+                'key' => 'field_hero_slides',
+                'label' => 'Slides',
+                'name' => 'hero_slides',
+                'type' => 'repeater',
+                'layout' => 'block',
+                'button_label' => '+ Slide hinzufügen',
+                'min' => 1,
+                'sub_fields' => array(
+                    array(
+                        'key' => 'field_slide_image',
+                        'label' => 'Hintergrundbild',
+                        'name' => 'image',
+                        'type' => 'image',
+                        'return_format' => 'array',
+                        'preview_size' => 'medium',
+                        'required' => 1,
+                    ),
+                    array(
+                        'key' => 'field_slide_title',
+                        'label' => 'Titel',
+                        'name' => 'title',
+                        'type' => 'text',
+                        'required' => 1,
+                    ),
+                    array(
+                        'key' => 'field_slide_subtitle',
+                        'label' => 'Untertitel',
+                        'name' => 'subtitle',
+                        'type' => 'textarea',
+                        'rows' => 3,
+                    ),
+                    array(
+                        'key' => 'field_slide_button_text',
+                        'label' => 'Button Text',
+                        'name' => 'button_text',
+                        'type' => 'text',
+                    ),
+                    array(
+                        'key' => 'field_slide_button_link',
+                        'label' => 'Button Link',
+                        'name' => 'button_link',
+                        'type' => 'link',
+                        'return_format' => 'array',
+                    ),
+                ),
+            ),
+            array(
+                'key' => 'field_slider_autoplay',
+                'label' => 'Autoplay aktivieren?',
+                'name' => 'autoplay',
+                'type' => 'true_false',
+                'default_value' => 1,
+                'ui' => 1,
+            ),
+            array(
+                'key' => 'field_slider_delay',
+                'label' => 'Autoplay Verzögerung (ms)',
+                'name' => 'delay',
+                'type' => 'number',
+                'default_value' => 5000,
+                'min' => 1000,
+                'step' => 1000,
+                'conditional_logic' => array(
+                    array(
+                        array(
+                            'field' => 'field_slider_autoplay',
+                            'operator' => '==',
+                            'value' => '1',
+                        ),
+                    ),
+                ),
+            ),
+        ),
+        'location' => array(
+            array(
+                array(
+                    'param' => 'block',
+                    'operator' => '==',
+                    'value' => 'acf/hero-slider',
+                ),
+            ),
+        ),
+    ));
+}
+
+/**
+ * Job Fields
+ */
+function agency_core_register_job_fields() {
+    acf_add_local_field_group(array(
+        'key' => 'group_job',
+        'title' => 'Job Details',
+        'fields' => array(
+            
+            // ============================================
+            // BASIC INFO
+            // ============================================
+            array(
+                'key' => 'field_job_subtitle',
+                'label' => 'Subtitle / Tagline',
+                'name' => 'subtitle',
+                'type' => 'text',
+                'placeholder' => 'z.B. "Join our team"',
+                'instructions' => 'Optional: Kurzer Untertitel für die Job-Anzeige',
+            ),
+            
+            array(
+                'key' => 'field_job_employment_type',
+                'label' => 'Employment Type',
+                'name' => 'employment_type',
+                'type' => 'select',
+                'required' => 1,
+                'choices' => array(
+                    'full-time' => 'Full-Time (Vollzeit)',
+                    'part-time' => 'Part-Time (Teilzeit)',
+                    'contract' => 'Contract (Vertrag)',
+                    'temporary' => 'Temporary (Befristet)',
+                    'internship' => 'Internship (Praktikum)',
+                    'freelance' => 'Freelance',
+                ),
+                'default_value' => 'full-time',
+            ),
+            
+            array(
+                'key' => 'field_job_experience_level',
+                'label' => 'Experience Level',
+                'name' => 'experience_level',
+                'type' => 'select',
+                'choices' => array(
+                    'entry' => 'Entry Level (Berufseinsteiger)',
+                    'junior' => 'Junior (1-3 Jahre)',
+                    'mid' => 'Mid-Level (3-5 Jahre)',
+                    'senior' => 'Senior (5+ Jahre)',
+                    'lead' => 'Lead/Manager',
+                ),
+                'default_value' => 'mid',
+            ),
+            
+            array(
+                'key' => 'field_job_remote',
+                'label' => 'Remote Work',
+                'name' => 'remote_work',
+                'type' => 'select',
+                'choices' => array(
+                    'office' => 'Office Only (Nur vor Ort)',
+                    'hybrid' => 'Hybrid (Teilweise Remote)',
+                    'remote' => 'Fully Remote (Vollständig Remote)',
+                ),
+                'default_value' => 'hybrid',
+            ),
+            
+            // ============================================
+            // SALARY & BENEFITS
+            // ============================================
+            array(
+                'key' => 'field_job_salary_min',
+                'label' => 'Salary Min (€)',
+                'name' => 'salary_min',
+                'type' => 'number',
+                'placeholder' => '40000',
+                'instructions' => 'Mindestgehalt pro Jahr in Euro (leer lassen für "Nach Vereinbarung")',
+            ),
+            
+            array(
+                'key' => 'field_job_salary_max',
+                'label' => 'Salary Max (€)',
+                'name' => 'salary_max',
+                'type' => 'number',
+                'placeholder' => '60000',
+                'instructions' => 'Maximalgehalt pro Jahr in Euro',
+            ),
+            
+            array(
+                'key' => 'field_job_salary_display',
+                'label' => 'Display Salary',
+                'name' => 'salary_display',
+                'type' => 'true_false',
+                'default_value' => 1,
+                'ui' => 1,
+                'instructions' => 'Gehalt auf der Webseite anzeigen?',
+            ),
+            
+            array(
+                'key' => 'field_job_benefits',
+                'label' => 'Benefits',
+                'name' => 'benefits',
+                'type' => 'repeater',
+                'button_label' => 'Add Benefit',
+                'layout' => 'table',
+                'sub_fields' => array(
+                    array(
+                        'key' => 'field_benefit_text',
+                        'label' => 'Benefit',
+                        'name' => 'benefit_text',
+                        'type' => 'text',
+                        'placeholder' => 'z.B. 30 Urlaubstage, Homeoffice, etc.',
+                    ),
+                    array(
+                        'key' => 'field_benefit_icon',
+                        'label' => 'Icon (optional)',
+                        'name' => 'benefit_icon',
+                        'type' => 'text',
+                        'placeholder' => 'dashicons-yes',
+                    ),
+                ),
+            ),
+            
+            // ============================================
+            // REQUIREMENTS
+            // ============================================
+            array(
+                'key' => 'field_job_requirements',
+                'label' => 'Requirements',
+                'name' => 'requirements',
+                'type' => 'repeater',
+                'button_label' => 'Add Requirement',
+                'layout' => 'table',
+                'instructions' => 'Was muss der Bewerber mitbringen?',
+                'sub_fields' => array(
+                    array(
+                        'key' => 'field_requirement_text',
+                        'label' => 'Requirement',
+                        'name' => 'requirement_text',
+                        'type' => 'text',
+                        'placeholder' => 'z.B. 3+ Jahre Erfahrung mit React',
+                    ),
+                ),
+            ),
+            
+            array(
+                'key' => 'field_job_responsibilities',
+                'label' => 'Responsibilities',
+                'name' => 'responsibilities',
+                'type' => 'repeater',
+                'button_label' => 'Add Responsibility',
+                'layout' => 'table',
+                'instructions' => 'Was sind die Hauptaufgaben?',
+                'sub_fields' => array(
+                    array(
+                        'key' => 'field_responsibility_text',
+                        'label' => 'Responsibility',
+                        'name' => 'responsibility_text',
+                        'type' => 'text',
+                        'placeholder' => 'z.B. Entwicklung von Web-Applikationen',
+                    ),
+                ),
+            ),
+            
+            array(
+                'key' => 'field_job_skills',
+                'label' => 'Required Skills',
+                'name' => 'skills',
+                'type' => 'textarea',
+                'rows' => 3,
+                'placeholder' => 'Eine Zeile pro Skill, z.B.:
+                                    JavaScript
+                                    React
+                                    Node.js',
+                'instructions' => 'Eine Zeile pro Skill',
+            ),
+            
+            // ============================================
+            // APPLICATION
+            // ============================================
+            array(
+                'key' => 'field_job_application_deadline',
+                'label' => 'Application Deadline',
+                'name' => 'application_deadline',
+                'type' => 'date_picker',
+                'display_format' => 'd.m.Y',
+                'return_format' => 'Y-m-d',
+                'first_day' => 1,
+                'instructions' => 'Bewerbungsfrist (optional)',
+            ),
+            
+            array(
+                'key' => 'field_job_application_email',
+                'label' => 'Application Email',
+                'name' => 'application_email',
+                'type' => 'email',
+                'required' => 1,
+                'placeholder' => 'jobs@example.com',
+                'instructions' => 'E-Mail für Bewerbungen',
+            ),
+            
+            array(
+                'key' => 'field_job_application_url',
+                'label' => 'Application URL (optional)',
+                'name' => 'application_url',
+                'type' => 'url',
+                'placeholder' => 'https://example.com/apply',
+                'instructions' => 'Optional: Externer Bewerbungslink',
+            ),
+            
+            array(
+                'key' => 'field_job_contact_person',
+                'label' => 'Contact Person',
+                'name' => 'contact_person',
+                'type' => 'text',
+                'placeholder' => 'Max Mustermann',
+                'instructions' => 'Ansprechpartner für Rückfragen',
+            ),
+            
+            array(
+                'key' => 'field_job_contact_phone',
+                'label' => 'Contact Phone',
+                'name' => 'contact_phone',
+                'type' => 'text',
+                'placeholder' => '+43 XXX XXX XXX',
+            ),
+            
+            // ============================================
+            // STATUS & DISPLAY
+            // ============================================
+            array(
+                'key' => 'field_job_featured',
+                'label' => 'Featured Job',
+                'name' => 'featured',
+                'type' => 'true_false',
+                'default_value' => 0,
+                'ui' => 1,
+                'instructions' => 'Job als "Featured" hervorheben?',
+            ),
+            
+            array(
+                'key' => 'field_job_urgent',
+                'label' => 'Urgent Hiring',
+                'name' => 'urgent',
+                'type' => 'true_false',
+                'default_value' => 0,
+                'ui' => 1,
+                'instructions' => 'Dringende Stellenbesetzung?',
+            ),
+            
+            array(
+                'key' => 'field_job_start_date',
+                'label' => 'Start Date',
+                'name' => 'start_date',
+                'type' => 'text',
+                'placeholder' => 'z.B. "Sofort", "01.06.2025", "Nach Vereinbarung"',
+                'instructions' => 'Gewünschtes Startdatum',
+            ),
+            
+        ),
+        'location' => array(
+            array(
+                array(
+                    'param' => 'post_type',
+                    'operator' => '==',
+                    'value' => 'job',
+                ),
+            ),
+        ),
+        'menu_order' => 0,
+        'position' => 'normal',
+        'style' => 'default',
+        'label_placement' => 'top',
+        'instruction_placement' => 'label',
     ));
 }

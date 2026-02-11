@@ -95,6 +95,8 @@ require_once get_template_directory() . '/inc/walker-nav-menu.php';
  */
 // require_once get_template_directory() . '/inc/customizer.php';
 
+
+
 /**
  * WooCommerce Support
  */
@@ -112,3 +114,44 @@ add_action('after_setup_theme', 'customtheme_woocommerce_support');
  * WooCommerce customizations
  */
 require_once get_template_directory() . '/inc/woocommerce.php';
+
+
+/**
+ * Fix typographic quotes in shortcodes
+ * Converts fancy quotes to normal quotes before shortcode processing
+ */
+add_filter('the_content', 'fix_shortcode_fancy_quotes', 7); // Priority 7 = before do_shortcode (11)
+function fix_shortcode_fancy_quotes($content) {
+    // Replace various quote styles with normal quotes in shortcodes
+    $content = preg_replace_callback(
+        '/\[([^\]]+)\]/',
+        function($matches) {
+            $shortcode = $matches[1];
+            
+            // Replace all fancy quote variations with normal quotes
+            $shortcode = str_replace(
+                ['"', '"', '″', '‶', '〝', '〞', '＂'],  // Fancy quotes
+                '"',                                      // Normal quote
+                $shortcode
+            );
+            
+            return '[' . $shortcode . ']';
+        },
+        $content
+    );
+    
+    return $content;
+}
+
+/**
+ * ACF JSON Save/Load Point
+ */
+add_filter('acf/settings/save_json', function($path) {
+    return get_stylesheet_directory() . '/acf-json';
+});
+
+add_filter('acf/settings/load_json', function($paths) {
+    unset($paths[0]);
+    $paths[] = get_stylesheet_directory() . '/acf-json';
+    return $paths;
+});

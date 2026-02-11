@@ -6,9 +6,12 @@ export default class FaqAccordion {
   constructor() {
     this.accordions = document.querySelectorAll('.faq-accordion');
     
-    if (this.accordions.length > 0) {
-      this.init();
+    if (this.accordions.length === 0) {
+      return;
     }
+    
+    console.log(`✅ Found ${this.accordions.length} FAQ accordion(s)`);
+    this.init();
   }
   
   init() {
@@ -28,7 +31,6 @@ export default class FaqAccordion {
       const question = item.querySelector('.faq-question');
       const answer = item.querySelector('.faq-answer');
       
-      // Skip if elements not found
       if (!question || !answer) {
         return;
       }
@@ -40,11 +42,9 @@ export default class FaqAccordion {
         if (isActive) {
           item.classList.remove('is-active');
           question.setAttribute('aria-expanded', 'false');
-          answer.style.display = 'none';
         } else {
           item.classList.add('is-active');
           question.setAttribute('aria-expanded', 'true');
-          answer.style.display = 'block';
         }
       });
     });

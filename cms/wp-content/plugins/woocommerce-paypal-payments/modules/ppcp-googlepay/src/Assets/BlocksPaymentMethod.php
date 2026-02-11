@@ -10,18 +10,14 @@ namespace WooCommerce\PayPalCommerce\Googlepay\Assets;
 
 use Automattic\WooCommerce\Blocks\Payments\Integrations\AbstractPaymentMethodType;
 use Automattic\WooCommerce\Blocks\Payments\PaymentMethodTypeInterface;
+use WooCommerce\PayPalCommerce\Assets\AssetGetter;
 use WooCommerce\PayPalCommerce\Button\Assets\ButtonInterface;
 /**
  * Class BlocksPaymentMethod
  */
 class BlocksPaymentMethod extends AbstractPaymentMethodType
 {
-    /**
-     * The URL of this module.
-     *
-     * @var string
-     */
-    private $module_url;
+    private AssetGetter $asset_getter;
     /**
      * The assets version.
      *
@@ -41,18 +37,16 @@ class BlocksPaymentMethod extends AbstractPaymentMethodType
      */
     private $paypal_payment_method;
     /**
-     * Assets constructor.
-     *
      * @param string                     $name The name of this module.
-     * @param string                     $module_url The url of this module.
+     * @param AssetGetter                $asset_getter
      * @param string                     $version The assets version.
      * @param ButtonInterface            $button The button.
      * @param PaymentMethodTypeInterface $paypal_payment_method The paypal payment method.
      */
-    public function __construct(string $name, string $module_url, string $version, ButtonInterface $button, PaymentMethodTypeInterface $paypal_payment_method)
+    public function __construct(string $name, AssetGetter $asset_getter, string $version, ButtonInterface $button, PaymentMethodTypeInterface $paypal_payment_method)
     {
         $this->name = $name;
-        $this->module_url = $module_url;
+        $this->asset_getter = $asset_getter;
         $this->version = $version;
         $this->button = $button;
         $this->paypal_payment_method = $paypal_payment_method;
@@ -76,7 +70,7 @@ class BlocksPaymentMethod extends AbstractPaymentMethodType
     public function get_payment_method_script_handles()
     {
         $handle = $this->name . '-block';
-        wp_register_script($handle, trailingslashit($this->module_url) . 'assets/js/boot-block.js', array(), $this->version, \true);
+        wp_register_script($handle, $this->asset_getter->get_asset_url('boot-block.js'), array(), $this->version, \true);
         return array($handle);
     }
     /**
