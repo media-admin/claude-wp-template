@@ -36,6 +36,7 @@
     width: 50%;
     
     &:nth-child(odd) {
+      width: auto;
       padding-right: calc(50% + 40px);
       text-align: right;
       
