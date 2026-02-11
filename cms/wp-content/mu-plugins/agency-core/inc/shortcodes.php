@@ -412,10 +412,6 @@ function carousel_shortcode($atts) {
 add_shortcode('carousel', 'carousel_shortcode');
 
 
-// ============================================
-// HERO SLIDER QUERY SHORTCODE
-// ============================================
-
 /**
  * Hero Slider Query (loads from hero_slide CPT)
  * 
@@ -456,50 +452,68 @@ function hero_slider_query_shortcode($atts) {
         $slides->the_post();
         
         $title = get_the_title();
-        $subtitle = get_field('subtitle');
-        $button_text = get_field('button_text');
-        $button_url = get_field('button_url');
+        $subtitle = get_field('subtitle');  // ← KORREKT: ohne hero_ Prefix
+        $button_text = get_field('button_text');  // ← KORREKT
+        $button_url = get_field('button_url');  // ← KORREKT
         $button_style = get_field('button_style') ?: 'primary';
-        $desktop_image = get_field('desktop_image');
-        $mobile_image = get_field('mobile_image');
-        $overlay_opacity = get_field('overlay_opacity') ?: 40;
-        $text_color = get_field('text_color') ?: 'light';
         
-        $image_desktop = $desktop_image ? $desktop_image['url'] : '';
-        $image_mobile = $mobile_image ? $mobile_image['url'] : $image_desktop;
+        // Get Images (ACF return_format = 'url', gibt direkt String zurück!)
+        $image_desktop = get_field('image_desktop');  // ← KORREKT
+        $image_mobile = get_field('image_mobile');  // ← KORREKT
+        
+        // Fallback: Featured Image
+        if (empty($image_desktop)) {
+            $image_desktop = get_the_post_thumbnail_url(get_the_ID(), 'full');
+        }
+        
+        // Mobile fallback to desktop
+        if (empty($image_mobile)) {
+            $image_mobile = $image_desktop;
+        }
+        
+        // Last fallback: Placeholder
+        if (empty($image_desktop)) {
+            $image_desktop = 'https://via.placeholder.com/1920x1080?text=Hero+Slide';
+            $image_mobile = $image_desktop;
+        }
+        
+        $overlay_opacity = get_field('overlay_opacity') ?: 40;  // ← KORREKT
+        $text_color = get_field('text_color') ?: 'light';  // ← KORREKT
         
         $output .= '<div class="hero-slide swiper-slide" style="position:relative;width:100%;height:100%;">';
         
         // Background
         $output .= '<div class="hero-slide__background" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;">';
-        if ($image_desktop) {
-            $output .= '<picture>';
-            $output .= '<source media="(min-width: 768px)" srcset="' . esc_url($image_desktop) . '">';
-            $output .= '<source media="(max-width: 767px)" srcset="' . esc_url($image_mobile) . '">';
-            $output .= '<img src="' . esc_url($image_desktop) . '" alt="' . esc_attr($title) . '" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">';
-            $output .= '</picture>';
-        }
+        $output .= '<picture>';
+        $output .= '<source media="(min-width: 768px)" srcset="' . esc_url($image_desktop) . '">';
+        $output .= '<source media="(max-width: 767px)" srcset="' . esc_url($image_mobile) . '">';
+        $output .= '<img src="' . esc_url($image_desktop) . '" alt="' . esc_attr($title) . '" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">';
+        $output .= '</picture>';
         $output .= '<div class="hero-slide__overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,' . ($overlay_opacity / 100) . ');z-index:1;"></div>';
         $output .= '</div>';
         
         // Content
+        $text_color_class = $text_color === 'dark' ? 'color:#333!important;' : 'color:white!important;';
+        
         $output .= '<div class="hero-slide__content" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:800px;z-index:2;padding:2rem;text-align:center;">';
-        $output .= '<div class="hero-slide__inner" style="color:white;">';
+        $output .= '<div class="hero-slide__inner" style="' . $text_color_class . '">';
         
         if ($subtitle) {
-            $output .= '<div class="hero-slide__subtitle" style="color:white;font-size:1rem;margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.1em;font-weight:600;">' . esc_html($subtitle) . '</div>';
+            $output .= '<div class="hero-slide__subtitle" style="' . $text_color_class . 'font-size:1rem;margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.1em;font-weight:600;">' . esc_html($subtitle) . '</div>';
         }
         
         if ($title) {
-            $output .= '<h2 class="hero-slide__title" style="color:white;font-size:2.5rem;font-weight:700;margin-bottom:1rem;line-height:1.2;text-shadow:0 2px 4px rgba(0,0,0,0.5);">' . esc_html($title) . '</h2>';
+            $output .= '<h2 class="hero-slide__title" style="' . $text_color_class . 'font-size:2.5rem;font-weight:700;margin-bottom:1rem;line-height:1.2;text-shadow:0 2px 4px rgba(0,0,0,0.5);">' . esc_html($title) . '</h2>';
         }
         
         if (has_excerpt()) {
-            $output .= '<div class="hero-slide__text" style="color:white;font-size:1rem;margin-bottom:1.5rem;line-height:1.6;">' . wpautop(get_the_excerpt()) . '</div>';
+            $output .= '<div class="hero-slide__text" style="' . $text_color_class . 'font-size:1rem;margin-bottom:1.5rem;line-height:1.6;">' . wpautop(get_the_excerpt()) . '</div>';
         }
         
         if ($button_text && $button_url) {
-            $output .= '<a href="' . esc_url($button_url) . '" class="hero-slide__button button button--' . esc_attr($button_style) . '" style="display:inline-block;padding:0.75rem 1.5rem;background:#667eea;color:white;text-decoration:none;border-radius:0.5rem;font-weight:600;">' . esc_html($button_text) . '</a>';
+            $button_bg = $button_style === 'primary' ? '#667eea' : ($button_style === 'secondary' ? '#f59e0b' : 'transparent');
+            $button_border = $button_style === 'outline' ? 'border:2px solid white;' : '';
+            $output .= '<a href="' . esc_url($button_url) . '" class="hero-slide__button button button--' . esc_attr($button_style) . '" style="display:inline-block;padding:0.75rem 1.5rem;background:' . $button_bg . ';color:white;text-decoration:none;border-radius:0.5rem;font-weight:600;' . $button_border . '">' . esc_html($button_text) . '</a>';
         }
         
         $output .= '</div></div>'; // inner + content
