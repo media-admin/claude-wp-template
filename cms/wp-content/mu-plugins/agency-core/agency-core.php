@@ -55,6 +55,7 @@ class Agency_Core {
         require_once AGENCY_CORE_PATH . 'inc/admin.php';
         require_once AGENCY_CORE_PATH . 'inc/ajax-search.php';
         require_once AGENCY_CORE_PATH . 'inc/ajax-load-more.php';
+        require_once AGENCY_CORE_PATH . 'inc/ajax-filters.php';
     }
     
     /**

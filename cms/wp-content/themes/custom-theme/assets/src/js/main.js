@@ -52,6 +52,7 @@ import VideoPlayer from './components/video-player';
 import './components/ajax-search';
 import './components/load-more';
 import './components/google-maps';
+import AjaxFilters from './components/ajax-filters.js';
 
 // Theme loaded
 console.log('✨ Custom Theme loaded with Vite + Autoprefixer');

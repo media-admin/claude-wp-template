@@ -45,18 +45,23 @@ function customtheme_enqueue_assets() {
         true
     );
     
-    // Add defer attribute to main script
-    add_filter('script_loader_tag', 'customtheme_add_defer_attribute', 10, 2);
+    // Localize script INLINE (loads BEFORE deferred script!)
+    wp_add_inline_script('custom-theme-script', 
+        'window.customTheme = ' . json_encode(array(
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('custom-theme-nonce'),
+            'searchNonce' => wp_create_nonce('agency_search_nonce'),
+            'loadMoreNonce' => wp_create_nonce('agency_load_more_nonce'),
+            'filtersNonce' => wp_create_nonce('ajax_filters_nonce'),
+            'googleMapsApiKey' => defined('GOOGLE_MAPS_API_KEY') ? GOOGLE_MAPS_API_KEY : '',
+            'themePath' => get_template_directory_uri(),
+            'homeUrl' => home_url('/'),
+        )) . ';',
+        'before'
+    );
     
-    // Localize script for AJAX
-    wp_localize_script('custom-theme-script', 'customTheme', array(
-        'ajaxUrl' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('agency_search_nonce'),
-        'loadMoreNonce' => wp_create_nonce('agency_load_more_nonce'),
-        'googleMapsApiKey' => defined('GOOGLE_MAPS_API_KEY') ? GOOGLE_MAPS_API_KEY : '',
-        'themePath' => get_template_directory_uri(),
-        'homeUrl' => home_url('/'),
-    ));
+    // Add defer attribute to main script (safe now with inline script)
+    add_filter('script_loader_tag', 'customtheme_add_defer_attribute', 10, 2);
 }
 add_action('wp_enqueue_scripts', 'customtheme_enqueue_assets');
 

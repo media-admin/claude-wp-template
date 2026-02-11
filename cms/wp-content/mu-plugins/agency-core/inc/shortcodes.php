@@ -452,14 +452,14 @@ function hero_slider_query_shortcode($atts) {
         $slides->the_post();
         
         $title = get_the_title();
-        $subtitle = get_field('subtitle');  // ← KORREKT: ohne hero_ Prefix
-        $button_text = get_field('button_text');  // ← KORREKT
-        $button_url = get_field('button_url');  // ← KORREKT
+        $subtitle = get_field('subtitle');
+        $button_text = get_field('button_text');
+        $button_url = get_field('button_url');
         $button_style = get_field('button_style') ?: 'primary';
         
         // Get Images (ACF return_format = 'url', gibt direkt String zurück!)
-        $image_desktop = get_field('image_desktop');  // ← KORREKT
-        $image_mobile = get_field('image_mobile');  // ← KORREKT
+        $image_desktop = get_field('image_desktop');
+        $image_mobile = get_field('image_mobile');
         
         // Fallback: Featured Image
         if (empty($image_desktop)) {
@@ -477,8 +477,8 @@ function hero_slider_query_shortcode($atts) {
             $image_mobile = $image_desktop;
         }
         
-        $overlay_opacity = get_field('overlay_opacity') ?: 40;  // ← KORREKT
-        $text_color = get_field('text_color') ?: 'light';  // ← KORREKT
+        $overlay_opacity = get_field('overlay_opacity') ?: 40;
+        $text_color = get_field('text_color') ?: 'light';
         
         $output .= '<div class="hero-slide swiper-slide" style="position:relative;width:100%;height:100%;">';
         
@@ -2882,3 +2882,291 @@ function jobs_query_shortcode($atts) {
     return ob_get_clean();
 }
 add_shortcode('jobs_query', 'jobs_query_shortcode');
+
+// ============================================
+// AJAX FILTERS SHORTCODES
+// ============================================
+
+/**
+ * AJAX Filters Container
+ * 
+ * Usage: [ajax_filters post_type="job" posts_per_page="12" template="card" columns="3"]
+ */
+function ajax_filters_shortcode($atts, $content = null) {
+    $atts = shortcode_atts(array(
+        'post_type' => 'post',
+        'posts_per_page' => '12',
+        'template' => 'card',
+        'columns' => '3',
+        'show_count' => 'true',
+        'show_sort' => 'true',
+        'show_reset' => 'true',
+    ), $atts);
+    
+    $unique_id = 'ajax-filters-' . uniqid();
+    
+    ob_start();
+    ?>
+    <div class="ajax-filters" 
+         id="<?php echo esc_attr($unique_id); ?>"
+         data-post-type="<?php echo esc_attr($atts['post_type']); ?>"
+         data-posts-per-page="<?php echo esc_attr($atts['posts_per_page']); ?>"
+         data-template="<?php echo esc_attr($atts['template']); ?>"
+         data-columns="<?php echo esc_attr($atts['columns']); ?>">
+        
+        <!-- Filter Sidebar -->
+        <div class="ajax-filters__sidebar">
+            <div class="ajax-filters__header">
+                <h3 class="ajax-filters__title">Filter</h3>
+                
+                <?php if ($atts['show_reset'] === 'true') : ?>
+                    <button class="ajax-filters__reset" style="display:none;">
+                        Zurücksetzen
+                    </button>
+                <?php endif; ?>
+            </div>
+            
+            <!-- Filter Forms (from nested shortcodes) -->
+            <div class="ajax-filters__forms">
+                <?php echo do_shortcode($content); ?>
+            </div>
+            
+            <!-- Active Filters -->
+            <div class="ajax-filters__active" style="display:none;">
+                <h4>Aktive Filter:</h4>
+                <div class="ajax-filters__active-list"></div>
+            </div>
+        </div>
+        
+        <!-- Results Area -->
+        <div class="ajax-filters__results">
+            <!-- Toolbar -->
+            <div class="ajax-filters__toolbar">
+                <?php if ($atts['show_count'] === 'true') : ?>
+                    <div class="ajax-filters__count">
+                        <span class="ajax-filters__count-number">0</span> Ergebnisse
+                    </div>
+                <?php endif; ?>
+                
+                <?php if ($atts['show_sort'] === 'true') : ?>
+                    <div class="ajax-filters__sort">
+                        <label for="<?php echo esc_attr($unique_id); ?>-sort">Sortieren:</label>
+                        <select id="<?php echo esc_attr($unique_id); ?>-sort" class="ajax-filters__sort-select">
+                            <option value="date-desc">Neueste zuerst</option>
+                            <option value="date-asc">Älteste zuerst</option>
+                            <option value="title-asc">A-Z</option>
+                            <option value="title-desc">Z-A</option>
+                        </select>
+                    </div>
+                <?php endif; ?>
+            </div>
+            
+            <!-- Loading Overlay -->
+            <div class="ajax-filters__loading" style="display:none;">
+                <div class="ajax-filters__spinner"></div>
+            </div>
+            
+            <!-- Results Grid -->
+            <div class="ajax-filters__grid ajax-filters__grid--columns-<?php echo esc_attr($atts['columns']); ?>">
+                <!-- Results loaded via AJAX -->
+            </div>
+            
+            <!-- Pagination -->
+            <div class="ajax-filters__pagination"></div>
+        </div>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('ajax_filters', 'ajax_filters_shortcode');
+
+/**
+ * Taxonomy Filter
+ * 
+ * Usage: [filter_taxonomy taxonomy="job_category" type="checkbox" label="Kategorie"]
+ */
+function filter_taxonomy_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'taxonomy' => '',
+        'type' => 'checkbox', // checkbox, radio, dropdown, buttons
+        'label' => 'Filter',
+        'show_count' => 'true',
+        'operator' => 'IN', // IN, AND, NOT IN
+    ), $atts);
+    
+    if (empty($atts['taxonomy'])) {
+        return '';
+    }
+    
+    $taxonomy = sanitize_text_field($atts['taxonomy']);
+    $terms = get_terms(array(
+        'taxonomy' => $taxonomy,
+        'hide_empty' => true,
+    ));
+    
+    if (is_wp_error($terms) || empty($terms)) {
+        return '';
+    }
+    
+    $type = sanitize_text_field($atts['type']);
+    $input_type = ($type === 'radio') ? 'radio' : 'checkbox';
+    $input_name = ($type === 'radio') ? 'tax_' . $taxonomy : 'tax_' . $taxonomy . '[]';
+    
+    ob_start();
+    ?>
+    <div class="ajax-filter ajax-filter--taxonomy ajax-filter--<?php echo esc_attr($type); ?>" 
+         data-taxonomy="<?php echo esc_attr($taxonomy); ?>"
+         data-operator="<?php echo esc_attr($atts['operator']); ?>">
+        
+        <h4 class="ajax-filter__label"><?php echo esc_html($atts['label']); ?></h4>
+        
+        <?php if ($type === 'dropdown') : ?>
+            <select class="ajax-filter__select" data-taxonomy="<?php echo esc_attr($taxonomy); ?>">
+                <option value="">Alle</option>
+                <?php foreach ($terms as $term) : ?>
+                    <option value="<?php echo esc_attr($term->slug); ?>">
+                        <?php echo esc_html($term->name); ?>
+                        <?php if ($atts['show_count'] === 'true') : ?>
+                            (<?php echo $term->count; ?>)
+                        <?php endif; ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            
+        <?php elseif ($type === 'buttons') : ?>
+            <div class="ajax-filter__buttons">
+                <?php foreach ($terms as $term) : ?>
+                    <button type="button" 
+                            class="ajax-filter__button" 
+                            data-value="<?php echo esc_attr($term->slug); ?>"
+                            data-taxonomy="<?php echo esc_attr($taxonomy); ?>">
+                        <?php echo esc_html($term->name); ?>
+                        <?php if ($atts['show_count'] === 'true') : ?>
+                            <span class="ajax-filter__count"><?php echo $term->count; ?></span>
+                        <?php endif; ?>
+                    </button>
+                <?php endforeach; ?>
+            </div>
+            
+        <?php else : ?>
+            <div class="ajax-filter__options">
+                <?php foreach ($terms as $term) : ?>
+                    <label class="ajax-filter__option">
+                        <input type="<?php echo esc_attr($input_type); ?>" 
+                               name="<?php echo esc_attr($input_name); ?>" 
+                               value="<?php echo esc_attr($term->slug); ?>"
+                               data-taxonomy="<?php echo esc_attr($taxonomy); ?>">
+                        <span class="ajax-filter__option-label">
+                            <?php echo esc_html($term->name); ?>
+                            <?php if ($atts['show_count'] === 'true') : ?>
+                                <span class="ajax-filter__count">(<?php echo $term->count; ?>)</span>
+                            <?php endif; ?>
+                        </span>
+                    </label>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('filter_taxonomy', 'filter_taxonomy_shortcode');
+
+/**
+ * Meta Field Range Filter
+ * 
+ * Usage: [filter_range key="salary_min" min="0" max="100000" step="1000" label="Gehalt"]
+ */
+function filter_range_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'key' => '',
+        'min' => '0',
+        'max' => '100',
+        'step' => '1',
+        'label' => 'Range',
+        'prefix' => '',
+        'suffix' => '',
+    ), $atts);
+    
+    if (empty($atts['key'])) {
+        return '';
+    }
+    
+    $unique_id = 'range-' . uniqid();
+    
+    ob_start();
+    ?>
+    <div class="ajax-filter ajax-filter--range" data-meta-key="<?php echo esc_attr($atts['key']); ?>">
+        <h4 class="ajax-filter__label"><?php echo esc_html($atts['label']); ?></h4>
+        
+        <div class="ajax-filter__range-wrapper">
+            <input type="range" 
+                   id="<?php echo esc_attr($unique_id); ?>-min"
+                   class="ajax-filter__range-input ajax-filter__range-min" 
+                   min="<?php echo esc_attr($atts['min']); ?>" 
+                   max="<?php echo esc_attr($atts['max']); ?>" 
+                   step="<?php echo esc_attr($atts['step']); ?>"
+                   value="<?php echo esc_attr($atts['min']); ?>"
+                   data-meta-key="<?php echo esc_attr($atts['key']); ?>">
+            
+            <input type="range" 
+                   id="<?php echo esc_attr($unique_id); ?>-max"
+                   class="ajax-filter__range-input ajax-filter__range-max" 
+                   min="<?php echo esc_attr($atts['min']); ?>" 
+                   max="<?php echo esc_attr($atts['max']); ?>" 
+                   step="<?php echo esc_attr($atts['step']); ?>"
+                   value="<?php echo esc_attr($atts['max']); ?>"
+                   data-meta-key="<?php echo esc_attr($atts['key']); ?>">
+            
+            <div class="ajax-filter__range-values">
+                <span class="ajax-filter__range-value">
+                    <?php echo esc_html($atts['prefix']); ?>
+                    <span class="ajax-filter__range-min-value"><?php echo esc_html($atts['min']); ?></span>
+                    <?php echo esc_html($atts['suffix']); ?>
+                </span>
+                <span class="ajax-filter__range-separator">-</span>
+                <span class="ajax-filter__range-value">
+                    <?php echo esc_html($atts['prefix']); ?>
+                    <span class="ajax-filter__range-max-value"><?php echo esc_html($atts['max']); ?></span>
+                    <?php echo esc_html($atts['suffix']); ?>
+                </span>
+            </div>
+        </div>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('filter_range', 'filter_range_shortcode');
+
+/**
+ * Search Filter
+ * 
+ * Usage: [filter_search placeholder="Suche..." label="Suche"]
+ */
+function filter_search_shortcode($atts) {
+    $atts = shortcode_atts(array(
+        'placeholder' => 'Suche...',
+        'label' => 'Suche',
+    ), $atts);
+    
+    ob_start();
+    ?>
+    <div class="ajax-filter ajax-filter--search">
+        <h4 class="ajax-filter__label"><?php echo esc_html($atts['label']); ?></h4>
+        
+        <div class="ajax-filter__search-wrapper">
+            <input type="text" 
+                   class="ajax-filter__search-input" 
+                   placeholder="<?php echo esc_attr($atts['placeholder']); ?>">
+            <button type="button" class="ajax-filter__search-button">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+    <?php
+    return ob_get_clean();
+}
+add_shortcode('filter_search', 'filter_search_shortcode');
