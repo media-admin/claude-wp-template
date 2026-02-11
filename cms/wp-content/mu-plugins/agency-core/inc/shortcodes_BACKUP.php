@@ -2206,34 +2206,60 @@ add_shortcode('products_grid', 'products_grid_shortcode');
  */
 function ajax_search_shortcode($atts) {
     $atts = shortcode_atts(array(
-        'placeholder' => 'Suchen...',
-        'limit' => 5,
-        'post_types' => 'post,page',  // ← NEU: Standard mit post,page
+        'post_types' => 'post,page',
+        'placeholder' => 'Suche nach Inhalten...',
+        'limit' => '10',
+        'min_chars' => '2',
+        'style' => 'default',
     ), $atts);
     
-    $unique_id = 'search-' . uniqid();
+    $search_id = 'ajax-search-' . uniqid();
+    $post_types = explode(',', $atts['post_types']);
+    $post_types_json = json_encode(array_map('trim', $post_types));
     
     ob_start();
     ?>
-    <div class="ajax-search" 
-         id="<?php echo esc_attr($unique_id); ?>"
-         data-limit="<?php echo esc_attr($atts['limit']); ?>"
-         data-post-types="<?php echo esc_attr($atts['post_types']); ?>">  <!-- ← NEU! -->
-        
-        <div class="ajax-search__input-wrapper">
-            <input 
-                type="text" 
-                class="ajax-search__input" 
-                placeholder="<?php echo esc_attr($atts['placeholder']); ?>"
-                autocomplete="off"
-            >
-            <span class="ajax-search__icon">
-                <svg>...</svg>
-            </span>
+    <div class="ajax-search ajax-search--<?php echo esc_attr($atts['style']); ?>" id="<?php echo esc_attr($search_id); ?>">
+        <div class="ajax-search__form">
+            <div class="ajax-search__input-wrapper">
+                <input 
+                    type="search" 
+                    class="ajax-search__input" 
+                    placeholder="<?php echo esc_attr($atts['placeholder']); ?>"
+                    data-post-types='<?php echo esc_attr($post_types_json); ?>'
+                    data-limit="<?php echo esc_attr($atts['limit']); ?>"
+                    data-min-chars="<?php echo esc_attr($atts['min_chars']); ?>"
+                    autocomplete="off"
+                >
+                <span class="ajax-search__icon">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M19 19l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </span>
+                <button type="button" class="ajax-search__clear" aria-label="Clear search" style="display: none;">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M15 5L5 15M5 5l10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+                <span class="ajax-search__loading" style="display: none;">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="2" stroke-opacity="0.3"/>
+                        <path d="M10 2a8 8 0 0 1 8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                            <animateTransform attributeName="transform" type="rotate" from="0 10 10" to="360 10 10" dur="1s" repeatCount="indefinite"/>
+                        </path>
+                    </svg>
+                </span>
+            </div>
         </div>
         
-        <div class="ajax-search__results" style="display: none;"></div>
-        <div class="ajax-search__loading" style="display: none;">Suche läuft...</div>
+        <div class="ajax-search__results" style="display: none;">
+            <div class="ajax-search__results-list"></div>
+        </div>
+        
+        <div class="ajax-search__no-results" style="display: none;">
+            <p>Keine Ergebnisse gefunden.</p>
+        </div>
     </div>
     <?php
     return ob_get_clean();

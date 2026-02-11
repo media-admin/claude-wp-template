@@ -17,7 +17,9 @@ $color-light: #f5f5f5;       // Aus Figma: "Light"
 $color-white: #ffffff;       // Aus Figma: "White"
 
 $color-gray-100: #9b9b9b;        // Aus Figma: "Grey"
+$color-gray-200: #9b9b9b;        // Aus Figma: "Grey"
 $color-gray-50: #e0e0e0;  // Aus Figma: "Grey/Light"
+$color-gray-400: #e0e0e0;  // Aus Figma: "Grey/Light"
 
 // Semantic Colors
 $color-success: #10b981;
@@ -146,6 +148,29 @@ $color-danger: #ef4444;
 $color-error: #ef4444 !default;
 $color-warning: #f59e0b !default;
 $color-info: #3b82f6 !default;
+
+
+
+
+// Success (Grün für Produkte)
+$color-success: #10b981;
+$color-success-light: #d1fae5;
+
+// Info (Blau für Projekte)
+$color-info: #3b82f6;
+$color-info-light: #dbeafe;
+
+// Warning (Gelb für Services)
+$color-warning: #f59e0b;
+$color-warning-light: #fef3c7;
+
+// Error (Rot für Out of Stock)
+$color-error: #ef4444;
+$color-error-light: #fee2e2;
+
+
+
+
 
 // Light Mode Colors (default)
 :root {

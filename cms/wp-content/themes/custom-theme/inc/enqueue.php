@@ -55,6 +55,7 @@ function customtheme_enqueue_assets() {
         'loadMoreNonce' => wp_create_nonce('agency_load_more_nonce'),
         'googleMapsApiKey' => defined('GOOGLE_MAPS_API_KEY') ? GOOGLE_MAPS_API_KEY : '',
         'themePath' => get_template_directory_uri(),
+        'homeUrl' => home_url('/'),
     ));
 }
 add_action('wp_enqueue_scripts', 'customtheme_enqueue_assets');

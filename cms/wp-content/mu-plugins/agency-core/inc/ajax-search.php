@@ -10,135 +10,110 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Register AJAX Search Handlers
+ * AJAX Search Handler
  */
 add_action('wp_ajax_agency_search', 'agency_core_ajax_search');
 add_action('wp_ajax_nopriv_agency_search', 'agency_core_ajax_search');
 
-/**
- * AJAX Search Handler
- */
 function agency_core_ajax_search() {
-    // Verify nonce
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'agency_search_nonce')) {
-        wp_send_json_error(array('message' => 'Invalid security token'));
-        return;
-    }
+    // Verify nonce - MUSS MIT functions.php ÜBEREINSTIMMEN!
+    check_ajax_referer('agency_search_nonce', 'nonce');
     
     // Get search query
     $search_query = isset($_POST['query']) ? sanitize_text_field($_POST['query']) : '';
     
-    // Minimum query length
-    if (strlen($search_query) < 2) {
-        wp_send_json_error(array('message' => 'Query too short'));
-        return;
+    if (empty($search_query) || strlen($search_query) < 2) {
+        wp_send_json_error(array(
+            'message' => 'Search query too short'
+        ));
     }
     
-    // Get post types to search
+    // Get post types - handle both string and array format
     $post_types = array('post', 'page', 'product'); // Default
-
+    
     if (isset($_POST['post_types'])) {
         $raw = $_POST['post_types'];
         
-        // Handle if it's a string (e.g., "post,page" or "post")
+        // Handle string (e.g., "post,page,product")
         if (is_string($raw)) {
-            // Check if it's JSON
             $decoded = json_decode($raw, true);
             if (is_array($decoded)) {
                 $raw = $decoded;
             } else {
-                // Split by comma
                 $raw = array_map('trim', explode(',', $raw));
             }
         }
         
-        // Now sanitize if it's an array
         if (is_array($raw)) {
             $post_types = array_map('sanitize_text_field', $raw);
-            $post_types = array_filter($post_types); // Remove empty values
+            $post_types = array_filter($post_types);
         }
     }
     
     // Get limit
-    $limit = isset($_POST['limit']) ? intval($_POST['limit']) : 10;
+    $limit = isset($_POST['limit']) ? absint($_POST['limit']) : 5;
     
-    // Build query
+    // Search query
     $args = array(
-        's' => $search_query,
         'post_type' => $post_types,
         'post_status' => 'publish',
         'posts_per_page' => $limit,
+        's' => $search_query,
         'orderby' => 'relevance',
         'order' => 'DESC',
     );
     
-    // Execute search
-    $search_results = new WP_Query($args);
+    $query = new WP_Query($args);
     
     $results = array();
     
-    if ($search_results->have_posts()) {
-        while ($search_results->have_posts()) {
-            $search_results->the_post();
+    if ($query->have_posts()) {
+        while ($query->have_posts()) {
+            $query->the_post();
             
-            $post_type_obj = get_post_type_object(get_post_type());
-            
-            $results[] = array(
+            $result = array(
                 'id' => get_the_ID(),
                 'title' => get_the_title(),
-                'excerpt' => wp_trim_words(get_the_excerpt(), 20),
-                'url' => get_permalink(),
-                'post_type' => get_post_type(),
-                'post_type_label' => $post_type_obj ? $post_type_obj->labels->singular_name : '',
-                'thumbnail' => get_the_post_thumbnail_url(get_the_ID(), 'thumbnail'),
+                'permalink' => get_permalink(),
+                'excerpt' => wp_trim_words(get_the_excerpt(), 15),
                 'date' => get_the_date('d.m.Y'),
+                'post_type' => get_post_type(),
+                'thumbnail' => get_the_post_thumbnail_url(get_the_ID(), 'thumbnail'),
             );
+            
+            // WooCommerce Product: Add Price & Stock Info
+            if (get_post_type() === 'product' && function_exists('wc_get_product')) {
+                $product = wc_get_product(get_the_ID());
+                
+                if ($product) {
+                    $result['price'] = $product->get_price_html();
+                    $result['regular_price'] = $product->get_regular_price();
+                    $result['sale_price'] = $product->get_sale_price();
+                    $result['sku'] = $product->get_sku();
+                    $result['stock_status'] = $product->get_stock_status();
+                    $result['stock_quantity'] = $product->get_stock_quantity();
+                    $result['is_in_stock'] = $product->is_in_stock();
+                    $result['is_on_sale'] = $product->is_on_sale();
+                }
+            }
+            
+            $results[] = $result;
         }
-        
-        wp_reset_postdata();
     }
     
-    // Send response
-    wp_send_json_success(array(
-        'results' => $results,
-        'total' => $search_results->found_posts,
-        'query' => $search_query,
-    ));
-}
-
-/**
- * Register Search Stats (optional - track popular searches)
- */
-add_action('wp_ajax_agency_search_track', 'agency_core_ajax_search_track');
-add_action('wp_ajax_nopriv_agency_search_track', 'agency_core_ajax_search_track');
-
-function agency_core_ajax_search_track() {
-    if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'agency_search_nonce')) {
-        wp_send_json_error();
-        return;
+    wp_reset_postdata();
+    
+    if (!empty($results)) {
+        wp_send_json_success(array(
+            'results' => $results,
+            'count' => count($results),
+            'query' => $search_query,
+        ));
+    } else {
+        wp_send_json_success(array(
+            'results' => array(),
+            'count' => 0,
+            'message' => 'No results found',
+        ));
     }
-    
-    $query = isset($_POST['query']) ? sanitize_text_field($_POST['query']) : '';
-    
-    if (empty($query)) {
-        wp_send_json_error();
-        return;
-    }
-    
-    // Store search query (for analytics)
-    $searches = get_option('agency_core_search_queries', array());
-    
-    if (!isset($searches[$query])) {
-        $searches[$query] = 0;
-    }
-    
-    $searches[$query]++;
-    
-    // Keep only top 100
-    arsort($searches);
-    $searches = array_slice($searches, 0, 100, true);
-    
-    update_option('agency_core_search_queries', $searches);
-    
-    wp_send_json_success();
 }
